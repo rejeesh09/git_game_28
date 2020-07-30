@@ -230,12 +230,12 @@ class Prepare_game(Deck):
                     ########################################################################
                     # if there is a list of len 4, which means all other lsts be len 0
                     if len(self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i])==4:
-                        print('\nreached case5')
+                        #print('\nreached case5')
                         # case 5.a
                         # if J,9 and A in hand
                         if ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i][-1].rank()=='J') and                            (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i][-2].rank()=='9') and                            (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i][-3].rank()=='A')):
                             # make bid of upto 20 
-                            print('\nreached 83')
+                            #print('\nreached 83')
                             if self.bid_value_final<20:
                                 self.bid_value=max(self.bid_value_final+1,16)# min call of 16
                                 # select lowest card as trump
@@ -246,7 +246,7 @@ class Prepare_game(Deck):
                         # if J along with any 3
                         elif self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i][-1].rank()=='J':
                             # make bid of upto 19
-                            print('\nreached 94')
+                            #print('\nreached 94')
                             if self.bid_value_final<19:
                                 self.bid_value=max(self.bid_value_final+1,16)# min call of 16
                                 # select lowest card as trump
@@ -257,7 +257,7 @@ class Prepare_game(Deck):
                         # no J but 9 along with any 3
                         elif self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i][-1].rank()=='9':
                             # make bid of upto 18
-                            print('\nreached 105')
+                            #print('\nreached 105')
                             if self.bid_value_final<18:
                                 self.bid_value=max(self.bid_value_final+1,16)# min call of 16
                                 # select 2nd last card as trump
@@ -268,7 +268,7 @@ class Prepare_game(Deck):
                         # highest card is A or 10 along with 3 other
                         elif self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i][-1].rank() in ['A','10']:
                             # make bid of upto 17
-                            print('\nreached 116')
+                            #print('\nreached 116')
                             if self.bid_value_final<17:
                                 self.bid_value=max(self.bid_value_final+1,15)# min call of 15
                                 # select 2nd last card as trump
@@ -279,7 +279,7 @@ class Prepare_game(Deck):
                         # only pointless 4 cards
                         else:
                             # make bid of upto 16
-                            print('\nreached 127')
+                            #print('\nreached 127')
                             if self.bid_value_final<16:
                                 self.bid_value=max(self.bid_value_final+1,15)# min call of 15
                                 # select lowest card as trump
@@ -294,13 +294,13 @@ class Prepare_game(Deck):
                         ####################################################################
                         # if there is a list of len 3
                         if len(self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i])==3:
-                            print('\nreached case4')
+                            #print('\nreached case4')
                             # case 4.a
                             # J of suit present and the 4th card is also another J
                             # the check is done using half_deal_lst (which is sorted)
                             if ((self.obj_half_deal_lst[self.bid_turn_index][0].rank()=='J') and                                (self.obj_half_deal_lst[self.bid_turn_index][-1].rank()=='J')) or                                ((self.obj_half_deal_lst[self.bid_turn_index][-2].rank()=='J') and                                (self.obj_half_deal_lst[self.bid_turn_index][-1].rank()=='J')):
                                 # make bid of upto 18
-                                print('\nreached 151')
+                                #print('\nreached 151')
                                 if self.bid_value_final<18:
                                     self.bid_value=max(self.bid_value_final+1,16)# min call of 16
                                     # select lowest card as trump
@@ -311,7 +311,7 @@ class Prepare_game(Deck):
                             # J of suit present but 4th card is not J
                             elif self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i][-1].rank()=='J':
                                 # make bid of upto 17
-                                print('\nreached 162')
+                                #print('\nreached 162')
                                 if self.bid_value_final<17:
                                     self.bid_value=max(self.bid_value_final+1,15)# min call of 15
                                     # select lowest card as trump
@@ -323,7 +323,7 @@ class Prepare_game(Deck):
                             # checking against half_deal_lst
                             elif (self.obj_half_deal_lst[self.bid_turn_index][0].rank()=='J') or                                 (self.obj_half_deal_lst[self.bid_turn_index][-1].rank()=='J'):
                                 # make bid of upto 16
-                                print('\nreached 175')
+                                #print('\nreached 175')
                                 if self.bid_value_final<16:
                                     self.bid_value=max(self.bid_value_final+1,15)
                                     # select 2nd last card as trump
@@ -332,7 +332,7 @@ class Prepare_game(Deck):
                                 break
                             else:
                                 # make bid of upto 15
-                                print('\nreached 184')
+                                #print('\nreached 184')
                                 if self.bid_value_final<15:
                                     self.bid_value=self.bid_value_final+1
                                     # select 2nd lowest card as trump
@@ -355,7 +355,7 @@ class Prepare_game(Deck):
                         if (self.obj_half_deal_lst[self.bid_turn_index][1].rank()=='J') and                             (self.obj_half_deal_lst[self.bid_turn_index][3].rank()=='J'):
                             if (self.obj_half_deal_lst[self.bid_turn_index][0].point()) >=                                 (self.obj_half_deal_lst[self.bid_turn_index][2].point()):
                                 # make bid of upto 16
-                                print('\nreached 208')
+                                #print('\nreached 208')
                                 if self.bid_value_final<16:
                                     self.bid_value=max(self.bid_value_final+1,15)# min call of 15
                                     # select higher card as trump
@@ -363,7 +363,7 @@ class Prepare_game(Deck):
                                 found=True
                             else:
                                 # make bid of upto 16
-                                print('\nreached 217')
+                                #print('\nreached 217')
                                 if self.bid_value_final<16:
                                     self.bid_value=self.bid_value_final+1
                                     # select higher card as trump
@@ -375,7 +375,7 @@ class Prepare_game(Deck):
                                 # only one J
                                 if self.obj_half_deal_lst[self.bid_turn_index][i].rank()=='J':
                                     # make bid upto 15
-                                    print('\nreached 231')
+                                    #print('\nreached 231')
                                     if self.bid_value_final<15:
                                         self.bid_value=self.bid_value_final+1
                                         # select the card along with J(half_deal_lst is sorted)
@@ -387,7 +387,7 @@ class Prepare_game(Deck):
                             # no J's
                             if (self.obj_half_deal_lst[self.bid_turn_index][1].point()) >=                                 (self.obj_half_deal_lst[self.bid_turn_index][3].point()):
                                 # make bid of upto 14
-                                print('\nreached 244')
+                                #print('\nreached 244')
                                 if self.bid_value_final<14:
                                     self.bid_value=self.bid_value_final+1
                                     # select higher point card as trump
@@ -395,7 +395,7 @@ class Prepare_game(Deck):
                                 found=True # found may not be needed from here on.. but sticking with it
                             else:
                                 # make bid of upto 14
-                                print('\nreached 253')
+                                #print('\nreached 253')
                                 if self.bid_value_final<14:
                                     self.bid_value=self.bid_value_final+1
                                     # select higher card as trump
@@ -408,7 +408,7 @@ class Prepare_game(Deck):
                         # 2-suit has J and both of the 1-suits also have J - tot 3 J's
                         if (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_2_lst[0]]                            [-1].rank() == 'J') and                             ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[0]]                            [0].rank() == 'J') and                             (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[1]]                            [0].rank() == 'J')):
                             # make bid of upto 17
-                            print('\nreached 273')
+                            #print('\nreached 273')
                             if self.bid_value_final<17:
                                 self.bid_value=max(self.bid_value_final+1,15)# min call of 15
                                 # select lower card as trump (only 2 cards, other is J)
@@ -418,7 +418,7 @@ class Prepare_game(Deck):
                         # 2-suit has J and one off the 1-suits also have J - tot 2 J's
                         elif (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_2_lst[0]]                            [-1].rank() == 'J') and                             ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[0]]                            [0].rank() == 'J') or                             (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[1]]                            [0].rank() == 'J')):
                             # make bid of upto 16
-                            print('\nreached 289')
+                            #print('\nreached 289')
                             if self.bid_value_final<16:
                                 self.bid_value=max(self.bid_value_final+1,15)# min call of 15
                                 # select lower card as trump (only 2 cards, other is J)
@@ -428,7 +428,7 @@ class Prepare_game(Deck):
                         # only 2-suit has J
                         elif (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_2_lst[0]]                            [-1].rank() == 'J'):
                             # make bid of upto 15
-                            print('\nreached 301')
+                            #print('\nreached 301')
                             if self.bid_value_final<15:
                                 self.bid_value=self.bid_value_final+1
                                 # select lower card as trump (only 2 cards, other is J)
@@ -438,7 +438,7 @@ class Prepare_game(Deck):
                         # 2-suit doesn't have J but both 1-suits have J
                         elif ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[0]]                            [0].rank() == 'J') and                             (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[1]]                            [0].rank() == 'J')):
                             # make bid of upto 15
-                            print('\nreached 315')
+                            #print('\nreached 315')
                             if self.bid_value_final<15:
                                 self.bid_value=self.bid_value_final+1
                                 # select higher card of 2-suit (no J in that suit)
@@ -448,7 +448,7 @@ class Prepare_game(Deck):
                         # 2-suit does't have J and only 1 other J or no J at all
                         else:
                             # make bid of upto 14
-                            print('\nreached 326')
+                            #print('\nreached 326')
                             if self.bid_value_final<14:
                                 self.bid_value=self.bid_value_final+1
                                 # select higher card of 2-suit (no J in that suit)
@@ -470,7 +470,7 @@ class Prepare_game(Deck):
                             for xy in self.obj_half_deal_lst[self.bid_turn_index]:
                                 if xy.rank()!='J':
                                     # make bid of upto 16
-                                    print('\nreached 347')
+                                    #print('\nreached 347')
                                     if self.bid_value_final<16:
                                         self.bid_value=max(self.bid_value_final+1,15)# min call of 15
                                         # select non J card
@@ -489,7 +489,7 @@ class Prepare_game(Deck):
                             # 2 J's in hand
                             if j_count2==2:                               
                                 # make bid of upto 15
-                                print('\nreached 368')
+                                #print('\nreached 368')
                                 if self.bid_value_final<15:
                                     self.bid_value=self.bid_value_final+1
                                     # select card with highest point and not J(index=p_i_*lst[2])
@@ -499,7 +499,7 @@ class Prepare_game(Deck):
                             # one J or no J in hand 
                             else:
                                 # make bid of upto 14
-                                print('\nreached 390')
+                                #print('\nreached 390')
                                 if self.bid_value_final<14:
                                     self.bid_value=self.bid_value_final+1
                                     # select card with highest point and not J(index=p_i_*lst[2])

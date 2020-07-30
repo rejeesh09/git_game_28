@@ -3,7 +3,7 @@
 
 # ## importing Cards() class - it is being explicitly used in Round_1() class
 
-# In[4]:
+# In[2]:
 
 
 from cards import Cards
@@ -17,7 +17,7 @@ from deck import Deck
 
 # ## importing Prepare_game() class - parent class of Round_1()
 
-# In[5]:
+# In[3]:
 
 
 from prepare_game import Prepare_game
@@ -25,7 +25,7 @@ from prepare_game import Prepare_game
 
 # ##  Round_1() class
 
-# In[6]:
+# In[4]:
 
 
 # trying to make deck and round1 separate
@@ -134,30 +134,46 @@ class Round_1(Prepare_game):
 
 
         #14.######### var14
-        self.turn_index=0 # here Player is starting first round
-        # this should change to turn_index=next_lead_index with suitable extras
+        self.turn_index=self.highest_bidder_index
         
-        self.player_input=input('\nEnter the card you want to play: '
-            +'\nrank followed by the first letter of the suit, eg.'
-            +'\n7s or ah or 10d etc.: '
-            +'\n(or 0 to stop game) ').lower()
-
-        # input converted to object
-        #15.######### var15
-        self.obj_inp_checked=self.inp_parse_check(self.player_input)
+        ###############################################################
+        if not self.turn_index: # ie zero        
+            self.player_input=input('\nEnter the card you want to play: '
+                +'\nrank followed by the first letter of the suit, eg.'
+                +'\n7s or ah or 10d etc.: '
+                +'\n(or 0 to stop game) ').lower()
+            # input converted to object
+            #15.######### var15
+            self.round1_lead_card=self.inp_parse_check(self.player_input)
+        else:
+            # starting with simple logic, play a J or the first non trump-suit card
+            found=False
+            for crd in self.obj_deal_lst_copy[self.turn_index]:
+                if crd.suit()!=self.trump_suit:
+                    if crd.rank()=='J':
+                        self.round1_lead_card=crd
+                        found=True
+                        break
+            if not found:
+                for crd in self.obj_deal_lst_copy[self.turn_index]:
+                    if crd.suit()!=self.trump_suit:
+                        self.round1_lead_card=crd
+                        break
+        ###############################################################        
 
         # adding inp to lst and dictionaries
-        self.obj_played_card_lst.append(self.obj_inp_checked)
-        self.obj_dictn_of_highest_card_and_turn['suit']=[self.turn_index,self.obj_inp_checked]
+        self.obj_played_card_lst.append(self.round1_lead_card)
+        self.obj_dictn_of_highest_card_and_turn['suit']=[self.turn_index,self.round1_lead_card]
 
-        self.obj_dictn_of_played_card_and_player[self.players_lst[self.turn_index]]        .append(self.obj_inp_checked)
+        self.obj_dictn_of_played_card_and_player[self.players_lst[self.turn_index]]        .append(self.round1_lead_card)
 
-        self.obj_dictn_of_played_card_and_suit[self.obj_inp_checked.suit()].append(self.obj_inp_checked)
+        self.obj_dictn_of_played_card_and_suit[self.round1_lead_card.suit()].append(self.round1_lead_card)
 
         #16.######### var16
-        self.round1_lead_card_suit=self.obj_inp_checked.suit()
+        self.round1_lead_card_suit=self.round1_lead_card.suit()
         #17.######### var17
-        self.round1_highest_point_sofar=self.obj_inp_checked.point()
+        self.round1_highest_point_sofar=self.round1_lead_card.point()
+        
     ################################################################
     #round1_lead_logic() method end ################################
 
@@ -185,7 +201,7 @@ class Round_1(Prepare_game):
         def strategy_scenario1():
             # if len() of suit < 5
             if len(self.obj_dictn_of_cards_grouped[self.turn_index][self.x])<5:
-                print('\nreached line 226')
+                #print('\nreached line 226')
                 # storing the card in self.card_played, highest card(J)
                 self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1]
                 # updating highest point
@@ -198,7 +214,7 @@ class Round_1(Prepare_game):
 
             # if len() of suit > 4 but last turn
             elif len(self.obj_dictn_of_cards_grouped[self.turn_index][self.x]) in [5,6,7] and                 len(self.obj_played_card_lst)==3:
-                print('\nreached line 241')
+                #print('\nreached line 241')
                 # storing the card in self.card_played, highest card(J)
                 self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1]
                 # updating highest point
@@ -213,7 +229,7 @@ class Round_1(Prepare_game):
             # it could be mate who doesn't have the suit
             elif (len(self.obj_dictn_of_cards_grouped[self.turn_index][self.x])==5) and                 (len(self.obj_played_card_lst)<3) and                 (self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-2].rank()=='9'):
                 # <3 coz, can play J itself if 3
-                print('\nreached line 259')
+                #print('\nreached line 259')
                 # storing card in self.card_played, 9
                 self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-2]
                 # updating highest point
@@ -227,7 +243,7 @@ class Round_1(Prepare_game):
 
             # if len() of suit 5 or more and not last turn and len() not 5 with J and 9 in hand
             else:
-                print('\nreached line 274')
+                #print('\nreached line 274')
                 # storing card in self.card_played, lowest card
                 self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][0]
                 if self.card_played.point()>self.round1_highest_point_sofar:
@@ -253,7 +269,7 @@ class Round_1(Prepare_game):
                     # checking separately in the order of priority for single cards
                     # if the single card is 9
                     if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])==1 and                           self.obj_dictn_of_cards_grouped[self.turn_index][i][0].rank()=='9':
-                        print('\nreached line 303')
+                        #print('\nreached line 303')
                         # storing the card in self.card_played, only card
                         self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][0]
                         # highest point need not be updated since already a J is played
@@ -266,7 +282,7 @@ class Round_1(Prepare_game):
                     # if the single card is either A or 10 - checking separately from 9 
                     # to assign 2nd priority
                     elif len(self.obj_dictn_of_cards_grouped[self.turn_index][i])==1 and                     (self.obj_dictn_of_cards_grouped[self.turn_index][i][0].rank() in ['A','10']):
-                        print('\nreached line 317')
+                        #print('\nreached line 317')
                         # storing the card in self.card_played, highest card
                         self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][0]
                         # highest point need not be updated
@@ -277,7 +293,7 @@ class Round_1(Prepare_game):
 
                     # if the single card is one of K,Q,8,7 - checking separately to assign 3rd priority
                     elif len(self.obj_dictn_of_cards_grouped[self.turn_index][i])==1 and                         (self.obj_dictn_of_cards_grouped[self.turn_index][i][0].rank() in                         ['K','Q','8','7']):
-                        print('\nreached line 330')
+                        #print('\nreached line 330')
                         # storing the card in self.card_played, highest card
                         self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][0]
                         # highest point need not be updated
@@ -288,7 +304,7 @@ class Round_1(Prepare_game):
 
             # no suitable card has been found so far(J already played by team mate)
             if not self.i1:
-                print('\nreached line 341')
+                #print('\nreached line 341')
                 for i in range(4):
                     if (not self.trump_revealed) or ((self.trump_revealed) and                         i!=self.suit.index(self.trump_suit)):
                         #making sure a trump card is not being 'let off' if trump revealed
@@ -299,7 +315,7 @@ class Round_1(Prepare_game):
 
                                 # selecting the first 9 encountered
                                 if self.obj_dictn_of_cards_grouped[self.turn_index][i][j].rank()=='9':
-                                    print('\nreached line 353')
+                                    #print('\nreached line 353')
                                     self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][j]
                                     # highest point need not be updated
                                     # removing played card from hand
@@ -320,7 +336,7 @@ class Round_1(Prepare_game):
 
                                     # selecting the first A or 10 encountered
                                     if self.obj_dictn_of_cards_grouped[self.turn_index][i][j].rank() in                                      ['A','10']:
-                                        print('\nreached line 376')
+                                        #print('\nreached line 376')
                                         self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][j]
                                         # highest point need not be updated
                                         # removing played card from hand
@@ -341,7 +357,7 @@ class Round_1(Prepare_game):
 
                                     # selecting the first K,Q,8,7 encountered
                                     if self.obj_dictn_of_cards_grouped[self.turn_index][i][j].rank() in                                      ['K','Q','8','7']:
-                                        print('\nreached line 399')
+                                        #print('\nreached line 399')
                                         self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][j]
                                         # highest point need not be updated
                                         # removing played card from hand
@@ -363,7 +379,7 @@ class Round_1(Prepare_game):
 
                     # selecting a single card which is not J or 9
                     if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])==1 and                           self.obj_dictn_of_cards_grouped[self.turn_index][i][0].rank() not in                           ['J','9']:
-                        print('\nreached line 424')
+                        #print('\nreached line 424')
                         # storing the card in self.card_played, only card
                         self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][0]
                         # highest point need not be updated
@@ -381,7 +397,7 @@ class Round_1(Prepare_game):
                         # checking for a set of 2 that is not J along with another point card and  
                         # one among 9,A,10 along with a non-point card
                         if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])==2 and                               self.obj_dictn_of_cards_grouped[self.turn_index][i][-1].rank() not in                               ['9','A','10'] and                               self.obj_dictn_of_cards_grouped[self.turn_index][i][0].rank() not in                               ['9','A','10']:
-                            print('\nreached line 447')
+                            #print('\nreached line 447')
                             # storing the card in self.card_played, lower card
                             self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][0]
                             # highest point need not be updated
@@ -398,7 +414,7 @@ class Round_1(Prepare_game):
 
                         # if len() 3 or more and suit of atleast 3 pointless cards
                         if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])>2 and                               (self.obj_dictn_of_cards_grouped[self.turn_index][i][-1].rank() in                               ['Q','K','10']):
-                            print('\nreached line 467')
+                            #print('\nreached line 467')
                             # storing the card in self.card_played, lower card
                             self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][0]
                             # highest point need not be updated
@@ -415,7 +431,7 @@ class Round_1(Prepare_game):
 
                         # if len() 3 or more and either of list[1] not in [9,A,10] or list[-1]==J
                         if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])>2 and                               ((self.obj_dictn_of_cards_grouped[self.turn_index][i][1].rank() not in                               ['9','A','10']) or                               (self.obj_dictn_of_cards_grouped[self.turn_index][i][-1].rank()=='J')):
-                            print('\nreached line 488')
+                            #print('\nreached line 488')
                             # storing the card in self.card_played, lower card
                             self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][0]
                             # highest point need not be updated
@@ -426,7 +442,7 @@ class Round_1(Prepare_game):
 
             # if no suitable cases found so far
             if not self.i3:
-                print('\nreached line 499')
+                #print('\nreached line 499')
                 for i in range(4):
                     if (not self.trump_revealed) or ((self.trump_revealed) and                         i!=self.suit.index(self.trump_suit)):
                         #making sure a trump card is not being 'let off' if trump revealed
@@ -437,7 +453,7 @@ class Round_1(Prepare_game):
 
                                 # selecting the first non point card encountered
                                 if self.obj_dictn_of_cards_grouped[self.turn_index][i][j].rank() in                                 ['7','8','Q','K']:
-                                    print('\nreached line 512')
+                                    #print('\nreached line 512')
                                     self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][j]
                                     # highest point need not be updated
                                     # removing played card from hand
@@ -447,7 +463,7 @@ class Round_1(Prepare_game):
 
                                 # selecting the first A or 10 if no non point card available
                                 elif self.obj_dictn_of_cards_grouped[self.turn_index][i][j].rank() in                                  ['A','10']:
-                                    print('\nreached line 523')
+                                    #print('\nreached line 523')
                                     self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][j]
                                     # highest point need not be updated
                                     # removing played card from hand
@@ -467,7 +483,7 @@ class Round_1(Prepare_game):
             for i in range(4):
                 # selecting a single card which is not J or 9
                 if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])==1 and                       self.obj_dictn_of_cards_grouped[self.turn_index][i][0].rank() not in                       ['J','9']:
-                    print('\nreached line 545')
+                    #print('\nreached line 545')
                     # storing the card in self.card_played, only card
                     self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][0]
                     # highest point need not be updated
@@ -482,7 +498,7 @@ class Round_1(Prepare_game):
                     # checking for a set of 2 that is not J along with another point card and  
                     # one among 9,A,10 along with a non-point card
                     if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])==2 and                           self.obj_dictn_of_cards_grouped[self.turn_index][i][-1].rank() not in                           ['9','A','10'] and                           self.obj_dictn_of_cards_grouped[self.turn_index][i][0].rank() not in                           ['9','A','10']:
-                        print('\nreached line 564')
+                        #print('\nreached line 564')
                         # storing the card in self.card_played, lower card
                         self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][0]
                         # highest point need not be updated
@@ -496,7 +512,7 @@ class Round_1(Prepare_game):
                 for i in range(4):
                     # if len() 3 or more and suit of atleast 3 pointless cards
                     if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])>2 and                           (self.obj_dictn_of_cards_grouped[self.turn_index][i][-1].rank() in                           ['Q','K','10']):
-                        print('\nreached line 580')
+                        #print('\nreached line 580')
                         # storing the card in self.card_played, lower card
                         self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][0]
                         # highest point need not be updated
@@ -510,7 +526,7 @@ class Round_1(Prepare_game):
                 for i in range(4):
                     # if len() 3 or more and either of list[1] not in [9,A,10] or list[-1]==J
                     if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])>2 and                           ((self.obj_dictn_of_cards_grouped[self.turn_index][i][1].rank() not in                           ['9','A','10']) or                           (self.obj_dictn_of_cards_grouped[self.turn_index][i][-1].rank()=='J')):
-                        print('\nreached line 597')
+                        #print('\nreached line 597')
                         # storing the card in self.card_played, lower card
                         self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][0]
                         # highest point need not be updated
@@ -521,7 +537,7 @@ class Round_1(Prepare_game):
 
             # if no suitable cases found so far
             if not self.i3: # checking if false
-                print('\nreached line 608')
+                #print('\nreached line 608')
                 for i in range(4):
                     # removing empty list from comparison
                     if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])!=0:
@@ -529,7 +545,7 @@ class Round_1(Prepare_game):
 
                             # selecting the first non point card encountered
                             if self.obj_dictn_of_cards_grouped[self.turn_index][i][j].rank() in                             ['7','8','Q','K']:
-                                print('\nreached line 617')
+                                #print('\nreached line 617')
                                 self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][j]
                                 # highest point need not be updated
                                 # removing played card from hand
@@ -539,7 +555,7 @@ class Round_1(Prepare_game):
 
                             # selecting the first A or 10 if no non point card available
                             elif self.obj_dictn_of_cards_grouped[self.turn_index][i][j].rank() in                              ['A','10']:
-                                print('\nreached line 628')
+                                #print('\nreached line 628')
                                 self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][j]
                                 # highest point need not be updated
                                 # removing played card from hand
@@ -627,142 +643,159 @@ class Round_1(Prepare_game):
         #round1_follow_logic()'s strategy_scenario7b() function end#
 
 # round1_follow_logic() main body###################################
-        # if played suit in hand
-        if len(self.obj_dictn_of_cards_grouped[self.turn_index][self.x]) != 0:
-            print('\nreached line 733')
+        if self.turn_index: # i.e not zero
+            # if played suit in hand
+            if len(self.obj_dictn_of_cards_grouped[self.turn_index][self.x]) != 0:
+                #print('\nreached line 733')
 
 #Strategy scenario1 # J in hand and trump not played in round so far               
-            if (self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1].rank()=='J') and                (not self.trump_played_in_round):
-                print('\nreached line 738')
-                strategy_scenario1()
+                if (self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1].rank()=='J') and                    (not self.trump_played_in_round):
+                    #print('\nreached line 738')
+                    strategy_scenario1()
 
 
 #Strategy scenario2 # trump not played and J already played by team mate, (i.e.) and playing 3rd or 4th turn
-            # or highest trump played by team mate and J in hand or otherwise
-            elif ((not self.trump_played_in_round) and (len(self.obj_played_card_lst)>1) and                 (self.obj_played_card_lst[(self.turn_index+2)%4].rank()=='J')) or                 ((self.trump_played_in_round) and (len(self.obj_played_card_lst)>1) and                 (self.obj_played_card_lst[(self.turn_index+2)%4] ==                 self.obj_dictn_of_highest_card_and_turn['trump'][1])):
-                print('\nreached line 749')
-                # storing the card in self.card_played, highest card
-                self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1]
-                # highest point need not be updated since already a J is played
-                # removing played card from hand
-                self.obj_dictn_of_cards_grouped[self.turn_index][self.x].pop(-1)
+                # or highest trump played by team mate and J in hand or otherwise
+                elif ((not self.trump_played_in_round) and (len(self.obj_played_card_lst)>1) and                     (self.obj_played_card_lst[(self.turn_in_round_index+2)%4].rank()=='J')) or                     ((self.trump_played_in_round) and (len(self.obj_played_card_lst)>1) and                     (self.obj_played_card_lst[(self.turn_in_round_index+2)%4] ==                     self.obj_dictn_of_highest_card_and_turn['trump'][1])):
+                    #print('\nreached line 749')
+                    # storing the card in self.card_played, highest card
+                    self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1]
+                    # highest point need not be updated since already a J is played
+                    # removing played card from hand
+                    self.obj_dictn_of_cards_grouped[self.turn_index][self.x].pop(-1)
 
 #Strategy scenario3 # Last turn and highest card in hand(could happen when J was deliberately not played)
-            elif (len(self.obj_played_card_lst)==3) and (not self.trump_played_in_round) and                 (self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1].point()>                self.round1_highest_point_sofar):
-                print('\nreached line 760')
-                # storing the card in self.card_played, highest card
-                self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1]
-                # updating highest point
-                self.round1_highest_point_sofar=self.card_played.point()
-                # updating dictionary of highest card and its turn
-                self.obj_dictn_of_highest_card_and_turn['suit'].clear()
-                self.obj_dictn_of_highest_card_and_turn['suit'].extend(                                                        [self.turn_index,self.card_played])
-                # removing played card from hand
-                self.obj_dictn_of_cards_grouped[self.turn_index][self.x].pop(-1)
-
-#Strategy scenario4 #  no J and playing 1st(?) or 2nd turn
-            else:
-                print('\nreached line 774')                    
-                # storing card in self.card_played, lowest card
-                self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][0]
-                if self.card_played.point()>self.round1_highest_point_sofar:
+                elif (len(self.obj_played_card_lst)==3) and (not self.trump_played_in_round) and                     (self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1].point()>                    self.round1_highest_point_sofar):
+                    #print('\nreached line 760')
+                    # storing the card in self.card_played, highest card
+                    self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1]
                     # updating highest point
                     self.round1_highest_point_sofar=self.card_played.point()
                     # updating dictionary of highest card and its turn
                     self.obj_dictn_of_highest_card_and_turn['suit'].clear()
                     self.obj_dictn_of_highest_card_and_turn['suit'].extend(                                                            [self.turn_index,self.card_played])
-                # removing played card from hand
-                self.obj_dictn_of_cards_grouped[self.turn_index][self.x].pop(0)
+                    # removing played card from hand
+                    self.obj_dictn_of_cards_grouped[self.turn_index][self.x].pop(-1)
 
-        # if played suit not in hand - strategy scenarios 5,6 and 7
-        else:
-            print('\nreached line 789')
+#Strategy scenario4 #  no J and playing 1st(?) or 2nd turn
+                else:
+                    #print('\nreached line 774')                    
+                    # storing card in self.card_played, lowest card
+                    self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][0]
+                    if self.card_played.point()>self.round1_highest_point_sofar:
+                        # updating highest point
+                        self.round1_highest_point_sofar=self.card_played.point()
+                        # updating dictionary of highest card and its turn
+                        self.obj_dictn_of_highest_card_and_turn['suit'].clear()
+                        self.obj_dictn_of_highest_card_and_turn['suit'].extend(                                                                [self.turn_index,self.card_played])
+                    # removing played card from hand
+                    self.obj_dictn_of_cards_grouped[self.turn_index][self.x].pop(0)
+
+            # if played suit not in hand - strategy scenarios 5,6 and 7
+            else:
+                #print('\nreached line 789')
 
 #Strategy scenario5 # J has already been played by team mate and no trump played so far
-            # or last turn and highest card sofar(not necessarily J) played by team mate and no trump
-            # in round
-            # or highest trump so far played by team mate (suit not in hand)
-            # 1) these are favourable situations - no need to call or play trump
-            if ((len(self.obj_played_card_lst)>1) and             (self.obj_played_card_lst[(self.turn_index+2)%4].rank()=='J') and             (not self.trump_played_in_round)) or             ((not self.trump_played_in_round) and (len(self.obj_played_card_lst)==3) and             (self.obj_dictn_of_highest_card_and_turn['suit'][1] ==             self.obj_played_card_lst[(self.turn_index+2)%4])) or             ((self.trump_played_in_round) and              (self.obj_played_card_lst[(self.turn_index+2)%4] ==              self.obj_dictn_of_highest_card_and_turn['trump'][1])):
-                print('\nreached line 805')
-                strategy_scenario5()
+                # or last turn and highest card sofar(not necessarily J) played by team mate and no trump
+                # in round
+                # or highest trump so far played by team mate (suit not in hand)
+                # 1) these are favourable situations - no need to call or play trump
+                if ((len(self.obj_played_card_lst)>1) and                 (self.obj_played_card_lst[(self.turn_in_round_index+2)%4].rank()=='J') and                 (not self.trump_played_in_round)) or                 ((not self.trump_played_in_round) and (len(self.obj_played_card_lst)==3) and                 (self.obj_dictn_of_highest_card_and_turn['suit'][1] ==                 self.obj_played_card_lst[(self.turn_in_round_index+2)%4])) or                 ((self.trump_played_in_round) and                  (self.obj_played_card_lst[(self.turn_in_round_index+2)%4] ==                  self.obj_dictn_of_highest_card_and_turn['trump'][1])):
+                    #print('\nreached line 805')
+                    strategy_scenario5()
 
 #Strategy scenario6 # points so far played is less than <1 
-            # or points so far played >0 (suit not in hand) bt have no trump or no higher trump
-#?????????? # ???????????????????????????????
-            #  - but a player might still want to take control of the round for other reasons like 
-            # wanting to start next round or to play out a suit etc. 
-#?????????? # ???????????????????????????????
-            #  - there might also be a higher trump available with player and point maybe >0
-            # and can still happen to not want to play the higher trump
-            # 2) unfavourable situation or/and helpless
+                # or points so far played >0 (suit not in hand) bt have no trump or no higher trump
+#?????????????? # ???????????????????????????????
+                #  - but a player might still want to take control of the round for other reasons like 
+                # wanting to start next round or to play out a suit etc. 
+#?????????????? # ???????????????????????????????
+                #  - there might also be a higher trump available with player and point maybe >0
+                # and can still happen to not want to play the higher trump
+                # 2) unfavourable situation or/and helpless
 
-            elif ((point_sofar()<1) or ((self.trump_played_in_round) and (point_sofar()>0) and                 (len(self.obj_dictn_of_cards_grouped[self.turn_index][self.suit.index(self.trump_suit)])==0))                or ((self.trump_played_in_round) and (point_sofar()>0) and                 (self.obj_dictn_of_cards_grouped[self.turn_index][self.suit.index(self.trump_suit)]                 [-1].point()<self.obj_dictn_of_highest_card_and_turn['trump'][1].point()))):
-                print('\nreached line 819')
-                strategy_scenario6()
+                elif ((point_sofar()<1) or ((self.trump_played_in_round) and (point_sofar()>0) and                     (len(self.obj_dictn_of_cards_grouped[self.turn_index][self.suit.index(self.trump_suit)])==0))                    or ((self.trump_played_in_round) and (point_sofar()>0) and                     (self.obj_dictn_of_cards_grouped[self.turn_index][self.suit.index(self.trump_suit)]                     [-1].point()<self.obj_dictn_of_highest_card_and_turn['trump'][1].point()))):
+                    #print('\nreached line 819')
+                    strategy_scenario6()
 
 #Strategy scenario7 #i.e. ready to call and/or play trump           
-            else:
-                print('\nreached line 820')
-                # either trump is not called yet, so going to call 
-                # or trump revealed but not played in round so far
-                if (not self.trump_revealed) or                     ((self.trump_revealed) and (not self.trump_played_in_round)):
-                    print('\nreached line 821')
-                    if not self.trump_revealed:
-                        print('\n{} calls trump'.format(self.players_lst[self.turn_index]))
-                        # now trump_suit and obj_trump_checked can be used freely
-                        self.trump_revealed=True
-                        print('\nRevealing trump, card set by {} was: {}'.format(                                    self.players_lst[self.highest_bidder_index],self.trump_card.show()))
-                        
-                        # inserting the trump card back into the highest bidder dictionary (if not player)
-                        if self.highest_bidder_index:
-                            self.insert_trump_card_back()
-                        
-                        # if highest bidder himself is revealing trump
-                        if self.highest_bidder_index==self.turn_index:
-                            self.trump_played_in_round=True
-                            print('\nreached line 822')
-                            # playing the card that was set as trump
-                            self.card_played=self.trump_card
-                            # updating dictionary of highest trump and its turn
-                            self.obj_dictn_of_highest_card_and_turn['trump'].clear()
-                            self.obj_dictn_of_highest_card_and_turn['trump'].extend(                                                                    [self.turn_index,self.card_played])
-                            # removing played card from hand
-                            self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index]                            .remove(self.card_played)
-                            found=True
-                    if not found:
-                        print('\nreached line 823')
-#Strategy scenario7a # no trump in hand scenario6 repeat except not checking for trump suit
-                        if len(self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index])==0:
-                            strategy_scenario7a()
-#Strategy scenario7b # trump in hand and has to play trump
-                        else:
-                            print('\nreached line 824')
-                            self.trump_played_in_round=True
-                            strategy_scenario7b()
-#Strategy scenario7c # trump has already been played in round and has to play a trump that is higher
                 else:
-                    print('\nreached line 825')
-                    for item in self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index]:
-                        if item.point()>self.obj_dictn_of_highest_card_and_turn['trump'][1].point():
-                            print('\nreached line 826')
-                            # play the 1st higher trump available
-                            # storing the card in self.card_played
-                            self.card_played=item
-                            # updating dictionary of highest trump and its turn
-                            self.obj_dictn_of_highest_card_and_turn['trump'].clear()
-                            self.obj_dictn_of_highest_card_and_turn['trump'].extend(                                                                    [self.turn_index,self.card_played])
-                            # removing played card from hand
-                            self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index]                            .remove(item)
-                            break
+                    #print('\nreached line 820')
+                    # either trump is not called yet, so going to call 
+                    # or trump revealed but not played in round so far
+                    if (not self.trump_revealed) or                         ((self.trump_revealed) and (not self.trump_played_in_round)):
+                        #print('\nreached line 821')
+                        if not self.trump_revealed:
+                            print('\n{} calls trump'.format(self.players_lst[self.turn_index]))
+                            # now trump_suit and obj_trump_checked can be used freely
+                            self.trump_revealed=True
+                            print('\nRevealing trump, card set by {} was: {}'.format(                                        self.players_lst[self.highest_bidder_index],self.trump_card.show()))
 
+                            # inserting the trump card back into the highest bidder dictionary (if not player)
+                            if self.highest_bidder_index:
+                                self.insert_trump_card_back()
+
+                            # if highest bidder himself is revealing trump
+                            if self.highest_bidder_index==self.turn_index:
+                                self.trump_played_in_round=True
+                                #print('\nreached line 822')
+                                # playing the card that was set as trump
+                                self.card_played=self.trump_card
+                                # updating dictionary of highest trump and its turn
+                                self.obj_dictn_of_highest_card_and_turn['trump'].clear()
+                                self.obj_dictn_of_highest_card_and_turn['trump'].extend(                                                                        [self.turn_index,self.card_played])
+                                # removing played card from hand
+                                self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index]                                .remove(self.card_played)
+                                found=True
+                        if not found:
+                            #print('\nreached line 823')
+#Strategy scenario7a # no trump in hand scenario6 repeat except not checking for trump suit
+                            if len(self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index])==0:
+                                strategy_scenario7a()
+#Strategy scenario7b # trump in hand and has to play trump
+                            else:
+                                #print('\nreached line 824')
+                                self.trump_played_in_round=True
+                                strategy_scenario7b()
+#Strategy scenario7c # trump has already been played in round and has to play a trump that is higher
+                    else:
+                        #print('\nreached line 825')
+                        for item in self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index]:
+                            if item.point()>self.obj_dictn_of_highest_card_and_turn['trump'][1].point():
+                                #print('\nreached line 826')
+                                # play the 1st higher trump available
+                                # storing the card in self.card_played
+                                self.card_played=item
+                                # updating dictionary of highest trump and its turn
+                                self.obj_dictn_of_highest_card_and_turn['trump'].clear()
+                                self.obj_dictn_of_highest_card_and_turn['trump'].extend(                                                                        [self.turn_index,self.card_played])
+                                # removing played card from hand
+                                self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index]                                .remove(item)
+                                break
+        else:
+            #########################################################
+            # asking and playing trump not included
+            #printing the cards played so far
+            for i in self.obj_played_card_lst:
+                print('\n{}: {}'.format(self.players_lst                    [(self.obj_played_card_lst.index(i)+self.highest_bidder_index)%4],i.show()))
+            # taking player input
+            self.player_input=input('\nEnter the card you want to play: '
+                +'\nrank followed by the first letter of the suit, eg.'
+                +'\n7s or ah or 10d etc.: '
+                +'\n(or 0 to stop game) ').lower()
+            
+            self.card_played=self.inp_parse_check(self.player_input)
+            if (not self.obj_dictn_of_highest_card_and_turn['suit']) or                 (self.obj_dictn_of_highest_card_and_turn['suit'][1].point()<self.card_played.point()):
+                self.obj_dictn_of_highest_card_and_turn['suit']=[self.turn_index,self.card_played]
+            #########################################################
+            
         # adding card to played card lst
         self.obj_played_card_lst.append(self.card_played)
 
         # updating the two dictionaries(player and suit) for played card
         self.obj_dictn_of_played_card_and_player[self.players_lst[self.turn_index]]        .append(self.card_played)
         self.obj_dictn_of_played_card_and_suit[self.card_played.suit()]        .append(self.card_played)
-        print('\nreached line 847')
+        #print('\nreached line 847')
     ################################################################
     #round1_follow_logic() method end ##############################
 
@@ -775,8 +808,11 @@ class Round_1(Prepare_game):
             if len(self.obj_played_card_lst)==0:                
                 self.round1_lead_logic()
 
-            # updating turn_index
+            # updating turn_index - this is actually the player index
             self.turn_index=(self.turn_index+1)%4 # to cycle through 0,1,2,3
+            
+            # updating turn_in_round_index
+            self.turn_in_round_index=len(self.obj_played_card_lst)# not +1 since list index start from 0
 
             # checks for the lead suit and calls the follow_logic by passing suit value
             if self.obj_played_card_lst[0].suit()=='spade':
@@ -807,19 +843,19 @@ class Round_1(Prepare_game):
             self.point_oppo_team=sum(int(i.point()) for i in self.obj_played_card_lst)
 
         print('\n')
-        print(20*' '+'Mate:'+'{}'.format(self.obj_played_card_lst[2].show()))# [2] b'coz Player was [0]
-        print('Oppo_left:'+'{}'.format(self.obj_played_card_lst[3].show()),end=' ')
-        print(21*' '+'Oppo_right:'+'{}'.format(self.obj_played_card_lst[1].show()))
+        print(20*' '+'Mate:'+'{}'.format(self.obj_dictn_of_played_card_and_player['Mate'][0].show()))
+        print('Oppo_left:'+'{}'.format(self.obj_dictn_of_played_card_and_player                                       ['Oppo_left'][0].show()),end=' ')
+        print(21*' '+'Oppo_right:'+'{}'.format(self.obj_dictn_of_played_card_and_player                                               ['Oppo_right'][0].show()))
         print(20*' '+'{}:'.format(self.players_lst[0]),end=' ')
-        print(self.obj_played_card_lst[0].show())
-        print("\nRound1 - starting from {}, counter_clockwise: ".format(self.players_lst[0]),end=' ')        
+        print(self.obj_dictn_of_played_card_and_player[self.players_lst[0]][0].show())
+        print("\nRound1 - starting from {}, counter_clockwise: ".format              (self.players_lst[self.highest_bidder_index]),end=' ')        
         for i in self.obj_played_card_lst:
             print(i.show(),end=' ')
         print('')
         print('\nnext_lead_index: ',self.next_lead_index)
         print('\nPoints scored - Your_team:{} , Oppo_team:{}'.format(                                    self.point_player_team,self.point_oppo_team))
 
-        # clearing and updating variables
+        # updating and clearing variables
         self.obj_played_card_lst_of_32.extend(self.obj_played_card_lst)
         self.obj_played_card_lst.clear()
         self.obj_dictn_of_highest_card_and_turn['suit'].clear()
