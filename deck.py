@@ -108,23 +108,27 @@ class Deck:
             # no point in a hand, all J's in one hand
             # haven't really tested for errors here
             j_count=0
+            call_count=0
             for h in range(4):
                 if sum(int(i.point()) for i in self.obj_deal_lst[h]) == 0:
                     print("\n{} has no points, redealing".format(self.players_lst[h]))
+                    call_count+=1
                     self.obj_deal(False)
                 for i in self.obj_deal_lst[h]:
                     if i.rank()=='J':
                         j_count+=1
                 if j_count==4:
                     print("\n{} has all J's, redealing".format(self.players_lst[h]))
+                    call_count+=1
                     self.obj_deal(False)
                 j_count=0
-            print('\nAll hands are good to go')
-                
-            # saving a copy for debugging 
-            f=open("last_deal.txt","wb")
-            pickle.dump(self.obj_deal_lst,f)
-            f.close()
+            if not call_count:
+                print('\nAll hands are good to go')
+
+                # saving a copy for debugging 
+                f=open("last_deal.txt","wb")
+                pickle.dump(self.obj_deal_lst,f)
+                f.close()
         else:
             f=open("last_deal.txt","rb")
             self.obj_deal_lst=pickle.load(f)
