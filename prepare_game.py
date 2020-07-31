@@ -563,6 +563,7 @@ class Prepare_game(Deck):
 
         # displaying full hands
         self.obj_display_hands()
+
     ###################################################################
     # bid_half_hand() end #############################################
     
