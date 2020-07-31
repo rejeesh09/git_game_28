@@ -23,6 +23,17 @@ from deck import Deck
 from prepare_game import Prepare_game
 
 
+# ## some other modules
+
+# In[ ]:
+
+
+import time
+import sys
+# sys used in inp_parse_check to exit 
+# sys and time used in follow_logic to print played cards with delay before taking player inp
+
+
 # ##  Round_1() class
 
 # In[4]:
@@ -37,7 +48,7 @@ class Round_1(Prepare_game):
         super().__init__(self.hold)
         # All 15 variables in init() and 6 out of 7 methods of Deck class and all 10 variables 
         # in init() of Prepare_game class are constructed by the above line
-        input('\nPress enter to start bidding')
+        input("\nStart bidding: 'Enter' ")
         # calling the bid method in Prepare_game()
         super().bid_half_hand(self.hold)
         
@@ -52,7 +63,7 @@ class Round_1(Prepare_game):
     ###################################################################
     def inp_parse_check(self,inp):
         # checks and converts the input to unicode and then to Card object        
-        import sys
+#         import sys
         # to use sys.exit()
         control_count=0
         self.inp=inp
@@ -130,8 +141,6 @@ class Round_1(Prepare_game):
     ###################################################################
     def round1_lead_logic(self):
         # logic for opening turn of round
-        # here just a dummy, since first card selected by Player.
-
 
         #14.######### var14
         self.turn_index=self.highest_bidder_index
@@ -140,13 +149,14 @@ class Round_1(Prepare_game):
         if not self.turn_index: # ie zero        
             self.player_input=input('\nEnter the card you want to play: '
                 +'\nrank followed by the first letter of the suit, eg.'
-                +'\n7s or ah or 10d etc.: '
-                +'\n(or 0 to stop game) ').lower()
+                +'\n7s or ah or 10d etc.'
+                +'\n(or 0 to stop game): ').lower()
             # input converted to object
             #15.######### var15
             self.round1_lead_card=self.inp_parse_check(self.player_input)
         else:
             # starting with simple logic, play a J or the first non trump-suit card
+            input("\n'Enter'")
             found=False
             for crd in self.obj_deal_lst_copy[self.turn_index]:
                 if crd.suit()!=self.trump_suit:
@@ -159,6 +169,13 @@ class Round_1(Prepare_game):
                     if crd.suit()!=self.trump_suit:
                         self.round1_lead_card=crd
                         break
+                        
+        # printing out the card played
+        print('\n')
+        time.sleep(0.5)
+        sys.stdout.write(self.players_lst[self.highest_bidder_index]+': ')
+        time.sleep(0.5)
+        sys.stdout.write(self.round1_lead_card.show())
         ###############################################################        
 
         # adding inp to lst and dictionaries
@@ -775,18 +792,19 @@ class Round_1(Prepare_game):
         else:
             #########################################################
             # asking and playing trump not included
-            #printing the cards played so far
-            for i in self.obj_played_card_lst:
-                print('\n{}: {}'.format(self.players_lst                    [(self.obj_played_card_lst.index(i)+self.highest_bidder_index)%4],i.show()))
+            
             # taking player input
+            time.sleep(0.5)
             self.player_input=input('\nEnter the card you want to play: '
                 +'\nrank followed by the first letter of the suit, eg.'
-                +'\n7s or ah or 10d etc.: '
-                +'\n(or 0 to stop game) ').lower()
+                +'\n7s or ah or 10d etc.'
+                +'\n(or 0 to stop game): ').lower()
             
             self.card_played=self.inp_parse_check(self.player_input)
+            
             if (not self.obj_dictn_of_highest_card_and_turn['suit']) or                 (self.obj_dictn_of_highest_card_and_turn['suit'][1].point()<self.card_played.point()):
                 self.obj_dictn_of_highest_card_and_turn['suit']=[self.turn_index,self.card_played]
+                #print('\nreached line 845')
             #########################################################
             
         # adding card to played card lst
@@ -796,6 +814,15 @@ class Round_1(Prepare_game):
         self.obj_dictn_of_played_card_and_player[self.players_lst[self.turn_index]]        .append(self.card_played)
         self.obj_dictn_of_played_card_and_suit[self.card_played.suit()]        .append(self.card_played)
         #print('\nreached line 847')
+        
+        # printing out the card played
+        print('\n')
+        time.sleep(0.5)
+        sys.stdout.write(self.players_lst[self.turn_index]+': ')
+        time.sleep(0.5)
+        sys.stdout.write(self.card_played.show())
+
+        
     ################################################################
     #round1_follow_logic() method end ##############################
 
@@ -842,6 +869,7 @@ class Round_1(Prepare_game):
         else:
             self.point_oppo_team=sum(int(i.point()) for i in self.obj_played_card_lst)
 
+        time.sleep(0.5)
         print('\n')
         print(20*' '+'Mate:'+'{}'.format(self.obj_dictn_of_played_card_and_player['Mate'][0].show()))
         print('Oppo_left:'+'{}'.format(self.obj_dictn_of_played_card_and_player                                       ['Oppo_left'][0].show()),end=' ')
