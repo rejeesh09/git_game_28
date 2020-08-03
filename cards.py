@@ -1,12 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# ## a. Cards()
-
-# In[2]:
-
-
-
 ######################################################################
 class Cards():
     def __init__(self,x):
@@ -91,4 +82,3 @@ class Cards():
         
     def value(self):
         return self.cards_no_colr.index(self.x)
-
