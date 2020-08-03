@@ -1,11 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# ## b. Deck()
-
-# In[9]:
-
-
 # importing Cards() class inside the obj_deal() method
 #####################################################################
 class Deck:
@@ -17,6 +9,7 @@ class Deck:
         self.suit=['spade','hearts','clubs','diamonds']
         #d3)
         self.suit_inp=['s','h','c','d']
+        self.suit_dictn={'spade':0,'hearts':1,'clubs':2,'diamonds':3}
         #d4)
         self.suit_uni=['\u2660','\u2665','\u2663','\u2666'] #overriding?
         #d5)
@@ -43,7 +36,8 @@ class Deck:
         # dictionary with objects
         #2.###### var2
         #d10)
-        self.obj_dictn_of_deck_with_value=dict([self.card_obj[card_index],card_index]                                               for card_index in range(32))
+        self.obj_dictn_of_deck_with_value=dict([self.card_obj[card_index],card_index] \
+                                              for card_index in range(32))
         
         # making a dictionary of points 
         # these points to be used for comparison and have to be 
@@ -170,7 +164,8 @@ class Deck:
     def obj_sort_hands(self):
         # changes in copy are affecting original list as well. why????????????
         #5.c.#### var5.c
-        self.obj_deal_lst_copy=self.obj_deal_lst.copy()
+        self.obj_deal_lst_copy=[dl[:] for dl in self.obj_deal_lst]
+        # or use deepcopy from copy for compound objects
         for k in range(4):
             for i in range(8):                
                 for j in range(i+1,8):
@@ -181,21 +176,34 @@ class Deck:
                         self.obj_deal_lst_copy[k].pop(j+1)
                     else:
                         continue
+                
+        # to keep a list that doesn't change
+        self.obj_deal_lst_sorted=[sr[:] for sr in self.obj_deal_lst_copy]
         
         # dictionary of players with their hands
         #6.###### var6
-        self.obj_dictn_of_players_and_hand = dict([self.players_lst[i],                                                   self.obj_deal_lst_copy[i]] for i in range(4))
+        self.obj_dictn_of_players_and_hand = dict([self.players_lst[i],\
+                                                   self.obj_deal_lst_sorted[i]] for i in range(4))
 
     ##################################################################          
     # for displaying the hands object based
     #D5)
-    def obj_display_hands(self):
-        print('\n')
-        for key in self.obj_dictn_of_players_and_hand:
-            print("{}: ".format(key))
-            for value in self.obj_dictn_of_players_and_hand[key]:
-                print(value.show(),end=' ')
-            print("\n")
+    def obj_display_hands(self,show_updated):
+        # updated True means display hand that changes over round or may be even with trump removed
+        if not show_updated:
+            print('\n')
+            for key in self.obj_dictn_of_players_and_hand:
+                print("{}: ".format(key))
+                for value in self.obj_dictn_of_players_and_hand[key]:
+                    print(value.show(),end=' ')
+                print("\n")
+        else:
+            print('\n')
+            for key in range(4):
+                print("{}: ".format(self.players_lst[key]))
+                for carrd in self.obj_deal_lst_copy[key]:
+                    print(carrd.show(),end=' ')
+                print("\n")
     
     ##################################################################
     # making induvidual dictionaries of grouped cards for Oppo_right, Mate and Oppo_left
@@ -206,7 +214,8 @@ class Deck:
         # for printing out the dictionary
         self.dictn_of_cards_grouped=dict()
         
-        for i in range(1,4):
+#         for i in range(1,4):
+        for i in range(4):
             self.obj_spade_cards=[]
             self.obj_hearts_cards=[]
             self.obj_clubs_cards=[]
@@ -228,8 +237,10 @@ class Deck:
                 if k.suit()=='diamonds':
                     self.obj_diamonds_cards.append(k)
                     self.diamonds_cards.append(k.form())
-            self.obj_induv_dictn={0:self.obj_spade_cards,1:self.obj_hearts_cards,2:self.obj_clubs_cards,                              3:self.obj_diamonds_cards}
-            self.induv_dictn={0:self.spade_cards,1:self.hearts_cards,                                   2:self.clubs_cards,3:self.diamonds_cards}
+            self.obj_induv_dictn={0:self.obj_spade_cards,1:self.obj_hearts_cards,2:self.obj_clubs_cards,\
+                              3:self.obj_diamonds_cards}
+            self.induv_dictn={0:self.spade_cards,1:self.hearts_cards,\
+                                   2:self.clubs_cards,3:self.diamonds_cards}
             self.obj_dictn_of_cards_grouped.update({i:self.obj_induv_dictn})
             self.dictn_of_cards_grouped.update({i:self.induv_dictn})
             
@@ -240,7 +251,8 @@ class Deck:
         #7.b.###### var7
         self.obj_half_dictn_of_cards_grouped=dict()
         
-        for i in range(1,4):
+#         for i in range(1,4):
+        for i in range(4):
             self.obj_spade_cards_half=[]
             self.obj_hearts_cards_half=[]
             self.obj_clubs_cards_half=[]
@@ -254,6 +266,7 @@ class Deck:
                     self.obj_clubs_cards_half.append(k)
                 if k.suit()=='diamonds':
                     self.obj_diamonds_cards_half.append(k)
-            self.obj_induv_dictn_half={0:self.obj_spade_cards_half,1:self.obj_hearts_cards_half,                            2:self.obj_clubs_cards_half,3:self.obj_diamonds_cards_half}
+            self.obj_induv_dictn_half={0:self.obj_spade_cards_half,1:self.obj_hearts_cards_half,\
+                            2:self.obj_clubs_cards_half,3:self.obj_diamonds_cards_half}
             self.obj_half_dictn_of_cards_grouped.update({i:self.obj_induv_dictn_half})
 
