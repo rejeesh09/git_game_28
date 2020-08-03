@@ -1,11 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# ## importing Cards() class and making dictionary of cards
-
-# In[ ]:
-
-
 from cards import Cards
 # importing the class - Cards()
 #######################################################################
@@ -29,26 +21,12 @@ dictn_of_cards=dict.fromkeys(i,'')
 for j in range(32):
     dictn_of_cards[j]=Cards(cards_no_colr[j])
 #######################################################################
-
-
-# ## importing Deck() class - parent class of Prepare_game()
-
-# In[1]:
-
-
 from deck import Deck
 # importing the class - Deck()
 # this import is done to allow this .py file to run independently as a module
 # and not for making the class variables(ones with self prefix(even inside methods)) and methods
 # available to the child class. Those are available by default by virture of being a child.
 #######################################################################
-
-
-# ## Prepare_game() class
-
-# In[2]:
-
-
 # have to include two methods bid() and set_trump()
 class Prepare_game(Deck):
     ###################################################################
@@ -65,7 +43,7 @@ class Prepare_game(Deck):
         super().obj_induvidual_dictns() # makes obj_dictn_of_cards_grouped, which is used 
         #throughout to make decision on card to be played
         super().obj_half_dictns() # makes grouped dictn of half hand
-#         super().obj_display_hands()
+#         super().obj_display_hands(False)
         # (6 out of 7) methods of Deck are constructed here
         
         ###############################################################
@@ -114,6 +92,7 @@ class Prepare_game(Deck):
     
     #P1)
     def trump_verify(self,trump):
+        # only for setting trump card, other checks for an input is done in inp_parse_check
         # checks and converts the trump input to unicode and then to Card object        
         control_count=0
         self.trump=trump
@@ -151,8 +130,8 @@ class Prepare_game(Deck):
         # input to object
         self.inp_uni_obj=Cards(self.inp_uni)
         ###############################################################
-        # ?????????? # this following set of code repeated the no.of times a wrong entry is
-        # given without the check for control_count==0
+        # the counter is used since there are instructions in the functions 
+        # which come after recursive call
         if control_count==0:
             if self.inp_uni_obj not in self.obj_dictn_of_players_and_hand[self.player_name]:
                 print('\nEntered card not in hand')
@@ -233,7 +212,9 @@ class Prepare_game(Deck):
                         #print('\nreached case5')
                         # case 5.a
                         # if J,9 and A in hand
-                        if ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i][-1].rank()=='J') and                            (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i][-2].rank()=='9') and                            (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i][-3].rank()=='A')):
+                        if ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i][-1].rank()=='J') and \
+                           (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i][-2].rank()=='9') and \
+                           (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][i][-3].rank()=='A')):
                             # make bid of upto 20 
                             #print('\nreached 83')
                             if self.bid_value_final<20:
@@ -298,7 +279,10 @@ class Prepare_game(Deck):
                             # case 4.a
                             # J of suit present and the 4th card is also another J
                             # the check is done using half_deal_lst (which is sorted)
-                            if ((self.obj_half_deal_lst[self.bid_turn_index][0].rank()=='J') and                                (self.obj_half_deal_lst[self.bid_turn_index][-1].rank()=='J')) or                                ((self.obj_half_deal_lst[self.bid_turn_index][-2].rank()=='J') and                                (self.obj_half_deal_lst[self.bid_turn_index][-1].rank()=='J')):
+                            if ((self.obj_half_deal_lst[self.bid_turn_index][0].rank()=='J') and \
+                               (self.obj_half_deal_lst[self.bid_turn_index][-1].rank()=='J')) or \
+                               ((self.obj_half_deal_lst[self.bid_turn_index][-2].rank()=='J') and \
+                               (self.obj_half_deal_lst[self.bid_turn_index][-1].rank()=='J')):
                                 # make bid of upto 18
                                 #print('\nreached 151')
                                 if self.bid_value_final<18:
@@ -321,7 +305,8 @@ class Prepare_game(Deck):
                             # case 4.c
                             # no J of suit but the 4th card is a J
                             # checking against half_deal_lst
-                            elif (self.obj_half_deal_lst[self.bid_turn_index][0].rank()=='J') or                                 (self.obj_half_deal_lst[self.bid_turn_index][-1].rank()=='J'):
+                            elif (self.obj_half_deal_lst[self.bid_turn_index][0].rank()=='J') or \
+                                (self.obj_half_deal_lst[self.bid_turn_index][-1].rank()=='J'):
                                 # make bid of upto 16
                                 #print('\nreached 175')
                                 if self.bid_value_final<16:
@@ -352,8 +337,10 @@ class Prepare_game(Deck):
                         ####################################################################
                         # case 3.a
                         # if there are two J's
-                        if (self.obj_half_deal_lst[self.bid_turn_index][1].rank()=='J') and                             (self.obj_half_deal_lst[self.bid_turn_index][3].rank()=='J'):
-                            if (self.obj_half_deal_lst[self.bid_turn_index][0].point()) >=                                 (self.obj_half_deal_lst[self.bid_turn_index][2].point()):
+                        if (self.obj_half_deal_lst[self.bid_turn_index][1].rank()=='J') and \
+                            (self.obj_half_deal_lst[self.bid_turn_index][3].rank()=='J'):
+                            if (self.obj_half_deal_lst[self.bid_turn_index][0].point()) >= \
+                                (self.obj_half_deal_lst[self.bid_turn_index][2].point()):
                                 # make bid of upto 16
                                 #print('\nreached 208')
                                 if self.bid_value_final<16:
@@ -385,7 +372,8 @@ class Prepare_game(Deck):
                         if not found:
                             # case 3.c
                             # no J's
-                            if (self.obj_half_deal_lst[self.bid_turn_index][1].point()) >=                                 (self.obj_half_deal_lst[self.bid_turn_index][3].point()):
+                            if (self.obj_half_deal_lst[self.bid_turn_index][1].point()) >= \
+                                (self.obj_half_deal_lst[self.bid_turn_index][3].point()):
                                 # make bid of upto 14
                                 #print('\nreached 244')
                                 if self.bid_value_final<14:
@@ -406,43 +394,61 @@ class Prepare_game(Deck):
                         ###################################################################
                         # case 2.a
                         # 2-suit has J and both of the 1-suits also have J - tot 3 J's
-                        if (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_2_lst[0]]                            [-1].rank() == 'J') and                             ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[0]]                            [0].rank() == 'J') and                             (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[1]]                            [0].rank() == 'J')):
+                        if (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_2_lst[0]]\
+                            [-1].rank() == 'J') and \
+                            ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[0]]\
+                            [0].rank() == 'J') and \
+                            (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[1]]\
+                            [0].rank() == 'J')):
                             # make bid of upto 17
                             #print('\nreached 273')
                             if self.bid_value_final<17:
                                 self.bid_value=max(self.bid_value_final+1,15)# min call of 15
                                 # select lower card as trump (only 2 cards, other is J)
-                                self.trump_card=self.obj_half_dictn_of_cards_grouped[self.bid_turn_index]                                [count_2_lst[0]][0]
+                                self.trump_card=self.obj_half_dictn_of_cards_grouped[self.bid_turn_index]\
+                                [count_2_lst[0]][0]
 #                             found=True
                         # case 2.b
                         # 2-suit has J and one off the 1-suits also have J - tot 2 J's
-                        elif (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_2_lst[0]]                            [-1].rank() == 'J') and                             ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[0]]                            [0].rank() == 'J') or                             (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[1]]                            [0].rank() == 'J')):
+                        elif (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_2_lst[0]]\
+                            [-1].rank() == 'J') and \
+                            ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[0]]\
+                            [0].rank() == 'J') or \
+                            (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[1]]\
+                            [0].rank() == 'J')):
                             # make bid of upto 16
                             #print('\nreached 289')
                             if self.bid_value_final<16:
                                 self.bid_value=max(self.bid_value_final+1,15)# min call of 15
                                 # select lower card as trump (only 2 cards, other is J)
-                                self.trump_card=self.obj_half_dictn_of_cards_grouped[self.bid_turn_index]                                [count_2_lst[0]][0]
+                                self.trump_card=self.obj_half_dictn_of_cards_grouped[self.bid_turn_index]\
+                                [count_2_lst[0]][0]
 #                             found=True
                         # case 2.c
                         # only 2-suit has J
-                        elif (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_2_lst[0]]                            [-1].rank() == 'J'):
+                        elif (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_2_lst[0]]\
+                            [-1].rank() == 'J'):
                             # make bid of upto 15
                             #print('\nreached 301')
                             if self.bid_value_final<15:
                                 self.bid_value=self.bid_value_final+1
                                 # select lower card as trump (only 2 cards, other is J)
-                                self.trump_card=self.obj_half_dictn_of_cards_grouped[self.bid_turn_index]                                [count_2_lst[0]][0]
+                                self.trump_card=self.obj_half_dictn_of_cards_grouped[self.bid_turn_index]\
+                                [count_2_lst[0]][0]
 #                             found=True
                         # case 2.d
                         # 2-suit doesn't have J but both 1-suits have J
-                        elif ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[0]]                            [0].rank() == 'J') and                             (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[1]]                            [0].rank() == 'J')):
+                        elif ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[0]]\
+                            [0].rank() == 'J') and \
+                            (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[1]]\
+                            [0].rank() == 'J')):
                             # make bid of upto 15
                             #print('\nreached 315')
                             if self.bid_value_final<15:
                                 self.bid_value=self.bid_value_final+1
                                 # select higher card of 2-suit (no J in that suit)
-                                self.trump_card=self.obj_half_dictn_of_cards_grouped[self.bid_turn_index]                                [count_2_lst[0]][-1]
+                                self.trump_card=self.obj_half_dictn_of_cards_grouped[self.bid_turn_index]\
+                                [count_2_lst[0]][-1]
 #                             found=True
                         # case 2.e
                         # 2-suit does't have J and only 1 other J or no J at all
@@ -452,7 +458,8 @@ class Prepare_game(Deck):
                             if self.bid_value_final<14:
                                 self.bid_value=self.bid_value_final+1
                                 # select higher card of 2-suit (no J in that suit)
-                                self.trump_card=self.obj_half_dictn_of_cards_grouped[self.bid_turn_index]                                [count_2_lst[0]][-1]
+                                self.trump_card=self.obj_half_dictn_of_cards_grouped[self.bid_turn_index]\
+                                [count_2_lst[0]][-1]
 #                             found=True                     
                     else:
                         # len(count_1_lst) will be 4 in this case
@@ -493,7 +500,8 @@ class Prepare_game(Deck):
                                 if self.bid_value_final<15:
                                     self.bid_value=self.bid_value_final+1
                                     # select card with highest point and not J(index=p_i_*lst[2])
-                                    self.trump_card=self.obj_half_deal_lst[self.bid_turn_index]                                    [p_i_holder_lst[1]]
+                                    self.trump_card=self.obj_half_deal_lst[self.bid_turn_index]\
+                                    [p_i_holder_lst[1]]
 #                                 found=True
                             # case 1.c
                             # one J or no J in hand 
@@ -503,7 +511,8 @@ class Prepare_game(Deck):
                                 if self.bid_value_final<14:
                                     self.bid_value=self.bid_value_final+1
                                     # select card with highest point and not J(index=p_i_*lst[2])
-                                    self.trump_card=self.obj_half_deal_lst[self.bid_turn_index]                                    [p_i_holder_lst[1]]
+                                    self.trump_card=self.obj_half_deal_lst[self.bid_turn_index]\
+                                    [p_i_holder_lst[1]]
 #                                 found=True
                         ###################################################################
                         # case 1 end ######################################################
@@ -531,8 +540,9 @@ class Prepare_game(Deck):
             if (len(self.bid_counter_lst)>2) and ((self.bid_counter_lst[-1] - self.bid_counter_lst[-3])>3):
                 break
         
-        print('\n{} made the highest bid: {}'.format(self.players_lst[self.highest_bidder_index],                                                    self.bid_value_final))
-        print('\n',self.bid_counter)
+        print('\n{} made the highest bid: {}'.format(self.players_lst[self.highest_bidder_index],\
+                                                    self.bid_value_final))
+        print('\nbid_counter value: ',self.bid_counter)
         
         # if player is not highest bidder i.e index!=0       
         if self.highest_bidder_index:
@@ -543,12 +553,17 @@ class Prepare_game(Deck):
             
             # need to remove trump card from the obj_dictn_of_cards_grouped to make sure it is not 
             # played until trump is revealed
-            self.obj_dictn_of_cards_grouped[self.highest_bidder_index]                                            [self.trump_suit_index].remove(self.trump_card)
+            # this is done only for the 3 other players, since the condition is taken care of 
+            # for player in inp_parse_check
+            self.obj_dictn_of_cards_grouped[self.highest_bidder_index]\
+                                            [self.trump_suit_index].remove(self.trump_card)
+            self.obj_deal_lst_copy[self.highest_bidder_index].remove(self.trump_card)
+
         # if player is the highest bidder
         else:
-            self.player_input=input('\nEnter the card for setting as trump:'
-                +'\nrank followed by the first letter of the suit, eg.'
-                +'\n7s or ah or 10d etc.: '
+            self.player_input=input('\nSet trump card; '
+                +'\nEnter rank followed by the first letter of the suit, '
+                +'\neg. 7s or ah or 10d etc.: '
                 +'\n(or 0 to stop game) ').lower()
 
             # trump input converted to object
@@ -562,7 +577,7 @@ class Prepare_game(Deck):
 
 
         # displaying full hands
-        self.obj_display_hands()
+        self.obj_display_hands(False)
 
     ###################################################################
     # bid_half_hand() end #############################################
@@ -588,27 +603,47 @@ class Prepare_game(Deck):
     #P4)
     # to insert the trump card back in highest bidder dictn once trump is revealed
     def insert_trump_card_back(self):
+        # to insert back in dictn
         leng=len(self.obj_dictn_of_cards_grouped[self.highest_bidder_index][self.trump_suit_index])
         if leng:
             for i in range(leng):
                 itema=self.obj_dictn_of_cards_grouped[self.highest_bidder_index][self.trump_suit_index][i]
                 if itema.point()>self.trump_card.point():
                     # insert at the position i
-                    self.obj_dictn_of_cards_grouped[self.highest_bidder_index]                    [self.trump_suit_index].insert(i,self.trump_card)
+                    self.obj_dictn_of_cards_grouped[self.highest_bidder_index]\
+                    [self.trump_suit_index].insert(i,self.trump_card)
                     break
                 else:
                     if i!=leng-1:
                         continue
                     else:
                         # insert at the end
-                        self.obj_dictn_of_cards_grouped[self.highest_bidder_index]                            [self.trump_suit_index].append(self.trump_card)
+                        self.obj_dictn_of_cards_grouped[self.highest_bidder_index]\
+                            [self.trump_suit_index].append(self.trump_card)
         else:
             # insert at the end, this will be the only element
-            self.obj_dictn_of_cards_grouped[self.highest_bidder_index]                [self.trump_suit_index].append(self.trump_card)
+            self.obj_dictn_of_cards_grouped[self.highest_bidder_index]\
+                [self.trump_suit_index].append(self.trump_card)
+        
+        # to insert back in deal_lst_copy
+        leng2=len(self.obj_deal_lst_copy[self.highest_bidder_index])
+        if leng2:
+            for i in range(leng2):
+                caard=self.obj_deal_lst_copy[self.highest_bidder_index][i]
+                if caard.value()>self.trump_card.value():
+                    self.obj_deal_lst_copy[self.highest_bidder_index].insert(i,self.trump_card)
+                    break
+                else:
+                    if i!=leng2-1:
+                        continue
+                    else:
+                        self.obj_deal_lst_copy[self.highest_bidder_index].append(self.trump_card)
+        else:
+            self.obj_deal_lst_copy[self.highest_bidder_index].append(self.trump_card)
+                    
             
     ###################################################################
     # insert_trump_card_back() end ####################################
             
     
     
-
