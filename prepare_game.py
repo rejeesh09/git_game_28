@@ -154,6 +154,8 @@ class Prepare_game(Deck):
         if not hold:
             # selecting the first turn for bidding randomly
             self.bid_turn_index=np.random.randint(4)
+            # the first bidder starts the round. turn_index used in Round_1() class
+            self.turn_index=self.bid_turn_index
             # saving a copy for debugging 
             fb=open("last_starting_bid_turn.txt","wb")
             pickle.dump(self.bid_turn_index,fb)
@@ -161,6 +163,7 @@ class Prepare_game(Deck):
         else:
             fb=open("last_starting_bid_turn.txt","rb")
             self.bid_turn_index=pickle.load(fb)
+            self.turn_index=self.bid_turn_index
             fb.close()
 
         print('\nStarting bid_turn_index is: ',self.bid_turn_index)
