@@ -122,12 +122,10 @@ class Round_1(Prepare_game):
     ###################################################################
     def round1_lead_logic(self):
         # logic for opening turn of round
-
-        #14.######### var14
-        self.turn_index=self.highest_bidder_index
         
         ###############################################################
-        if not self.turn_index: # ie zero        
+        if not self.turn_index:
+        # i.e. player gets to start
             self.player_input=input('\nPlay your card; '
                 +'\nEnter rank followed by the first letter of the suit,'
                 +'\neg. 7s or ah or 10d etc.'
@@ -136,28 +134,59 @@ class Round_1(Prepare_game):
             #15.######### var15
             self.round1_lead_card=self.inp_parse_check(self.player_input)
         else:
-            # starting with simple logic, play a J or the first non trump-suit card
+        # starting by other players - lead_logic for other players
             input("\nStart game: 'Enter'")
             found=False
-            for crd in self.obj_deal_lst_copy[self.turn_index]:
-                if crd.suit()!=self.trump_suit:
+
+            if self.turn_index==self.highest_bidder_index:
+            # case1 - highest bidder himself starting
+                if len(self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index])>2:
+                # case1.a - has 3 or more trump cards excluding self.trump_card
+                    # starting with simple logic, play a J or the first non trump-suit card
+                    for crd in self.obj_deal_lst_copy[self.turn_index]:
+                        if crd.suit()!=self.trump_suit:
+                            if crd.rank()=='J':
+                                self.round1_lead_card=crd
+                                found=True
+                                break
+                    if not found:
+                        for crd in self.obj_deal_lst_copy[self.turn_index]:
+                            if crd.suit()!=self.trump_suit:
+                                self.round1_lead_card=crd
+                                break
+                else:
+                # case1.b - has less than 4 trump cards including self.trump_card
+                    # starting with simple logic, play a J or the first non trump-suit card
+                    for crd in self.obj_deal_lst_copy[self.turn_index]:
+                        if crd.suit()!=self.trump_suit:
+                            if crd.rank()=='J':
+                                self.round1_lead_card=crd
+                                found=True
+                                break
+                    if not found:
+                        for crd in self.obj_deal_lst_copy[self.turn_index]:
+                            if crd.suit()!=self.trump_suit:
+                                self.round1_lead_card=crd
+                                break
+            else:
+            # case2 - not the highest bidder
+                # starting with simple logic, play first J or if no J's, then the first card
+                for crd in self.obj_deal_lst_copy[self.turn_index]:
                     if crd.rank()=='J':
+                    # no need to check for trump suit since not highest bidder
                         self.round1_lead_card=crd
                         found=True
                         break
-            if not found:
-                for crd in self.obj_deal_lst_copy[self.turn_index]:
-                    if crd.suit()!=self.trump_suit:
-                        self.round1_lead_card=crd
-                        break
+                if not found:
+                    self.round1_lead_card=self.obj_deal_lst_copy[self.turn_index][0]
+        ###############################################################
                         
         # printing out the card played
         print('\n')
         time.sleep(0.5)
-        sys.stdout.write(self.players_lst[self.highest_bidder_index]+': ')
+        sys.stdout.write(self.players_lst[self.turn_index]+': ')
         time.sleep(0.5)
         sys.stdout.write(self.round1_lead_card.show())
-#         print('\n')
         ###############################################################        
 
         # adding inp to lst and dictionaries
@@ -178,9 +207,7 @@ class Round_1(Prepare_game):
         # removing card played from lst and dictn
         self.obj_deal_lst_copy[self.turn_index].remove(self.round1_lead_card)
         self.obj_dictn_of_cards_grouped[self.turn_index]\
-                                        [self.round1_lead_suit_index].remove(self.round1_lead_card)
-
-        
+                                        [self.round1_lead_suit_index].remove(self.round1_lead_card)    
     ################################################################
     #round1_lead_logic() method end ################################
 
@@ -871,10 +898,7 @@ class Round_1(Prepare_game):
                                 .remove(item)
                                 break
         else:
-            #########################################################
-            # the player being the highest bidder case would not arise in follow_logic, since
-            # this is round1 and highest bidder starts the round
-            
+        # i.e self.turn_index==0
             # taking player input
             played=False
             time.sleep(0.5)
@@ -890,12 +914,17 @@ class Round_1(Prepare_game):
                         
                         if len(self.obj_dictn_of_cards_grouped[0][self.trump_suit_index]):
                         # trump called and trump present
-                            self.player_input=input('\nEnter the trump card you want to play: ')
-                            self.card_played=self.inp_parse_check(self.player_input)
-                            # making sure a trump is played
-                            while (self.card_played.suit()!=self.trump_suit):
+                            if self.turn_index==self.highest_bidder_index:
+                            # player was highest bidder
+                                input("\nHave to play trump card itself: 'Enter'")
+                                self.card_played=self.trump_card
+                            else:
                                 self.player_input=input('\nEnter the trump card you want to play: ')
                                 self.card_played=self.inp_parse_check(self.player_input)
+                                # making sure a trump is played
+                                while (self.card_played.suit()!=self.trump_suit):
+                                    self.player_input=input('\nEnter the trump card you want to play: ')
+                                    self.card_played=self.inp_parse_check(self.player_input)
 
                             self.trump_played_in_round=True
                             self.obj_dictn_of_highest_card_and_turn['trump'].clear()
