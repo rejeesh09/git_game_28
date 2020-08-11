@@ -33,7 +33,7 @@ class Round_1(Prepare_game):
     ###################################################################
     def inp_parse_check(self,inp):
         # checks and converts the input to unicode and then to Card object        
-#         import sys
+        #import sys
         # to use sys.exit()
         control_count=0
         self.inp=inp
@@ -123,6 +123,8 @@ class Round_1(Prepare_game):
     def round1_lead_logic(self):
         # logic for opening turn of round
         
+        self.turn_index=self.round1_lead_index
+        
         ###############################################################
         if not self.turn_index:
         # i.e. player gets to start
@@ -140,45 +142,148 @@ class Round_1(Prepare_game):
 
             if self.turn_index==self.highest_bidder_index:
             # case1 - highest bidder himself starting
+
                 if len(self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index])>2:
-                # case1.a - has 3 or more trump cards excluding self.trump_card
-                    # starting with simple logic, play a J or the first non trump-suit card
-                    for crd in self.obj_deal_lst_copy[self.turn_index]:
-                        if crd.suit()!=self.trump_suit:
-                            if crd.rank()=='J':
-                                self.round1_lead_card=crd
+                # case1.a - has 4 or more trump cards (including self.trump_card)
+
+                    for keyy in self.obj_dictn_of_cards_grouped[self.turn_index]:
+                        if len(self.obj_dictn_of_cards_grouped[self.turn_index][keyy])==1 \
+                            and self.obj_dictn_of_cards_grouped[self.turn_index][keyy][0].rank()=='J':
+                        # if a non-trump single J present
+                            self.round1_lead_card=self.obj_dictn_of_cards_grouped[self.turn_index][keyy][0]
+                            found=True
+                            break
+                    if not found:
+                    # no single J found
+                        for xn in self.obj_dictn_of_cards_grouped[self.turn_index]:
+                            if len(self.obj_dictn_of_cards_grouped[self.turn_index][xn])==1 and \
+                                self.obj_dictn_of_cards_grouped[self.turn_index][xn][0].rank()!='9':
+                            # if there is any single card which is not 9(J already ruled out)
+                                self.round1_lead_card=self.obj_dictn_of_cards_grouped[self.turn_index][xn][0]
                                 found=True
                                 break
                     if not found:
+                    # no single J or non-9 single card found
+                        for crd in self.obj_deal_lst_copy[self.turn_index]:
+                            if crd.suit()!=self.trump_suit and crd.rank()=='J':
+                            # play any non-trump J present
+                                self.round1_lead_card=crd
+                                break
+                    if not found:
+                    # no single J or non-9 single card or no J found
+                        for crd in self.obj_deal_lst_copy[self.turn_index]:
+                            if crd.suit()!=self.trump_suit and int(crd.point())==0:
+                            # play the first pointless card
+                                self.round1_lead_card=crd
+                                break
+                    if not found:
+                    # no single J or non-9 single card or no J or no pointless card found
+                        for crd in self.obj_deal_lst_copy[self.turn_index]:
+                            if crd.suit()!=self.trump_suit and crd.rank()!='9':
+                            # play any non-trump, non-9 card
+                                self.round1_lead_card=crd
+                                break
+                    if not found:
+                    # reaching here means that all non-trump cards present are 9's
                         for crd in self.obj_deal_lst_copy[self.turn_index]:
                             if crd.suit()!=self.trump_suit:
+                            # play first non-trump 9
                                 self.round1_lead_card=crd
                                 break
                 else:
-                # case1.b - has less than 4 trump cards including self.trump_card
-                    # starting with simple logic, play a J or the first non trump-suit card
-                    for crd in self.obj_deal_lst_copy[self.turn_index]:
-                        if crd.suit()!=self.trump_suit:
-                            if crd.rank()=='J':
-                                self.round1_lead_card=crd
+                # case1.b - has less than 4 trump cards (including self.trump_card)
+                    
+                    for keyz in self.obj_dictn_of_cards_grouped[self.turn_index]:
+                        if keyz!=self.trump_suit_index and (0<len(self.obj_dictn_of_cards_grouped\
+                                [self.turn_index][keyz])<5) and \
+                                self.obj_dictn_of_cards_grouped[self.turn_index][keyz][-1].rank()=='J':
+                        # if a non-trump J of suit len < 5 present
+                            self.round1_lead_card=self.obj_dictn_of_cards_grouped[self.turn_index][keyz][-1]
+                            found=True
+                            break
+                    if not found:
+                    # no suitable J found
+                        for xn in self.obj_dictn_of_cards_grouped[self.turn_index]:
+                            if xn!=self.trump_suit_index and \
+                                len(self.obj_dictn_of_cards_grouped[self.turn_index][xn])>2:
+                            # if there is any suit with len > 3 play the lowest in that suit
+                                self.round1_lead_card=self.obj_dictn_of_cards_grouped[self.turn_index][xn][0]
                                 found=True
                                 break
                     if not found:
+                    # no suitable J or len > 3 suit found
+                        for xn in self.obj_dictn_of_cards_grouped[self.turn_index]:
+                            if xn!=self.trump_suit_index and \
+                                len(self.obj_dictn_of_cards_grouped[self.turn_index][xn])==1 and \
+                                self.obj_dictn_of_cards_grouped[self.turn_index][xn][0].rank()!='9':
+                            # if there is any single card which is not 9(J already ruled out) 
+                                self.round1_lead_card=self.obj_dictn_of_cards_grouped[self.turn_index][xn][0]
+                                found=True
+                                break
+                    if not found:
+                    # no suitable J or len > 3 suit or non-9 single card found
+                        for xn in self.obj_dictn_of_cards_grouped[self.turn_index]:
+                            if xn!=self.trump_suit_index and \
+                             (len(self.obj_dictn_of_cards_grouped[self.turn_index][xn])>1) and \
+                             int(self.obj_dictn_of_cards_grouped[self.turn_index][xn][0].point())==0 and \
+                             self.obj_dictn_of_cards_grouped[self.turn_index][xn][1].rank()!='9':
+                            # any pointless card whose 2nd is not a 9
+                                self.round1_lead_card=self.obj_dictn_of_cards_grouped[self.turn_index][xn][0]
+                                found=True
+                                break
+                    if not found:
+                    # reaches here if there are no pointless cards in hand
                         for crd in self.obj_deal_lst_copy[self.turn_index]:
-                            if crd.suit()!=self.trump_suit:
+                            if crd.suit()!=self.trump_suit and crd.rank()!='9':
+                            # play the first non-trump,non-9 card
                                 self.round1_lead_card=crd
                                 break
             else:
             # case2 - not the highest bidder
-                # starting with simple logic, play first J or if no J's, then the first card
                 for crd in self.obj_deal_lst_copy[self.turn_index]:
-                    if crd.rank()=='J':
+                    if crd.rank()=='J' and len(self.obj_dictn_of_cards_grouped[self.turn_index]\
+                        [self.suit_dictn[crd.suit()]])<5:
+                    # J of the first suit with less than 5 cards
                     # no need to check for trump suit since not highest bidder
                         self.round1_lead_card=crd
                         found=True
                         break
                 if not found:
-                    self.round1_lead_card=self.obj_deal_lst_copy[self.turn_index][0]
+                # i.e. no J's present or has 5 or more cards from the J suit
+                    for ixdn in self.obj_dictn_of_cards_grouped[self.turn_index]:
+                        if len(self.obj_dictn_of_cards_grouped[self.turn_index][ixdn])==1 and \
+                            self.obj_dictn_of_cards_grouped[self.turn_index][ixdn][0].rank()!='9':
+                        # if there is any single card which is not 9(J already ruled out)
+                            self.round1_lead_card=self.obj_dictn_of_cards_grouped[self.turn_index][ixdn][0]
+                            found=True
+                            break
+                if not found:
+                # i.e. no suitable J or no suitable single card
+                    for ixdn in self.obj_dictn_of_cards_grouped[self.turn_index]:
+                        if len(self.obj_dictn_of_cards_grouped[self.turn_index][ixdn])==2 and \
+                            int(self.obj_dictn_of_cards_grouped[self.turn_index][ixdn][-1].point())==0:
+                        # if there is a set of 2 point less cards
+                            self.round1_lead_card=self.obj_dictn_of_cards_grouped[self.turn_index][ixdn][0]
+                            found=True
+                            break
+                if not found:
+                # i.e. no suitable J,single card or pointless two cards
+                    for ixdn in self.obj_dictn_of_cards_grouped[self.turn_index]:
+                        if len(self.obj_dictn_of_cards_grouped[self.turn_index][ixdn])>2 and \
+                            int(self.obj_dictn_of_cards_grouped[self.turn_index][ixdn][0].point())==0:
+                        # if there is a pointless card in a set of len>2
+                            self.round1_lead_card=self.obj_dictn_of_cards_grouped[self.turn_index][ixdn][0]
+                            found=True
+                            break
+                if not found:
+                # if none of the above, play the card with the min point
+                    mi=min(crdd.point() for crdd in self.obj_deal_lst_copy[self.turn_index])
+                    for crdd in self.obj_deal_lst_copy[self.turn_index]:
+                        if crdd.point()==mi:
+                            self.round1_lead_card=crdd
+                            found=True
+                            break
+                    
         ###############################################################
                         
         # printing out the card played
@@ -934,6 +1039,10 @@ class Round_1(Prepare_game):
                 if not played:
                 # trump is already revealed or trump called but no trump card in hand 
                 # or trump not called
+                    print('\n')
+                    print('\nYour hand: ',end=' ')
+                    for i in self.obj_deal_lst_copy[self.turn_index]:
+                        print(i.show(),end=' ')
                     self.player_input=input('\nPlay your card; '
                         +'\nEnter rank followed by the first letter of the suit,'
                         +'\neg. 7s or ah or 10d etc.'
@@ -949,6 +1058,10 @@ class Round_1(Prepare_game):
                                                                         [self.turn_index,self.card_played])
             else:
                 # played suit in hand
+                print('\n')
+                print('\nYour hand: ',end=' ')
+                for i in self.obj_deal_lst_copy[self.turn_index]:
+                    print(i.show(),end=' ')
                 self.player_input=input('\nPlay your card; '
                     +'\nEnter rank followed by the first letter of the suit, '
                     +'\neg. 7s or ah or 10d etc.'
@@ -1016,13 +1129,13 @@ class Round_1(Prepare_game):
             self.round1_follow_logic(self.round1_lead_suit_index)
 
 
-        # assigning value to next_lead_index and calculating points scored by each team
+        # assigning value to round2_lead_index and calculating points scored by each team
         if len(self.obj_dictn_of_highest_card_and_turn['trump'])==0:
             key = self.obj_dictn_of_highest_card_and_turn['suit'][0]
         else:
             key = self.obj_dictn_of_highest_card_and_turn['trump'][0]
 
-        self.next_lead_index=key
+        self.round2_lead_index=key
         if key in [0,2]:
             self.point_player_team=sum(int(i.point()) for i in self.obj_played_card_lst)
         else:
@@ -1038,11 +1151,11 @@ class Round_1(Prepare_game):
         print(20*' '+'{}:'.format(self.players_lst[0]),end=' ')
         print(self.obj_dictn_of_played_card_and_player[self.players_lst[0]][0].show())
         print("\nRound1 - starting from {}, counter_clockwise: ".format\
-              (self.players_lst[self.highest_bidder_index]),end=' ')        
+              (self.players_lst[self.round1_lead_index]),end=' ')        
         for i in self.obj_played_card_lst:
             print(i.show(),end=' ')
         print('')
-        print('\nnext_lead_index: ',self.next_lead_index)
+        print('\nround2_lead_index: ',self.round2_lead_index)
         print('\nPoints scored - Your_team:{} , Oppo_team:{}'.format(\
                                     self.point_player_team,self.point_oppo_team))
 
