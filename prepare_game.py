@@ -133,7 +133,7 @@ class Prepare_game(Deck):
         # the counter is used since there are instructions in the functions 
         # which come after recursive call
         if control_count==0:
-            if self.inp_uni_obj not in self.obj_dictn_of_players_and_hand[self.player_name]:
+            if self.inp_uni_obj not in self.obj_half_deal_lst[self.highest_bidder_index]:
                 print('\nEntered card not in hand')
                 self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
                     +'\n7s or ah or 10d etc.: ').lower()
@@ -155,7 +155,7 @@ class Prepare_game(Deck):
             # selecting the first turn for bidding randomly
             self.bid_turn_index=np.random.randint(4)
             # the first bidder starts the round. turn_index used in Round_1() class
-            self.turn_index=self.bid_turn_index
+            self.round1_lead_index=self.bid_turn_index
             # saving a copy for debugging 
             fb=open("last_starting_bid_turn.txt","wb")
             pickle.dump(self.bid_turn_index,fb)
@@ -163,7 +163,7 @@ class Prepare_game(Deck):
         else:
             fb=open("last_starting_bid_turn.txt","rb")
             self.bid_turn_index=pickle.load(fb)
-            self.turn_index=self.bid_turn_index
+            self.round1_lead_index=self.bid_turn_index
             fb.close()
 
         print('\nStarting bid_turn_index is: ',self.bid_turn_index)
@@ -564,6 +564,9 @@ class Prepare_game(Deck):
 
         # if player is the highest bidder
         else:
+            print('\nYour hand: ',end=' ')
+            for i in self.obj_half_deal_lst[self.highest_bidder_index][:4]:
+                print(i.show(),end=' ')
             self.player_input=input('\nSet trump card; '
                 +'\nEnter rank followed by the first letter of the suit, '
                 +'\neg. 7s or ah or 10d etc.: '
