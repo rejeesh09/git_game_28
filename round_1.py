@@ -124,6 +124,7 @@ class Round_1(Prepare_game):
         # logic for opening turn of round
         
         self.turn_index=self.round1_lead_index
+#         self.turn_index=0
         
         ###############################################################
         if not self.turn_index:
