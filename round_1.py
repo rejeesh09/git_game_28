@@ -19,8 +19,12 @@ class Round_1(Prepare_game):
         # All 15 variables in init() and 6 out of 7 methods of Deck class and all 10 variables 
         # in init() of Prepare_game class are constructed by the above line
         input("\nStart bidding: 'Enter' ")
-        # calling the bid method in Prepare_game()
+        # calling the bid_half_hand method in Prepare_game()
         super().bid_half_hand(self.hold)
+        
+#-----------------------------------------------------------------------------------------------------        
+######### obj_display_hands and bid_full_hand{yet to be defined in prepare_game} should be called here
+#-----------------------------------------------------------------------------------------------------        
         
         # redealing if trump_distrb_good() returns false
         # this has not been tested for errors

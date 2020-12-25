@@ -43,7 +43,7 @@ class Prepare_game(Deck):
         super().obj_induvidual_dictns() # makes obj_dictn_of_cards_grouped, which is used 
         #throughout to make decision on card to be played
         super().obj_half_dictns() # makes grouped dictn of half hand
-#         super().obj_display_hands(False)
+        # super().obj_display_hands(False)
         # (6 out of 7) methods of Deck are constructed here
         
         ###############################################################
