@@ -1,30 +1,31 @@
+#########################################################################
 from cards import Cards
-# importing the class - Cards() since the class is explicitly called 
-# within Round_1()
-from deck import Deck
-# 
+# importing the class - Cards() since the class is explicitly called in the inp_parse_check() method 
+# in Round_1()
+# from deck import Deck ## Deck() class is not required explicitly in this module
 # #######################################################################
+#########################################################################
 from prepare_game import Prepare_game
+#########################################################################
 import time
 import sys
 # sys used in inp_parse_check to exit 
 # sys and time used in follow_logic to print played cards with delay before taking player inp
-# trying to make deck and round1 separate
-###################################################################
-# round_1() method of Prepare_game()
+#######################################################################
 class Round_1(Prepare_game):
-    def __init__(self,hold):
-        self.hold=hold
-        super().__init__(self.hold)
+    def __init__(self,hold,custom_deal):
+#         self.hold=hold
+#         self.custom_deal=custom_deal
+        super().__init__(hold,custom_deal)
         # All 15 variables in init() and 6 out of 7 methods of Deck class and all 10 variables 
         # in init() of Prepare_game class are constructed by the above line
         input("\nStart bidding: 'Enter' ")
         # calling the bid_half_hand method in Prepare_game()
-        super().bid_half_hand(self.hold)
+        super().bid_half_hand(hold,custom_deal)
+        # obj_display_hands(False) is called/included within(at the end of) bid_half_hand()
         
-#-----------------------------------------------------------------------------------------------------        
-######### obj_display_hands and bid_full_hand{yet to be defined in prepare_game} should be called here
-#-----------------------------------------------------------------------------------------------------        
+        input("\nStart 2nd bidding: 'Enter' ")
+        super().bid_full_hand()
         
         # redealing if trump_distrb_good() returns false
         # this has not been tested for errors
@@ -132,7 +133,7 @@ class Round_1(Prepare_game):
         
         ###############################################################
         if not self.turn_index:
-        # i.e. player gets to start
+        # i.e. player gets to start    
             self.player_input=input('\nPlay your card; '
                 +'\nEnter rank followed by the first letter of the suit,'
                 +'\neg. 7s or ah or 10d etc.'
@@ -1118,6 +1119,11 @@ class Round_1(Prepare_game):
 
     def round1_play(self):
         # round1_play() method  ####################################
+        
+        print('\nYour hand: ',end=' ')
+        for i in self.obj_deal_lst_copy[0][:8]:
+            print(i.show(),end=' ')
+                
         while(len(self.obj_played_card_lst)<4):
 
             # calling the round lead_logic for the first turn
