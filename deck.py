@@ -1,7 +1,14 @@
-# importing Cards() class inside the obj_deal() method
 #####################################################################
-class Deck:
+from cards import Cards ## to make card objects inside Deck()
+import pickle ## to dump deal_lst to txt file and load for debugging
+import numpy as np 
+# all three modules above are used in the obj_deal() method in Deck() class, could have been called inside
+# the method itself. But done here just to make all imports explicit within each module
+#####################################################################
+####################################################################
+class Deck():
     def __init__(self,dictn_of_card_objects):
+        # the argument is a dictionary of 32 card objects created separately using the Cards() class
         #1.###### var1
         #d1)
         self.card_obj=dictn_of_card_objects
@@ -66,14 +73,12 @@ class Deck:
         self.players_lst=[self.player_name,'Oppo_right','Mate','Oppo_left']
         
     ##################################################################
-    # for dealing out four hands object-based
+    # for dealing out the four hands object-based
     #D1)
-    def obj_deal(self,hold):
-        import pickle ## to dump deal_lst to txt file and load for debugging
-        import numpy as np ## added when importing Deck class in main code
-        from cards import Cards ## added when importing Deck class in main code
+    def obj_deal(self,hold,custom_deal):
         self.cards_copy=self.cards_no_colr.copy()
-        if not hold:
+        if not (hold or custom_deal):
+            print('\nNo hold or no custom')
             #5.########## var5
             self.obj_deal_lst=[[],[],[],[]]
             for i in range(32):
@@ -99,30 +104,49 @@ class Deck:
                     self.cards_copy.remove(d)
             
             # handling probable redeal situations except no trump
-            # no point in a hand, all J's in one hand
+            # no point in a hand, all J's in one hand and all cards of a suit in a hand
             # haven't really tested for errors here
             j_count=0
-            call_count=0
+            self.suit_count=0
+            redeal_count=0
+            
             for h in range(4):
                 if sum(int(i.point()) for i in self.obj_deal_lst[h]) == 0:
                     print("\n{} has no points, redealing".format(self.players_lst[h]))
-                    call_count+=1
+                    redeal_count+=1
                     self.obj_deal(False)
                 for i in self.obj_deal_lst[h]:
                     if i.rank()=='J':
                         j_count+=1
                 if j_count==4:
                     print("\n{} has all J's, redealing".format(self.players_lst[h]))
-                    call_count+=1
+                    redeal_count+=1
                     self.obj_deal(False)
                 j_count=0
-            if not call_count:
+                
+                # to check if any of the hands have all the 8 cards in a suit
+                for i in range(7):
+                    if self.obj_deal_lst[h][i].suit()==self.obj_deal_lst[h][i+1].suit():
+                        self.suit_count+=1
+                if self.suit_count==8:
+                    print('\n{} has all cards of the suit {}'.format(self.players_lst[h],\
+                                                                self.obj_deal_lst[h][0].suit()))
+                    redeal_count+=1
+                    self.obj_deal(False)
+                self.suit_count=0
+                    
+                    
+            if not redeal_count:
                 print('\nAll hands are good to go')
 
                 # saving a copy for debugging 
                 f=open("last_deal.txt","wb")
                 pickle.dump(self.obj_deal_lst,f)
                 f.close()
+        elif custom_deal:
+            f=open("custom_dealt_hand.txt","rb")
+            self.obj_deal_lst=pickle.load(f)
+            f.close()
         else:
             f=open("last_deal.txt","rb")
             self.obj_deal_lst=pickle.load(f)
@@ -162,10 +186,11 @@ class Deck:
     # for sorting the hands dealt, object based
     #D4)
     def obj_sort_hands(self):
-        # changes in copy are affecting original list as well. why????????????
         #5.c.#### var5.c
         self.obj_deal_lst_copy=[dl[:] for dl in self.obj_deal_lst]
-        # or use deepcopy from copy for compound objects
+        # use the above method or deepcopy from copy for compound objects, normal copies are just pointers 
+        # to the original compound object (list/dict/tuple...)
+        # obj_deal_lst is the original dealt hand and obj_deal_lst_copy is the sorted hand
         for k in range(4):
             for i in range(8):                
                 for j in range(i+1,8):
@@ -179,6 +204,8 @@ class Deck:
                 
         # to keep a list that doesn't change
         self.obj_deal_lst_sorted=[sr[:] for sr in self.obj_deal_lst_copy]
+        # every time a card is played, it will be removed from obj_deal_lst_copy and 
+        # obj_dictn_of_cards_grouped
         
         # dictionary of players with their hands
         #6.###### var6
@@ -189,7 +216,6 @@ class Deck:
     # for displaying the hands object based
     #D5)
     def obj_display_hands(self,show_updated):
-        # updated True means display hand that changes over round or may be even with trump removed
         if not show_updated:
             print('\n')
             for key in self.obj_dictn_of_players_and_hand:
@@ -198,10 +224,13 @@ class Deck:
                     print(value.show(),end=' ')
                 print("\n")
         else:
+        # if show_updated value is True, then display without already played cards and even trump removed if
+        # trump card is not yet revealed - to be used for successive rounds
             print('\n')
             for key in range(4):
                 print("{}: ".format(self.players_lst[key]))
                 for carrd in self.obj_deal_lst_copy[key]:
+                # deal_lst_copy is the updated list of cards in hand after each round
                     print(carrd.show(),end=' ')
                 print("\n")
     
