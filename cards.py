@@ -1,14 +1,15 @@
 ######################################################################
 class Cards():
     def __init__(self,x):
+        # the argument x should be the alphanumeric-unicode combo of one of the 32 cards
         self.x=x
         
-        # spade-\u2660, hearts-\u2665, clubs-\u2663, diamonds-\u2666
+        # making a list, cards_no_colr=['7♠', '8♠','Q♠',...,'9♦','J♦']
+        # this is done to have a .value() method which returns the index of 
+        # the card in this list, which is used in sorting hands
+        # - unicode for symbols, spade-\u2660, hearts-\u2665, clubs-\u2663, diamonds-\u2666
         self.suit_uni=['\u2660','\u2665','\u2663','\u2666']
-        self.rank_er=['7','8','Q','K','10','A','9','J']
-        
-        # making the game deck of 32 cards
-        # ['7♠', '8♠','Q♠',...,'9♦','J♦']
+        self.rank_er=['7','8','Q','K','10','A','9','J']                
         self.cards_no_colr=[]
         for y in self.suit_uni:
             self.cards_no_colr.extend([x+y for x in self.rank_er])
