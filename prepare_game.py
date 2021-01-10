@@ -1,42 +1,43 @@
+#######################################################################
 from cards import Cards
 # importing the class - Cards()
-#######################################################################
 
-
-# making objects of Cards()
+# making the game deck of 32 cards
+# ['7♠', '8♠','Q♠',...,'9♦','J♦']
 # spade-\u2660, hearts-\u2665, clubs-\u2663, diamonds-\u2666
 suit_uni=['\u2660','\u2665','\u2663','\u2666']
 rank=['7','8','Q','K','10','A','9','J']
         
-# making the game deck of 32 cards
-# ['7♠', '8♠','Q♠',...,'9♦','J♦']
 cards_no_colr=[]
 for y in suit_uni:
     cards_no_colr.extend([x+y for x in rank])
 
-# dictn_of_cards is a dictionary of 32 Cards objects
-# {0: <__main__.Cards object at ..>,.., 32: 31: <__main__.Cards object at..}
+# dictn_of_cards is a dictionary of 32 Cards objects,
+# dictn_of_cards = {0: <__main__.Cards object at ..>,.., 32: 31: <__main__.Cards object at..}
 i=range(32)
 dictn_of_cards=dict.fromkeys(i,'')
 for j in range(32):
     dictn_of_cards[j]=Cards(cards_no_colr[j])
 #######################################################################
+#######################################################################
 from deck import Deck
 # importing the class - Deck()
-# this import is done to allow this .py file to run independently as a module
-# and not for making the class variables(ones with self prefix(even inside methods)) and methods
-# available to the child class. Those are available by default by virture of being a child.
+# Each module needs to have all the classes that are being explicitly used, 
+# available in their own 'namespace'
 #######################################################################
-# have to include two methods bid() and set_trump()
+#######################################################################
+import numpy as np
+import pickle
+# both the above modules are used in the bid_half_hand() method in Prepare_game()
+#######################################################################
 class Prepare_game(Deck):
-    ###################################################################
-    def __init__(self,hold):
+    def __init__(self,hold,custom_deal):
         # methods from Deck()
         super().__init__(dictn_of_cards) #??? in which namespace does dictn_of_cards reside?
         # looks like when doing from prepare_game import Prepare_game, the whole prepare_game.py script 
         # is run first and then the class Prepare_game() is imported from it
         # All the (15*) variables(attributes) in Deck()'s init() are now constructed by the above line
-        super().obj_deal(hold)
+        super().obj_deal(hold,custom_deal)
         super().obj_sort_half_hands()
         super().obj_display_half_hands()
         super().obj_sort_hands()
@@ -44,6 +45,9 @@ class Prepare_game(Deck):
         #throughout to make decision on card to be played
         super().obj_half_dictns() # makes grouped dictn of half hand
         # super().obj_display_hands(False)
+        # obj_display_hands(True/False) is called in the bid_half_hand() method below, after trump is set
+        # Pass False as argument to display the original hands and pass True to display hands updated 
+        # after the round
         # (6 out of 7) methods of Deck are constructed here
         
         ###############################################################
@@ -53,11 +57,11 @@ class Prepare_game(Deck):
         #p2)
         self.obj_played_card_lst_of_32=[]
         
-        # this dictionary holds the highest card of the round and the corresponding turn index
-        # only the turn_index is actually needed
         #9.###### var9
         #p3)
         self.obj_dictn_of_highest_card_and_turn=dict()
+        # this dictionary holds the highest card of the round and the corresponding turn index
+        # only the turn_index is actually needed
         self.obj_dictn_of_highest_card_and_turn['suit']=[]
         self.obj_dictn_of_highest_card_and_turn['trump']=[]
 
@@ -91,11 +95,12 @@ class Prepare_game(Deck):
     # init() end ######################################################
     
     #P1)
-    def trump_verify(self,trump):
+    def trump_verify(self,trump,half_hand):
         # only for setting trump card, other checks for an input is done in inp_parse_check
         # checks and converts the trump input to unicode and then to Card object        
         control_count=0
         self.trump=trump
+        self.half_hand=half_hand
         self.inp_cpy=self.trump
         self.inp_cpy.strip(" ") # doesn't seem to work
         self.inp_cpy.replace(" ","") # this seems to work only for space inside the string
@@ -104,7 +109,7 @@ class Prepare_game(Deck):
             print('\nYou did not enter a valid card')
             self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
                 +'\n7s or ah or 10d etc.: ').lower()
-            self.trump_verify(self.player_input)
+            self.trump_verify(self.player_input,self.half_hand)
         else:
             if self.inp_cpy[-1]=='s':
                 if self.inp_cpy[0]!='1':
@@ -132,14 +137,24 @@ class Prepare_game(Deck):
         ###############################################################
         # the counter is used since there are instructions in the functions 
         # which come after recursive call
-        if control_count==0:
-            if self.inp_uni_obj not in self.obj_half_deal_lst[self.highest_bidder_index]:
-                print('\nEntered card not in hand')
-                self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
-                    +'\n7s or ah or 10d etc.: ').lower()
-                self.trump_verify(self.player_input)
-            else:
-                control_count+=1
+        if self.half_hand:
+            if control_count==0:
+                if self.inp_uni_obj not in self.obj_half_deal_lst[self.highest_bidder_index]:
+                    print('\nEntered card not in hand')
+                    self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
+                        +'\n7s or ah or 10d etc.: ').lower()
+                    self.trump_verify(self.player_input,self.half_hand)
+                else:
+                    control_count+=1
+        else:
+            if control_count==0:
+                if self.inp_uni_obj not in self.obj_deal_lst[self.highest_bidder2_index]:
+                    print('\nEntered card not in hand')
+                    self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
+                        +'\n7s or ah or 10d etc.: ').lower()
+                    self.trump_verify(self.player_input,self.half_hand)
+                else:
+                    control_count+=1
         # returns the input, converted to Cards object
         return(self.inp_uni_obj)
     
@@ -147,21 +162,33 @@ class Prepare_game(Deck):
     # trump_verify end ################################################
     
     #P2)
-    def bid_half_hand(self,hold):
-        import numpy as np
-        import pickle
+    def bid_half_hand(self,hold,custom_deal):
         
-        if not hold:
-            # selecting the first turn for bidding randomly
+        if not (hold or custom_deal):
+        # the value of hold is either True or False depending on whether the last hand is to be 
+        # repeated(for debugging pupose)
             self.bid_turn_index=np.random.randint(4)
-            # the first bidder starts the round. turn_index used in Round_1() class
+            # selecting the first turn for bidding, randomly
             self.round1_lead_index=self.bid_turn_index
-            # saving a copy for debugging 
+            # the one who starts the bid, starts/lead the first round. 
+            # round1_lead_index will be used in Round_1() class.
+
             fb=open("last_starting_bid_turn.txt","wb")
+            # saving a copy for debugging 
+            # opening a file object in write-binary mode
             pickle.dump(self.bid_turn_index,fb)
             fb.close()
+        elif custom_deal:
+            fb=open("custom_starting_bid_turn.txt","rb")
+            # opening a file object in read-binary mode
+            self.bid_turn_index=pickle.load(fb)
+            self.round1_lead_index=self.bid_turn_index
+            fb.close()
         else:
+        # i.e. True is passed as the value of argument 'hold', to this method,
+        # (i.e. replaying last round - for debugging)
             fb=open("last_starting_bid_turn.txt","rb")
+            # opening a file object in read-binary mode
             self.bid_turn_index=pickle.load(fb)
             self.round1_lead_index=self.bid_turn_index
             fb.close()
@@ -170,24 +197,31 @@ class Prepare_game(Deck):
         
         self.bid_value_final=13 # to make sure min starting bid value is 14
         
-        # to stop bidding after two rounds
         self.bid_counter=0
-        # to stop bidding if both team mates passes
+        # the above counter increments after every bid or pass and is used to stop bidding 
+        # after two rounds
         self.bid_counter_lst=[0]
+        # the above counter list is used to stop bidding if both team mates passes
         
         found=False
-        # to hold the index of suits with len()==2 for cases 3 and 2
         count_2_lst=[]
-        # to hold the index of suits with len()==1 for cases 3 and 2
+        # the above list holds the indices of suits with len()==2 for cases 3 and 2
         count_1_lst=[]
+        # the above list holds the indices of suits with len()==1 for cases 3 and 2
 
         while self.bid_counter<8:
-            # taking bid input if bid_turn_index==0
             if self.bid_turn_index==0:
+            # taking bid input if bid_turn_index==0
                 self.bid_value_inp=input('\nEnter your bid (any non-digit input will be considered as pass): ')
                 if self.bid_value_inp.isdigit():
                     self.bid_value=int(self.bid_value_inp)
                     while not (13<self.bid_value<21): # setting 21 limit for half hand bid
+                    # this inner while loop is executed when the bid value entered first is a digit but 
+                    # not legit. another input is asked for and if the bid value is not legit, 
+                    # even the second time, then the min value is set, if mandatory, or the bid_value is 
+                    # set to be less than the bid_value_final(equal is also enough). At the end of each run  
+                    # of the outer while loop, bid_value is compared with bid_value_final and a decision on
+                    # whether the bid has been called or passed is taken
                         self.bid_value_inp=input('\nYou did not enter a legal bid value (14-20). Pls try again: ')
                         if self.bid_value_inp.isdigit():
                             self.bid_value=int(self.bid_value_inp)
@@ -196,14 +230,16 @@ class Prepare_game(Deck):
                             print('\nBid set to 14 as atleast minimum call mandatory in first bid')
                             self.bid_value=14
                         else:
-                            # passing bid
+                            # setting the bid_value to be less than the bid_value_final so that at the 
+                            # end of the outer while loop, the condition satisfies a passing bid
                             self.bid_value=self.bid_value_final-1
                 elif self.bid_counter==0:
                     # minimum call
                     print('\nBid set to 14 as atleast minimum call mandatory in first bid')
                     self.bid_value=14
                 else:
-                    # passing bid
+                    # setting the bid_value to be less than the bid_value_final so that at the 
+                    # end of the outer while loop, the condition satisfies a passing bid
                     self.bid_value=self.bid_value_final-1 # no need of minus 1 actually
                     
             else:
@@ -338,6 +374,7 @@ class Prepare_game(Deck):
                     if len(count_2_lst)==2:
                         #case3
                         ####################################################################
+                        # if there are two sets/suits of two cards each
                         # case 3.a
                         # if there are two J's
                         if (self.obj_half_deal_lst[self.bid_turn_index][1].rank()=='J') and \
@@ -395,6 +432,7 @@ class Prepare_game(Deck):
                     elif len(count_1_lst)==2: # len(count_2_lst) will be one
                         #case2
                         ###################################################################
+                        # if there is a suit of two cards and two other suits of single cards
                         # case 2.a
                         # 2-suit has J and both of the 1-suits also have J - tot 3 J's
                         if (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_2_lst[0]]\
@@ -412,7 +450,7 @@ class Prepare_game(Deck):
                                 [count_2_lst[0]][0]
 #                             found=True
                         # case 2.b
-                        # 2-suit has J and one off the 1-suits also have J - tot 2 J's
+                        # the 2-suit has J and one of the 1-suits also have J - tot 2 J's
                         elif (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_2_lst[0]]\
                             [-1].rank() == 'J') and \
                             ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[0]]\
@@ -428,7 +466,7 @@ class Prepare_game(Deck):
                                 [count_2_lst[0]][0]
 #                             found=True
                         # case 2.c
-                        # only 2-suit has J
+                        # only the 2-suit has J
                         elif (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_2_lst[0]]\
                             [-1].rank() == 'J'):
                             # make bid of upto 15
@@ -440,7 +478,7 @@ class Prepare_game(Deck):
                                 [count_2_lst[0]][0]
 #                             found=True
                         # case 2.d
-                        # 2-suit doesn't have J but both 1-suits have J
+                        # the 2-suit doesn't have J but both the 1-suits have J
                         elif ((self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[0]]\
                             [0].rank() == 'J') and \
                             (self.obj_half_dictn_of_cards_grouped[self.bid_turn_index][count_1_lst[1]]\
@@ -467,8 +505,10 @@ class Prepare_game(Deck):
                     else:
                         # len(count_1_lst) will be 4 in this case
                         #case1
-                        ###################################################################                       
+                        ################################################################### 
+                        # all 4 cards are from different suits
                         j_count2=0
+                        # to find the no.of J's in hand
                         p_i_holder_lst=[0.00,0] # holds point and index of a card
                         
                         for xy in self.obj_half_deal_lst[self.bid_turn_index]:
@@ -523,18 +563,27 @@ class Prepare_game(Deck):
             if self.bid_value>self.bid_value_final:
                 self.bid_value_final=self.bid_value
                 self.highest_bidder_index=self.bid_turn_index
+                
+                self.highest_bidder1_index=self.highest_bidder_index
+                # the above is to keep a copy of who was the highest bidder in round1, which will be
+                # used for setting trump in round2 of bid(i.e. to see if a team mate had set trump in
+                # first bid round)
                 print('\n{} calls {}'.format(self.players_lst[self.bid_turn_index],self.bid_value_final))
                 self.bid_turn_index=(self.bid_turn_index+1)%4
                 self.bid_counter+=1
                 self.bid_counter_lst.append(self.bid_counter)
+                
+                # resetting some variables used, to default values
                 found=False
                 count_1_lst.clear()
                 count_2_lst.clear()               
             else:
                 print('\n{} passes'.format(self.players_lst[self.bid_turn_index]))
                 self.bid_turn_index=(self.bid_turn_index+2)%4
-                self.bid_counter+=2
+                self.bid_counter+=2 # to skip the bidding chance of the current bidder's mate
                 self.bid_counter_lst.append(self.bid_counter)
+                
+                #resetting some variables used, to default values
                 found=False
                 count_1_lst.clear()
                 count_2_lst.clear()
@@ -565,15 +614,15 @@ class Prepare_game(Deck):
         # if player is the highest bidder
         else:
             print('\nYour hand: ',end=' ')
-            for i in self.obj_half_deal_lst[self.highest_bidder_index][:4]:
+            for i in self.obj_half_deal_lst[0][:4]:
                 print(i.show(),end=' ')
             self.player_input=input('\nSet trump card; '
                 +'\nEnter rank followed by the first letter of the suit, '
-                +'\neg. 7s or ah or 10d etc.: '
-                +'\n(or 0 to stop game) ').lower()
+                +'\neg. 7s or ah or 10d etc.: ').lower()
 
             # trump input converted to object
-            self.obj_trump_checked=self.trump_verify(self.player_input)
+            self.obj_trump_checked=self.trump_verify(self.player_input,True)
+            # passing half_hand=True to verify for half hand bid
             self.trump_set=True
             self.trump_suit=self.obj_trump_checked.suit()
             self.trump_suit_index=self.suit.index(self.trump_suit)
@@ -582,11 +631,246 @@ class Prepare_game(Deck):
             print('\nTrump card set by {}: {}'.format(self.players_lst[0],self.obj_trump_checked.form()))
 
 
-        # displaying full hands
+        # displaying full hands/ pass True to see updated hands after each round
         self.obj_display_hands(False)
 
     ###################################################################
     # bid_half_hand() end #############################################
+    
+    #P2.b)
+    def bid_full_hand(self):
+    # no need to use a hold value here as in bid_half_hand() as the starting bidder index here 
+    # is taken from the bid_half_hand() method itself which makes sure that the same round is 
+    # repeated if that was what was required.
+        self.bid2_turn_index=self.round1_lead_index
+        # the player who started the first round bidding gets to start the second round bidding as well,
+        # round1_lead_index stores the value of the first bid_turn_index value which was generated 
+        # randomly. bid_turn_index and similarly bid2_turn_index get updated during bids 
+        
+        print('\nStarting bid2_turn_index is: ',self.round1_lead_index)
+        
+        self.bid2_value_final=20 # to make sure min starting bid value is 21
+        self.bid2_counter=0
+        # the above counter increments after every bid or pass and is used to stop bidding 
+        # after two rounds
+        self.bid2_counter_lst=[0]
+        # the above counter list is used to stop bidding if both team mates passes
+        self.bid2_any_call=False
+        # this is used to check if there was any bid at all with full hand
+        
+        
+        # to carry on with various checks for finding a trump card
+        found=False
+        
+        # making a list of J counts
+        j_count_lst=[0,0,0,0]
+        for k in range(4):
+            for i in self.obj_deal_lst[k]:
+                if i.rank()=='J':
+                    j_count_lst[k]+=1
+        
+        # inserting the trump card of previous round back in hand for finding new trump in the 
+        # 2nd round of bidding
+        if self.highest_bidder_index!=0:
+            print('\nFirst round trump inserted back in first round highest bidder hand')
+            self.insert_trump_card_back()
+            # should be removed again if bid2_any_call is False at the end (i.e first round Trump is to stay)
+        
+        while self.bid2_counter<8:
+            if self.bid2_turn_index==0:
+            # taking bid input if bid_turn_index==0
+                self.bid2_value_inp=input('\nEnter your 2nd round bid (any non-digit input will be considered as pass: ')
+                if self.bid2_value_inp.isdigit():
+                    self.bid2_value=int(self.bid2_value_inp)
+                    while not (20<self.bid2_value<28):
+                    # to make sure that the bid value is between 20 and 28
+##################### further look into whether 28 needs to be allowed in 2nd bid and how to incorporate 
+                    # the 'thani' call (without trump)
+                        self.bid2_value_inp=input('\nSorry, plz enter a bid value from 21-27: ')
+                        if self.bid2_value_inp.isdigit():
+                            self.bid2_value=int(self.bid2_value_inp)
+                        else:
+                            # the bid is being passed
+                            self.bid2_value=self.bid2_value_final
+                            # bid2_value>bid2_value_final is the condition for deciding whether a bid
+                            # was made. setting it be equal would hence correspond to a pass
+                            break
+                else:
+                # if a non-digit input was made, it will be considered a pass and bid2_value is 
+                # set to be equal to bid2_value_final so that a pass decision can be made 
+                # when the condition (bid2_value <= bid2_value_final) at the end of the 
+                # outer while loop is satisfied. There is no need for a mandatory minimun call in 
+                # the 2nd round.
+                    self.bid2_value=self.bid2_value_final
+            else:
+                # conditions for making a bid of 21 or more for players 1-3
+                for i in range(4):
+#                     print('\nreached line 651, {} time'.format(i))
+                    
+                    # - 1) 4 trump cards without J but 9 - and a) three other J's, or b) two other J's and 
+                    #      teammate had called atleast 18 in first bid - can call upto 22
+                    if (len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i])==4 and\
+                     self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='9') and\
+                     (j_count_lst[self.bid2_turn_index]==3 or \
+                     (j_count_lst[self.bid2_turn_index]==2 and (self.bid2_turn_index+2)%4==self.\
+                     highest_bidder1_index and self.bid_value_final>17)):
+##################### actually need to check if team mate had made such a call, and not necessarily if 
+                    # if she was the highest bidder in bid1
+                        if self.bid2_value_final!=21:
+                            self.bid2_value=21
+                        else:
+                            self.bid2_value=22
+                        # i.e. make a call of 22 if highest bid in round is 21, else call 21 
+                        self.trump_card2=self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][1]
+                        # the 2nd lowest card in the suit is kept as trump card
+                        found=True
+                        print('\ncase 1 of 2nd round bid satisfied')
+                        break # to break from the for loop
+                    
+                    
+                    # - 2) 4 trump cards including J - and a) two other J's, or b) one other J but 3 cards 
+                    #      in same suit with highest J or 9, or c) only one other J but team mate had 
+                    #      called atleast 17 in first bid - can call upto 22
+                    if (len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i])==4 and\
+                     self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='J') and\
+                     ((j_count_lst[self.bid2_turn_index]==2) or \
+                     (j_count_lst[self.bid2_turn_index]==1 and (self.bid2_turn_index+2)%4==self.\
+                     highest_bidder1_index and self.bid_value_final>16) or \
+                     (True in list(map(lambda x: len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index]\
+                        [x])==3, self.obj_dictn_of_cards_grouped[self.bid2_turn_index])))):
+                    # the last condition checks if there is a suit of length 3 in current bidder's hand
+                    # for that , the map function returns True or False by testing elements of the iterable 
+                    # against the expression in lambda function and the returned values are made into a list
+                    # and the membership is checked
+                    # eg. 
+                    #     dictnu={1:[1,2,3,4],0:[],2:[1,5,6]}
+                    #     if True in list(map(lambda x: len(dictnu[x])==3, dictnu)):
+                    #     print('yes')
+                    # end of eg.                    
+                        if self.bid2_value_final!=21:
+                            self.bid2_value=21
+                        else:
+                            self.bid2_value=22
+                        # i.e. make a call of 22 if highest bid in round is 21, else call 21 
+                        self.trump_card2=self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][1]
+                        # the 2nd lowest card in the suit is kept as trump card
+                        found=True
+                        print('\ncase 2 of 2nd round bid satisfied')
+                        break # to break from the for loop
+                        
+            # - 3) 5 trump cards without J - and a) three other J's, or b) two other J's and team mate had
+            #      called atleast 17 in first bid
+            # - 4) 5 trump cards with J - and a) two other J's, or b) one other J and team mate had called 
+            #      atleast 17 in first bid
+            # - 5) 6 trump cards without J - and a) two other J's, or b) one other J and team mate 
+            #      had called atleast 17 in first bid, or c) no other J but team mate had called atleast 
+            #      18 in first bid
+            # - 6) 6 trump cards with J - and a) another J, or b) no other J but team mate had called 
+            #      atleast 17 in first bid
+            # - 7) 7 trump cards without J - and a) another J, or b) no J but team mate had called atleast 
+            #      17 in first bid
+            # - 8) 7 trump cards with J 
+            #      (8 is invalid - gets redealt in Deck())
+                if not found:
+                    self.bid2_value=self.bid2_value_final
+                    print('\n{} passing for now, further code to be written'.format(self.players_lst[self.\
+                                                                                        bid2_turn_index]))
+            
+            
+                
+            if (self.bid2_value>self.bid2_value_final):
+                self.bid2_value_final=self.bid2_value
+                self.highest_bidder2_index=self.bid2_turn_index
+                
+                print('\n{} calls {}'.format(self.players_lst[self.bid2_turn_index],self.bid2_value))
+                self.bid2_counter+=1
+                self.bid2_turn_index=(self.bid2_turn_index+1)%4
+                self.bid2_any_call=True                
+            
+            else:
+                print('\n{} passes'.format(self.players_lst[self.bid2_turn_index]))
+                
+                if not self.bid2_any_call:
+                    if not self.bid2_counter==3:
+                    # bid2_counter==3 in the outer else means that all 4 players have passed, 
+                    # so break loop in the else below
+                        self.bid2_counter+=1
+                        self.bid2_turn_index=(self.bid2_turn_index+1)%4
+                    else:
+                        break
+                else:
+                    self.bid2_counter+=2
+                    self.bid2_turn_index=(self.bid2_turn_index+2)%4
+            
+
+            self.bid2_counter_lst.append(self.bid2_counter)
+            if (len(self.bid2_counter_lst)>2) and ((self.bid2_counter_lst[-1] - self.bid2_counter_lst[-3])>3):
+            # after successive passes the diff b/w the last and 3rd last bid2_counter values will be 4
+                break
+        
+        print('\nbid2_counter value: ',self.bid2_counter)
+        
+        # if any call was made in bidding round 2
+        if self.bid2_any_call:
+            print('\n{} made the highest bid: {}'.format(self.players_lst[self.highest_bidder2_index],\
+                self.bid2_value_final))
+            
+            self.highest_bidder_index=self.highest_bidder2_index
+            # actually highest_bidder_index and highest_bidder2_index were kept separate and 
+            # different sets of code written for trump_verify method. But to avoid writing extra
+            # code for insert_trump_card_back and trump_distribution_good methods, highest_bidder_
+            # index is being assigned the value of highest_bidder2_index now. Previous round's 
+            # highest_bidder_index is available in highest_bidder1_index
+            
+            # if player is not highest bidder i.e index!=0       
+            if self.highest_bidder2_index:
+                self.trump_card=self.trump_card2
+                self.trump_set=True
+                self.trump_suit=self.trump_card.suit()
+                self.trump_suit_index=self.suit.index(self.trump_suit)
+                print('\nTrump card set by {}'.format(self.players_lst[self.highest_bidder2_index]))
+
+                # need to remove trump card from the obj_dictn_of_cards_grouped to make sure it is not 
+                # played until trump is revealed
+                # this is done only for the 3 other players, since the condition is taken care of 
+                # for player in inp_parse_check
+                self.obj_dictn_of_cards_grouped[self.highest_bidder2_index]\
+                                                [self.trump_suit_index].remove(self.trump_card)
+                self.obj_deal_lst_copy[self.highest_bidder2_index].remove(self.trump_card)
+            
+            # if player is the highest bidder
+            else:
+                print('\nYour hand: ',end=' ')
+                for i in self.obj_deal_lst_copy[0][:8]:
+                    print(i.show(),end=' ')
+                self.player_input=input('\nSet trump card; '
+                    +'\nEnter rank followed by the first letter of the suit, '
+                    +'\neg. 7s or ah or 10d etc.: ').lower()
+
+                # trump input converted to object
+                self.obj_trump_checked=self.trump_verify(self.player_input,False)
+                # passing half_hand=False to verify trump for full hand bid
+                self.trump_set=True
+                self.trump_suit=self.obj_trump_checked.suit()
+                self.trump_suit_index=self.suit.index(self.trump_suit)
+                # storing the trump input to the variable used by all hands(from Prepare_game())
+                self.trump_card=self.obj_trump_checked
+                print('\nTrump card set by {}: {}'.format(self.players_lst[0],self.obj_trump_checked.form()))
+
+        else:
+            print('\nEveryone passed in 2nd bid round')
+            
+            # removing the trump card of first bidding round again from the first round's 
+            # highest bidder's hand
+            self.obj_dictn_of_cards_grouped[self.highest_bidder_index]\
+                                            [self.trump_suit_index].remove(self.trump_card)
+            self.obj_deal_lst_copy[self.highest_bidder_index].remove(self.trump_card)
+            print('\nFirst round trump removed from first round highest bidder hand')
+            print('\nNo one called 21 or above, so trump set by {} stays for the call of {} '.format(self.\
+                    players_lst[self.highest_bidder1_index],self.bid_value_final))
+            
+    ###################################################################
+    # bid_full_hand() end #############################################
     
     #P3)
     # to check if the team who lost bid has atleast one card from the trump suit
