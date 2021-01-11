@@ -415,9 +415,11 @@ class Round_1(Prepare_game):
             # check for any single cards and play the highest which is not J and if 
             # more than one such case then first encountered case
             for i in range(4):
-                if (not self.trump_revealed) or ((self.trump_revealed) and \
-                    i!=self.suit.index(self.trump_suit)):
-                    #making sure a trump card is not being 'let off' if trump revealed
+                if ((not self.trump_revealed) and (self.turn_index!=self.highest_bidder_index)) or \
+                    ((self.trump_revealed) and \
+                    (i!=self.suit.index(self.trump_suit))) or ((not self.trump_revealed) and \
+                    (self.turn_index==self.highest_bidder_index) and (i!=self.suit.index(self.trump_suit))):
+                    #making sure a trump card is not being 'let off' if trump revealed or if highest_bidder
 
                     # checking separately in the order of priority for single cards
                     # if the single card is 9
@@ -463,9 +465,12 @@ class Round_1(Prepare_game):
             if not self.i1:
                 #print('\nreached line 341')
                 for i in range(4):
-                    if (not self.trump_revealed) or ((self.trump_revealed) and \
-                        i!=self.suit.index(self.trump_suit)):
-                        #making sure a trump card is not being 'let off' if trump revealed
+                    if ((not self.trump_revealed) and (self.turn_index!=self.highest_bidder_index)) or \
+                        ((self.trump_revealed) and \
+                        i!=self.suit.index(self.trump_suit)) or ((not self.trump_revealed) and \
+                        (self.turn_index==self.highest_bidder_index) and \
+                        (i!=self.suit.index(self.trump_suit))):
+                        #making sure a trump card is not being 'let off' if trump revealed or highest_bidder
 
                         # to remove empty list from comparison, .rank() may give error
                         if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])!=0:
@@ -485,9 +490,12 @@ class Round_1(Prepare_game):
                                 break
                 if not self.i2:
                     for i in range(4):
-                        if (not self.trump_revealed) or ((self.trump_revealed) and \
-                            i!=self.suit.index(self.trump_suit)):
-                            #making sure a trump card is not being 'let off' if trump revealed
+                        if ((not self.trump_revealed) and (self.turn_index!=self.highest_bidder_index)) or \
+                            ((self.trump_revealed) and \
+                            i!=self.suit.index(self.trump_suit)) or ((not self.trump_revealed) and \
+                            (self.turn_index==self.highest_bidder_index) and \
+                            (i!=self.suit.index(self.trump_suit))):
+                            #making sure trump card is not 'let off' if trump revealed or highest_bidder
 
                             # to remove empty list from comparison, .rank() may give error
                             if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])!=0:
@@ -508,9 +516,12 @@ class Round_1(Prepare_game):
                                     break
                 if not self.i2:
                     for i in range(4):
-                        if (not self.trump_revealed) or ((self.trump_revealed) and \
-                            i!=self.suit.index(self.trump_suit)):
-                            #making sure a trump card is not being 'let off' if trump revealed
+                        if ((not self.trump_revealed) and (self.turn_index!=self.highest_bidder_index)) or \
+                            ((self.trump_revealed) and \
+                            i!=self.suit.index(self.trump_suit)) or ((not self.trump_revealed) and \
+                            (self.turn_index==self.highest_bidder_index) and \
+                            (i!=self.suit.index(self.trump_suit))):
+                            #making sure trump card is not 'let off' if trump revealed or highest_bidder
 
                             # to remove empty list from comparison, .rank() may give error
                             if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])!=0:
@@ -536,9 +547,12 @@ class Round_1(Prepare_game):
         # strategy6 - suit not in hand and unfavourable to call/play trump
         def strategy_scenario6():
             for i in range(4):
-                if (not self.trump_revealed) or ((self.trump_revealed) and \
-                    i!=self.suit.index(self.trump_suit)):
-                    #making sure a trump card is not being 'let off' if trump revealed
+                if ((not self.trump_revealed) and (self.turn_index!=self.highest_bidder_index)) or \
+                    ((self.trump_revealed) and \
+                    i!=self.suit.index(self.trump_suit)) or ((not self.trump_revealed) and \
+                    (self.turn_index==self.highest_bidder_index) and \
+                    (i!=self.suit.index(self.trump_suit))):
+                    #making sure trump card is not 'let off' if trump revealed or highest_bidder
 
                     # selecting a single card which is not J or 9
                     if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])==1 and \
@@ -556,9 +570,12 @@ class Round_1(Prepare_game):
             # if no suitable single card found
             if not self.i3:
                 for i in range(4):
-                    if (not self.trump_revealed) or ((self.trump_revealed) and \
-                        i!=self.suit.index(self.trump_suit)):
-                        #making sure a trump card is not being 'let off' if trump revealed
+                    if ((not self.trump_revealed) and (self.turn_index!=self.highest_bidder_index)) or \
+                        ((self.trump_revealed) and \
+                        i!=self.suit.index(self.trump_suit)) or ((not self.trump_revealed) and \
+                        (self.turn_index==self.highest_bidder_index) and \
+                        (i!=self.suit.index(self.trump_suit))):
+                        #making sure trump card is not 'let off' if trump revealed or highest_bidder
 
                         # checking for a set of 2 that is not J along with another point card and  
                         # one among 9,A,10 along with a non-point card
@@ -579,9 +596,12 @@ class Round_1(Prepare_game):
             # if no single or double
             if not self.i3:
                 for i in range(4):
-                    if (not self.trump_revealed) or ((self.trump_revealed) and \
-                        i!=self.suit.index(self.trump_suit)):
-                        #making sure a trump card is not being 'let off' if trump revealed
+                    if ((not self.trump_revealed) and (self.turn_index!=self.highest_bidder_index)) or \
+                        ((self.trump_revealed) and \
+                        i!=self.suit.index(self.trump_suit)) or ((not self.trump_revealed) and \
+                        (self.turn_index==self.highest_bidder_index) and \
+                        (i!=self.suit.index(self.trump_suit))):
+                        #making sure a trump card is not being 'let off' if trump revealed or highest_bidr
 
                         # if len() 3 or more and suit of atleast 3 pointless cards
                         if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])>2 and \
@@ -600,8 +620,10 @@ class Round_1(Prepare_game):
             if not self.i3:
                 for i in range(4):
                     if (self.trump_revealed==False) or ((self.trump_revealed==True) and \
-                        i!=self.suit.index(self.trump_suit)):
-                        #making sure a trump card is not being 'let off' if trump revealed
+                        i!=self.suit.index(self.trump_suit)) or ((not self.trump_revealed) and \
+                        (self.turn_index==self.highest_bidder_index) and \
+                        (i!=self.suit.index(self.trump_suit))):
+                        #making sure a trump card is not being 'let off' if trump revealed or highest_bidr
 
                         # if len() 3 or more and either of list[1] not in [9,A,10] or list[-1]==J
                         if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])>2 and \
@@ -621,9 +643,12 @@ class Round_1(Prepare_game):
             if not self.i3:
                 #print('\nreached line 499')
                 for i in range(4):
-                    if (not self.trump_revealed) or ((self.trump_revealed) and \
-                        i!=self.suit.index(self.trump_suit)):
-                        #making sure a trump card is not being 'let off' if trump revealed
+                    if ((not self.trump_revealed) and (self.turn_index!=self.highest_bidder_index)) or \
+                        ((self.trump_revealed) and \
+                        i!=self.suit.index(self.trump_suit)) or ((not self.trump_revealed) and \
+                        (self.turn_index==self.highest_bidder_index) and \
+                        (i!=self.suit.index(self.trump_suit))):
+                        #making sure a trump card is not being 'let off' if trump revealed or highest_bidr
 
                         # removing empty list from comparison
                         if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])!=0:
@@ -661,10 +686,10 @@ class Round_1(Prepare_game):
         # strategy7a - calling trump but then trump suit not in hand
         def strategy_scenario7a():
             for i in range(4):
-                # selecting a single card which is not J or 9
+                # selecting a single card which is not J, 9, A or 10
                 if len(self.obj_dictn_of_cards_grouped[self.turn_index][i])==1 and \
                       self.obj_dictn_of_cards_grouped[self.turn_index][i][0].rank() not in \
-                      ['J','9']:
+                      ['J','9','A','10']:
                     #print('\nreached line 545')
                     # storing the card in self.card_played, only card
                     self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][i][0]
