@@ -710,10 +710,13 @@ class Prepare_game(Deck):
                     # - 1) 4 trump cards without J but 9 - and a) three other J's, or b) two other J's and 
                     #      teammate had called atleast 18 in first bid - can call upto 22
                     if (len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i])==4 and\
-                     self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='9') and\
-                     (j_count_lst[self.bid2_turn_index]==3 or \
-                     (j_count_lst[self.bid2_turn_index]==2 and (self.bid2_turn_index+2)%4==self.\
-                     highest_bidder1_index and self.bid_value_final>17)):
+                         self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='9') \
+                      and \
+                       (   (j_count_lst[self.bid2_turn_index]==3) \
+                          or \
+                           ((j_count_lst[self.bid2_turn_index]==2) and ((self.bid2_turn_index+2)%4==self.\
+                                 highest_bidder1_index) and (self.bid_value_final>17))\
+                       ):
 ##################### actually need to check if team mate had made such a call, and not necessarily if 
                     # if she was the highest bidder in bid1
                         if self.bid2_value_final!=21:
@@ -728,16 +731,25 @@ class Prepare_game(Deck):
                         break # to break from the for loop
                     
                     
-                    # - 2) 4 trump cards including J - and a) two other J's, or b) one other J but 3 cards 
-                    #      in same suit with highest J or 9, or c) only one other J but team mate had 
+                    # - 2) 4 trump cards including J - and a) two other J's, or c) one other J but 3 cards 
+                    #      in same suit with highest J or 9, or b) only one other J but team mate had 
                     #      called atleast 17 in first bid - can call upto 22
                     if (len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i])==4 and\
-                     self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='J') and\
-                     ((j_count_lst[self.bid2_turn_index]==2) or \
-                     (j_count_lst[self.bid2_turn_index]==1 and (self.bid2_turn_index+2)%4==self.\
-                     highest_bidder1_index and self.bid_value_final>16) or \
-                     (True in list(map(lambda x: len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index]\
-                        [x])==3, self.obj_dictn_of_cards_grouped[self.bid2_turn_index])))):
+                         self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='J') \
+                      and \
+                       (   (j_count_lst[self.bid2_turn_index]==2) \
+                          or \
+                           (   (j_count_lst[self.bid2_turn_index]==1) \
+                              and \
+                               (   ((self.bid2_turn_index+2)%4==self.highest_bidder1_index and \
+                                    self.bid_value_final>16) \
+                                  or \
+                                   (True in list(map(lambda x: len(self.obj_dictn_of_cards_grouped\
+                                    [self.bid2_turn_index][x])==3, \
+                                    self.obj_dictn_of_cards_grouped[self.bid2_turn_index])))\
+                               )\
+                           )\
+                       ):
                     # the last condition checks if there is a suit of length 3 in current bidder's hand
                     # for that , the map function returns True or False by testing elements of the iterable 
                     # against the expression in lambda function and the returned values are made into a list
@@ -758,8 +770,35 @@ class Prepare_game(Deck):
                         print('\ncase 2 of 2nd round bid satisfied')
                         break # to break from the for loop
                         
-            # - 3) 5 trump cards without J - and a) three other J's, or b) two other J's and team mate had
-            #      called atleast 17 in first bid
+                    # - 3) 5 trump cards without J but 9 - and a) three other J's, or b) two other J's and 
+                    #       team mate had called atleast 17 in first bid, or c) 1 other J with all three
+                    #       cards from the same suit - can call till 22
+                    if (len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i])==5) and\
+                       (self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='9') \
+                      and \
+                       (   (j_count_lst[self.bid2_turn_index]==3) \
+                          or \
+                           ((j_count_lst[self.bid2_turn_index]==2) and ((self.bid2_turn_index+2)%4==self.\
+                               highest_bidder1_index) and (self.bid_value_final>16)) \
+                          or \
+                           ((j_count_lst[self.bid2_turn_index]==1) and \
+                            (True in list(map(lambda x: len(self.obj_dictn_of_cards_grouped\
+                                    [self.bid2_turn_index][x])==3, \
+                                    self.obj_dictn_of_cards_grouped[self.bid2_turn_index]))))
+                       ):
+                        if self.bid2_value_final!=21:
+                            self.bid2_value=21
+                        else:
+                            self.bid2_value=22
+                        # i.e. make a call of 22 if highest bid in round is 21, else call 21 
+                        self.trump_card2=self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][2]
+                        # the 3rd lowest card in the suit is kept as trump card
+                        found=True
+                        print('\ncase 3 of 2nd round bid satisfied')
+                        break # to break from the for loop
+                    
+                    
+                    
             # - 4) 5 trump cards with J - and a) two other J's, or b) one other J and team mate had called 
             #      atleast 17 in first bid
             # - 5) 6 trump cards without J - and a) two other J's, or b) one other J and team mate 
