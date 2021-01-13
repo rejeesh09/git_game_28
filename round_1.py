@@ -31,9 +31,10 @@ class Round_1(Prepare_game):
         # this has not been tested for errors
         while not super().trump_distrb_good():
             print('\nRedealing since only one team has trump cards')
-            super().__init__(False)
-            # keeping the same bid_turn_index
-            super().bid_half_hand(True)
+            # hold and custom_deal are set to False since it's a redeal
+            super().__init__(False,False)
+            # keeping the same bid_turn_index as the last normal deal
+            super().bid_half_hand(True,False)
     
     ###################################################################
     def inp_parse_check(self,inp):
@@ -1145,9 +1146,9 @@ class Round_1(Prepare_game):
     def round1_play(self):
         # round1_play() method  ####################################
         
-        print('\nYour hand: ',end=' ')
-        for i in self.obj_deal_lst_copy[0][:8]:
-            print(i.show(),end=' ')
+#         print('\nYour hand: ',end=' ')
+#         for i in self.obj_deal_lst_copy[0][:8]:
+#             print(i.show(),end=' ')
                 
         while(len(self.obj_played_card_lst)<4):
 
