@@ -672,7 +672,7 @@ class Prepare_game(Deck):
         # inserting the trump card of previous round back in hand for finding new trump in the 
         # 2nd round of bidding
         if self.highest_bidder_index!=0:
-            print('\nFirst round trump inserted back in first round highest bidder hand')
+#             print('\nFirst round trump inserted back in first round highest bidder hand')
             self.insert_trump_card_back()
             # should be removed again if bid2_any_call is False at the end (i.e first round Trump is to stay)
         
@@ -727,7 +727,7 @@ class Prepare_game(Deck):
                         self.trump_card2=self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][1]
                         # the 2nd lowest card in the suit is kept as trump card
                         found=True
-                        print('\ncase 1 of 2nd round bid satisfied')
+#                         print('\ncase 1 of 2nd round bid satisfied')
                         break # to break from the for loop
                     
                     
@@ -737,9 +737,9 @@ class Prepare_game(Deck):
                     if (len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i])==4 and\
                          self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='J') \
                       and \
-                       (   (j_count_lst[self.bid2_turn_index]==2) \
+                       (   (j_count_lst[self.bid2_turn_index]==3) \
                           or \
-                           (   (j_count_lst[self.bid2_turn_index]==1) \
+                           (   (j_count_lst[self.bid2_turn_index]==2) \
                               and \
                                (   ((self.bid2_turn_index+2)%4==self.highest_bidder1_index and \
                                     self.bid_value_final>16) \
@@ -767,24 +767,31 @@ class Prepare_game(Deck):
                         self.trump_card2=self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][1]
                         # the 2nd lowest card in the suit is kept as trump card
                         found=True
-                        print('\ncase 2 of 2nd round bid satisfied')
+#                         print('\ncase 2 of 2nd round bid satisfied')
                         break # to break from the for loop
                         
                     # - 3) 5 trump cards without J but 9 - and a) three other J's, or b) two other J's and 
                     #       team mate had called atleast 17 in first bid, or c) 1 other J with all three
-                    #       cards from the same suit - can call till 22
+                    #       cards from the same suit, or d) 1 J with team mate having 
+                    #       called atleast 18 in round1 - can call till 22
                     if (len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i])==5) and\
                        (self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='9') \
                       and \
                        (   (j_count_lst[self.bid2_turn_index]==3) \
                           or \
                            ((j_count_lst[self.bid2_turn_index]==2) and ((self.bid2_turn_index+2)%4==self.\
-                               highest_bidder1_index) and (self.bid_value_final>16)) \
+                               highest_bidder1_index) and (self.bid_value_final>16)\
+                           ) \
                           or \
                            ((j_count_lst[self.bid2_turn_index]==1) and \
-                            (True in list(map(lambda x: len(self.obj_dictn_of_cards_grouped\
-                                    [self.bid2_turn_index][x])==3, \
-                                    self.obj_dictn_of_cards_grouped[self.bid2_turn_index]))))
+                                (   (True in list(map(lambda x: len(self.obj_dictn_of_cards_grouped\
+                                        [self.bid2_turn_index][x])==3, \
+                                        self.obj_dictn_of_cards_grouped[self.bid2_turn_index]))) \
+                               or \
+                                    (((self.bid2_turn_index+2)%4==self.highest_bidder1_index) and \
+                                        (self.bid_value_final>17))\
+                                )\
+                           )
                        ):
                         if self.bid2_value_final!=21:
                             self.bid2_value=21
@@ -794,27 +801,122 @@ class Prepare_game(Deck):
                         self.trump_card2=self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][2]
                         # the 3rd lowest card in the suit is kept as trump card
                         found=True
-                        print('\ncase 3 of 2nd round bid satisfied')
+#                         print('\ncase 3 of 2nd round bid satisfied')
+                        break # to break from the for loop
+                                        
+                    # - 4) 5 trump cards with J - and a) two other J's, or b) one other J and 
+                    #      team mate had called atleast 16 in first bid, or c) all three of same suit with
+                    #      9 and team mate had called atleast 16 in first round - can call till 22
+                    if (len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i])==5) and\
+                       (self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='J') \
+                      and \
+                       ((j_count_lst[self.bid2_turn_index]==3) \
+                        or \
+                        ( (((self.bid2_turn_index+2)%4==self.highest_bidder1_index) and \
+                          (self.bid_value_final>15)) and \
+                         (((j_count_lst[self.bid2_turn_index]==2)) or \
+                         (True in list(map(lambda x: len(self.obj_dictn_of_cards_grouped\
+                                [self.bid2_turn_index][x])==3, \
+                                self.obj_dictn_of_cards_grouped[self.bid2_turn_index]))))
+                        )\
+                       ):
+                        if self.bid2_value_final!=21:
+                            self.bid2_value=21
+                        else:
+                            self.bid2_value=22
+                        # i.e. make a call of 22 if highest bid in round is 21, else call 21 
+                        self.trump_card2=self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][2]
+                        # the 3rd lowest card in the suit is kept as trump card
+                        found=True
+#                         print('\ncase 4 of 2nd round bid satisfied')
                         break # to break from the for loop
                     
+                    # - 5) 6 trump cards without J but 9- and a) two other J's, or b) one other J and 
+                    #      team mate had called atleast 17 in first bid, or c) no other J but 
+                    #      team mate had called atleast 18 in first bid - can call till 22
+                    if (len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i])==6) and\
+                       (self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='9') \
+                      and \
+                       ( (j_count_lst[self.bid2_turn_index]==2) \
+                         or \
+                         ((j_count_lst[self.bid2_turn_index]==1) and ((self.bid2_turn_index+2)%4==self.\
+                               highest_bidder1_index) and (self.bid_value_final>16)) \
+                         or \
+                         (((self.bid2_turn_index+2)%4==self.highest_bidder1_index) and \
+                          (self.bid_value_final>17))
+                       ):
+                        if self.bid2_value_final!=21:
+                            self.bid2_value=21
+                        else:
+                            self.bid2_value=22
+                        # i.e. make a call of 22 if highest bid in round is 21, else call 21 
+                        self.trump_card2=self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][2]
+                        # the 3rd lowest card in the suit is kept as trump card
+                        found=True
+#                         print('\ncase 5 of 2nd round bid satisfied')
+                        break # to break from the for loop
                     
-                    
-            # - 4) 5 trump cards with J - and a) two other J's, or b) one other J and team mate had called 
-            #      atleast 17 in first bid
-            # - 5) 6 trump cards without J - and a) two other J's, or b) one other J and team mate 
-            #      had called atleast 17 in first bid, or c) no other J but team mate had called atleast 
-            #      18 in first bid
-            # - 6) 6 trump cards with J - and a) another J, or b) no other J but team mate had called 
-            #      atleast 17 in first bid
-            # - 7) 7 trump cards without J - and a) another J, or b) no J but team mate had called atleast 
-            #      17 in first bid
-            # - 8) 7 trump cards with J 
-            #      (8 is invalid - gets redealt in Deck())
+                    # - 6) 6 trump cards with J - and a)two other J's, or b) 1 other J, or 
+                    #      c) no other J but team mate had called atleast 16 in first bid, or d) both 
+                    #      cards of same suit with 9
+                    if (len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i])==6) and\
+                       (self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='J'):
+                        # if other two are J's then can call upto 25
+                        if j_count_lst[self.bid2_turn_index]==3:
+                            self.bid2_value=min(self.bid2_value_final+1,25)
+                            found=True
+                        # if one other J then call upto 23
+                        elif j_count_lst[self.bid2_turn_index]==2:
+                            self.bid2_value=min(self.bid2_value_final+1,23)
+                            found=True
+                        # 
+                        elif ((self.bid2_turn_index+2)%4==self.highest_bidder1_index and \
+                             self.bid_value_final>15) \
+                            or \
+                             ((True in list(map(lambda x: len(self.obj_dictn_of_cards_grouped\
+                                [self.bid2_turn_index][x])==2, \
+                                self.obj_dictn_of_cards_grouped[self.bid2_turn_index]))) and \
+                                 (self.obj_deal_lst_copy[self.bid2_turn_index][1].rank()=='9' or \
+                                 self.obj_deal_lst_copy[self.bid2_turn_index][-1].rank()=='9')
+                             ):
+                            self.bid2_value=min(self.bid2_value_final+1,22)
+                            found=True
+                        if found:
+                            self.trump_card2=self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][2]
+                            # the 3rd lowest card in the suit is kept as trump card
+#                             print('\ncase 6 of 2nd round bid satisfied')
+                            break # to break from the for loop
+                            
+                    # - 7) 7 trump cards without J - and a) another J, or b) no J but 
+                    #      team mate had called atleast 17 in first bid
+                    if (len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i])==7) and\
+                       (self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='9') \
+                      and \
+                        ((j_count_lst[self.bid2_turn_index]==1) \
+                        or \
+                        (((self.bid2_turn_index+2)%4==self.highest_bidder1_index) and \
+                         (self.bid_value_final>16))
+                        ):
+                        self.bid2_value=min(self.bid2_value_final+1,23)
+                        self.trump_card2=self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][2]
+                        # the 3rd lowest card in the suit is kept as trump card
+                        found=True
+#                         print('\ncase 7 of 2nd round bid satisfied')
+                        break # to break from the for loop
+                        
+                    # - 8) 7 trump cards with J 
+                    #      (8 is invalid - gets redealt in Deck())
+                    if (len(self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i])==7) and\
+                       (self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][-1].rank()=='J'):
+                        self.bid2_value=min(self.bid2_value_final+2,24)
+                        self.trump_card2=self.obj_dictn_of_cards_grouped[self.bid2_turn_index][i][3]
+                        # the 4rd lowest card in the suit is kept as trump card
+                        found=True
+#                         print('\ncase 8 of 2nd round bid satisfied')
+                        break # to break from the for loop
+                
                 if not found:
                     self.bid2_value=self.bid2_value_final
-                    print('\n{} passing for now, further code to be written'.format(self.players_lst[self.\
-                                                                                        bid2_turn_index]))
-            
             
                 
             if (self.bid2_value>self.bid2_value_final):
@@ -897,14 +999,14 @@ class Prepare_game(Deck):
                 print('\nTrump card set by {}: {}'.format(self.players_lst[0],self.obj_trump_checked.form()))
 
         else:
-            print('\nEveryone passed in 2nd bid round')
+#             print('\nEveryone passed in 2nd bid round')
             
             # removing the trump card of first bidding round again from the first round's 
             # highest bidder's hand
             self.obj_dictn_of_cards_grouped[self.highest_bidder_index]\
                                             [self.trump_suit_index].remove(self.trump_card)
             self.obj_deal_lst_copy[self.highest_bidder_index].remove(self.trump_card)
-            print('\nFirst round trump removed from first round highest bidder hand')
+#             print('\nFirst round trump removed from first round highest bidder hand')
             print('\nNo one called 21 or above, so trump set by {} stays for the call of {} '.format(self.\
                     players_lst[self.highest_bidder1_index],self.bid_value_final))
             
