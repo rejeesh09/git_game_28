@@ -13,10 +13,10 @@ import sys
 # sys and time used in follow_logic to print played cards with delay before taking player inp
 #######################################################################
 class Round_1(Prepare_game):
-    def __init__(self,hold,custom_deal):
+    def __init__(self,hold,custom_deal,tkntr_rt):
 #         self.hold=hold
 #         self.custom_deal=custom_deal
-        super().__init__(hold,custom_deal)
+        super().__init__(hold,custom_deal,tkntr_rt)
         # All 15 variables in init() and 6 out of 7 methods of Deck class and all 10 variables 
         # in init() of Prepare_game class are constructed by the above line
         input("\nStart bidding: 'Enter' ")
