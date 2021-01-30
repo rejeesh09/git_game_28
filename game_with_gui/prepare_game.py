@@ -29,6 +29,11 @@ from deck import Deck
 import numpy as np
 import pickle
 # both the above modules are used in the bid_half_hand() method in Prepare_game()
+
+# import tkinter as tk
+# for gui
+# import widget_manager as wm
+# widget_manager is a module to collect all gui related code in one place
 #######################################################################
 class Prepare_game(Deck):
     def __init__(self,hold,custom_deal,tkntr_rt):
@@ -39,7 +44,7 @@ class Prepare_game(Deck):
         # All the (15*) variables(attributes) in Deck()'s init() are now constructed by the above line
         super().obj_deal(hold,custom_deal)
         super().obj_sort_half_hands()
-        super().obj_display_half_hands(tkntr_rt)
+        super().obj_display_half_hands()
         super().obj_sort_hands()
         super().obj_induvidual_dictns() # makes obj_dictn_of_cards_grouped, which is used 
         #throughout to make decision on card to be played
@@ -89,6 +94,7 @@ class Prepare_game(Deck):
         #p10)        
         self.trump_played_in_round=False # to check if trump played in round, 
         #to be updated when entry added to dictn['trump'] lst
+        
         ###############################################################
 
     ###################################################################
@@ -192,8 +198,15 @@ class Prepare_game(Deck):
             self.bid_turn_index=pickle.load(fb)
             self.round1_lead_index=self.bid_turn_index
             fb.close()
+        
+        # gui window for bid messages
+        # displays the message as to who starts the bid
+        self.gui_handle.gui_half_bid_mes(self.players_lst[self.bid_turn_index])
+        # calling the appropriate method from widget_manager module using object(self.gui_handle) 
+        # created in __init__() of Deck() class
 
-        print('\nStarting bid_turn_index is: ',self.bid_turn_index)
+        
+#         print('\nStarting bid_turn_index is: ',self.bid_turn_index)
         
         self.bid_value_final=13 # to make sure min starting bid value is 14
         
@@ -212,7 +225,12 @@ class Prepare_game(Deck):
         while self.bid_counter<8:
             if self.bid_turn_index==0:
             # taking bid input if bid_turn_index==0
-                self.bid_value_inp=input('\nEnter your bid (any non-digit input will be considered as pass): ')
+            
+                # gui window for taking bid value (now as an entry, better be options of buttons)
+                
+                self.bid_value_inp=self.gui_handle.gui_half_bid_entry()
+                
+#                 self.bid_value_inp=input('\nEnter your bid (any non-digit input will be considered as pass): ')
                 if self.bid_value_inp.isdigit():
                     self.bid_value=int(self.bid_value_inp)
                     while not (13<self.bid_value<21): # setting 21 limit for half hand bid
@@ -568,6 +586,11 @@ class Prepare_game(Deck):
                 # the above is to keep a copy of who was the highest bidder in round1, which will be
                 # used for setting trump in round2 of bid(i.e. to see if a team mate had set trump in
                 # first bid round)
+                
+                # calling gui widget to display call message
+                self.gui_handle.gui_half_bid_values(self.bid_turn_index,self.bid_value_final,calls=True)
+                ############################################
+                
                 print('\n{} calls {}'.format(self.players_lst[self.bid_turn_index],self.bid_value_final))
                 self.bid_turn_index=(self.bid_turn_index+1)%4
                 self.bid_counter+=1
@@ -578,6 +601,11 @@ class Prepare_game(Deck):
                 count_1_lst.clear()
                 count_2_lst.clear()               
             else:
+                
+                # calling gui widget to display call message(pass)
+                self.gui_handle.gui_half_bid_values(self.bid_turn_index,10,calls=False)
+                ############################################
+                
                 print('\n{} passes'.format(self.players_lst[self.bid_turn_index]))
                 self.bid_turn_index=(self.bid_turn_index+2)%4
                 self.bid_counter+=2 # to skip the bidding chance of the current bidder's mate
@@ -591,6 +619,10 @@ class Prepare_game(Deck):
             # to stop bidding aft successive passes by team mates
             if (len(self.bid_counter_lst)>2) and ((self.bid_counter_lst[-1] - self.bid_counter_lst[-3])>3):
                 break
+        
+        # temp gui window for switching to prompt
+        self.gui_handle.gui_half_bid_values(self.highest_bidder_index,0,calls=False)
+        #########################################
         
         print('\n{} made the highest bid: {}'.format(self.players_lst[self.highest_bidder_index],\
                                                     self.bid_value_final))

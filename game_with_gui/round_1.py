@@ -19,7 +19,8 @@ class Round_1(Prepare_game):
         super().__init__(hold,custom_deal,tkntr_rt)
         # All 15 variables in init() and 6 out of 7 methods of Deck class and all 10 variables 
         # in init() of Prepare_game class are constructed by the above line
-        input("\nStart bidding: 'Enter' ")
+#         input("\nStart bidding: 'Enter' ")
+
         # calling the bid_half_hand method in Prepare_game()
         super().bid_half_hand(hold,custom_deal)
         # obj_display_hands(False) is called/included within(at the end of) bid_half_hand()

@@ -7,6 +7,8 @@ import numpy as np
 
 import tkinter as tk
 # for gui
+import widget_manager as wm
+# widget_manager is a module to collect all gui related code in one place
 #####################################################################
 ####################################################################
 class Deck():
@@ -68,56 +70,18 @@ class Deck():
         # player names
         #d14)
         
-        # gui window for taking input
-        self.rt=tkntr_rt
-#         self.rt.geometry('1600x900')
-#         self.rt.title('Game window')
-#         self.rt.configure(bg='black')
-        
-        fr1=tk.Frame(self.rt)
-        fr1.pack(side=tk.TOP, pady=300)
-
-        name_var=tk.StringVar()
-        self.name=name_var.get()
-        wait_var=tk.IntVar()
-        
-        def clear_fr1():
-            fr1.pack_forget()
-            wait_var.set(1)
-#             lab2.pack_forget()
-#             but2.pack_forget()
-#             lab3=tk.Label(fr1,text="Close and continue to python prompt",font=('GNU Unifont',30))
-#             lab3.pack(side=tk.TOP)
-#             but3=tk.Button(fr1,text="Close",font=('GNU Unifont',30),command=self.rt.destroy)
-#             but3.pack(side=tk.TOP)
-
-        def save_name():
-            global name, lab2, but2
-            name=name_var.get()
-            
-            lab1.grid_forget()
-            ent1.grid_forget()
-            but1.grid_forget()
-            
-            lab2=tk.Label(fr1,text='Name entered is: '+name,font=('GNU Unifont',30))
-            but2=tk.Button(fr1, text='Continue',font=('GNU Unifont',30),command=clear_fr1)
-            lab2.pack()
-            but2.pack()
-        
-        lab1=tk.Label(fr1,text='Name:',font=('GNU Unifont',20))
-        ent1=tk.Entry(fr1,textvariable=name_var,font=('GNU Unifont',20))
-        but1=tk.Button(fr1,text='Enter', font=('GNU Unifont',20),command=save_name)
-
-        lab1.grid(row=0,column=0,sticky='')
-        ent1.grid(row=0,column=1,sticky='')
-        but1.grid(row=1,column=1,sticky='')
-        
-        fr1.wait_variable(wait_var)
-        
-#         self.rt.mainloop()
+        # gui window for taking input, using 
+        self.rt=tkntr_rt        
+        self.gui_handle=wm.Widgets(self.rt)
+        # creating a Widgets() class object here - gui_handle, to call the methods for various widgets
+        # since it is being created in the __init__() of the first level parent class, it would be 
+        # availble to all child classes
+                
         #############################
         
-        self.player_name=name.capitalize()
+        self.player_name=self.gui_handle.gui_player_name()
+        # calling the appropriate method from the widget_manager module
+        self.player_name.capitalize()
 
 #         self.player_name=input('\nEnter your name: ').capitalize()
         while (not self.player_name) or (self.player_name.isspace()):
@@ -251,47 +215,12 @@ class Deck():
     ##################################################################
     # for displaying half hand
     #D3)
-    def obj_display_half_hands(self,tkntr_rt):
+    def obj_display_half_hands(self):
         
         # gui window display
-        self.rt=tkntr_rt
-        fr_0=tk.Frame(self.rt,background='DeepSkyBlue4')
-        fr_0.pack(side=tk.BOTTOM)
-
-        fr_1=tk.Frame(self.rt,background='DeepSkyBlue4')
-        fr_1.pack(side=tk.RIGHT)
-
-        fr_2=tk.Frame(self.rt,background='DeepSkyBlue4')
-        fr_2.pack(side=tk.TOP)
-
-        fr_3=tk.Frame(self.rt,background='DeepSkyBlue4')
-        fr_3.pack(side=tk.LEFT)
-
-        fr_lst=[fr_0,fr_1,fr_2,fr_3]
-
-        button_lst_4_nme=[]
-        for i in range(4):
-            button_lst_4_nme.append(tk.Button(fr_lst[i],text=self.players_lst[i],font=('GNU Unifont',15)))
-            button_lst_4_nme[i].pack(side=tk.BOTTOM,pady=10)
-
-
-        button_lst_4_crd=[[],[],[],[]]
-        for j in range(4):
-            for i in range(4):
-                k=self.obj_half_deal_lst[j][i]
-                button_lst_4_crd[j].append(tk.Button(fr_lst[j],text=k.form(),fg=k.colour(),font=('GNU Unifont',15)))
-                button_lst_4_crd[j][i].pack(side=tk.LEFT)
-
-        some_var=tk.IntVar()
-        
-        fr_center=tk.Frame(self.rt,background='black')
-        fr_center.pack()
-        but_cen=tk.Button(fr_center,text='Continue',command=lambda:some_var.set(1))
-        but_cen.pack(side=tk.TOP,pady=300)
-        
-        fr_center.wait_variable(some_var)
-#         self.rt.mainloop()
-        
+        # the gui disp method of Widget() class in widget_manager module is called by its object
+        # gui_handle which was created earlier in __init__() of Deck()
+        self.gui_handle.gui_disp_half_hands(self.players_lst,self.obj_half_deal_lst)
         ####################
         
         print('\n')
