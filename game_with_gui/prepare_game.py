@@ -198,13 +198,13 @@ class Prepare_game(Deck):
             self.bid_turn_index=pickle.load(fb)
             self.round1_lead_index=self.bid_turn_index
             fb.close()
-        
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^       
         # gui window for bid messages
         # displays the message as to who starts the bid
         self.gui_handle.gui_half_bid_mes(self.players_lst[self.bid_turn_index])
         # calling the appropriate method from widget_manager module using object(self.gui_handle) 
         # created in __init__() of Deck() class
-
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         
 #         print('\nStarting bid_turn_index is: ',self.bid_turn_index)
         
@@ -226,9 +226,10 @@ class Prepare_game(Deck):
             if self.bid_turn_index==0:
             # taking bid input if bid_turn_index==0
             
-                # gui window for taking bid value (now as an entry, better be options of buttons)
-                
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                # gui window for taking bid value (now as an entry, better be options of buttons)                
                 self.bid_value_inp=self.gui_handle.gui_half_bid_entry()
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 
 #                 self.bid_value_inp=input('\nEnter your bid (any non-digit input will be considered as pass): ')
                 if self.bid_value_inp.isdigit():
@@ -587,9 +588,10 @@ class Prepare_game(Deck):
                 # used for setting trump in round2 of bid(i.e. to see if a team mate had set trump in
                 # first bid round)
                 
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 # calling gui widget to display call message
                 self.gui_handle.gui_half_bid_values(self.bid_turn_index,self.bid_value_final,calls=True)
-                ############################################
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 
                 print('\n{} calls {}'.format(self.players_lst[self.bid_turn_index],self.bid_value_final))
                 self.bid_turn_index=(self.bid_turn_index+1)%4
@@ -602,9 +604,10 @@ class Prepare_game(Deck):
                 count_2_lst.clear()               
             else:
                 
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                
                 # calling gui widget to display call message(pass)
-                self.gui_handle.gui_half_bid_values(self.bid_turn_index,10,calls=False)
-                ############################################
+                self.gui_handle.gui_half_bid_values(self.bid_turn_index,0,calls=False)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 
                 print('\n{} passes'.format(self.players_lst[self.bid_turn_index]))
                 self.bid_turn_index=(self.bid_turn_index+2)%4
@@ -619,9 +622,7 @@ class Prepare_game(Deck):
             # to stop bidding aft successive passes by team mates
             if (len(self.bid_counter_lst)>2) and ((self.bid_counter_lst[-1] - self.bid_counter_lst[-3])>3):
                 break
-        
-        # temp gui window for switching to prompt
-        self.gui_handle.gui_half_bid_values(self.highest_bidder_index,0,calls=False)
+
         #########################################
         
         print('\n{} made the highest bid: {}'.format(self.players_lst[self.highest_bidder_index],\
@@ -635,6 +636,11 @@ class Prepare_game(Deck):
             self.trump_suit_index=self.suit.index(self.trump_suit)
             print('\nTrump card set by {}'.format(self.players_lst[self.highest_bidder_index]))
             
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^            
+            # gui window for declaring the bid and bidder after completing the half_bid
+            self.gui_handle.gui_half_bid_declare(self.highest_bidder_index,self.bid_value_final)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            
             # need to remove trump card from the obj_dictn_of_cards_grouped to make sure it is not 
             # played until trump is revealed
             # this is done only for the 3 other players, since the condition is taken care of 
@@ -645,12 +651,19 @@ class Prepare_game(Deck):
 
         # if player is the highest bidder
         else:
+            
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^            
+            #gui window for taking trump input and declaring bidder if player bids highest
+            self.player_input=self.gui_handle.gui_half_bid_trump(self.bid_value_final)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
             print('\nYour hand: ',end=' ')
             for i in self.obj_half_deal_lst[0][:4]:
                 print(i.show(),end=' ')
-            self.player_input=input('\nSet trump card; '
-                +'\nEnter rank followed by the first letter of the suit, '
-                +'\neg. 7s or ah or 10d etc.: ').lower()
+            
+#             self.player_input=input('\nSet trump card; '
+#                 +'\nEnter rank followed by the first letter of the suit, '
+#                 +'\neg. 7s or ah or 10d etc.: ').lower()
 
             # trump input converted to object
             self.obj_trump_checked=self.trump_verify(self.player_input,True)
@@ -662,7 +675,7 @@ class Prepare_game(Deck):
             self.trump_card=self.obj_trump_checked
             print('\nTrump card set by {}: {}'.format(self.players_lst[0],self.obj_trump_checked.form()))
 
-
+        
         # displaying full hands/ pass True to see updated hands after each round
         self.obj_display_hands(False)
 

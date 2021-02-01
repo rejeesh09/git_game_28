@@ -53,13 +53,13 @@ class Widgets():
         fr_0.pack(side=tk.BOTTOM,pady=10)
 
         fr_1=tk.Frame(self.rt,background='DeepSkyBlue4')
-        fr_1.pack(side=tk.RIGHT,padx=10)
+        fr_1.pack(side=tk.RIGHT,padx=30)
 
         fr_2=tk.Frame(self.rt,background='DeepSkyBlue4')
         fr_2.pack(side=tk.TOP,pady=10)
 
         fr_3=tk.Frame(self.rt,background='DeepSkyBlue4')
-        fr_3.pack(side=tk.LEFT,padx=10)
+        fr_3.pack(side=tk.LEFT,padx=30)
 
         fr_lst=[fr_0,fr_1,fr_2,fr_3]
 
@@ -111,16 +111,10 @@ class Widgets():
             self.lab_call_lst=[self.lab_self_call,self.lab_right_call,\
                                self.lab_mate_call,self.lab_left_call]
 
-            self.but_next=tk.Button(self.fr_hlf_bd_center,text='>>',font=('GNU Unifont',15),command=var2)
+            self.but_next=tk.Button(self.fr_hlf_bd_center,text='>>',font=('GNU Unifont',15))
+            some_var2.set(1)
             
-            self.lab_self_call.grid(row=4,column=1,columnspan=2,pady=5,sticky='')
-            self.lab_right_call.grid(row=2,column=3,padx=5,sticky='')
-            self.lab_mate_call.grid(row=0,column=1,columnspan=2,pady=5,sticky='')
-            self.lab_left_call.grid(row=2,column=0,padx=5,sticky='')
-            self.but_next.grid(row=2,column=1,columnspan=2,sticky='')
-            
-            
-        
+                   
         self.fr_hlf_bd_center=tk.Frame(self.rt,background='black')
         self.fr_hlf_bd_center.pack(side=tk.TOP,pady=250)
         lab_mes=tk.Label(self.fr_hlf_bd_center,text='Bidding starts with '+first_bidder,\
@@ -138,7 +132,11 @@ class Widgets():
         half_bid_var=tk.StringVar()
         some_var3=tk.IntVar()
         
-        self.lab_self_call.grid_forget()
+        self.lab_self_call.grid(row=4,column=1,columnspan=2,pady=5,sticky='')
+        self.lab_right_call.grid(row=2,column=3,padx=5,sticky='')
+        self.lab_mate_call.grid(row=0,column=1,columnspan=2,pady=5,sticky='')
+        self.lab_left_call.grid(row=2,column=0,padx=5,sticky='')
+            
         
         def save_hlf_bd_val():
             global half_bid_val
@@ -165,8 +163,7 @@ class Widgets():
     ############## gui_half_bid_entry() end ########################################
     
     def gui_half_bid_values(self,bidder_indx,bid_val,calls):
-        
-        self.lab_self_call.grid(row=4,column=1,columnspan=2,pady=5,sticky='')
+
         
         some_var4=tk.IntVar()
         
@@ -176,22 +173,89 @@ class Widgets():
         if calls:
             self.lab_call_lst[bidder_indx].configure(text=self.players_lst[bidder_indx]+' calls '+str(bid_val))
 
-        elif bid_val==10:
+        else:
             self.lab_call_lst[bidder_indx].configure(text=self.players_lst[bidder_indx]+' passes ')
 
-        else:
-            some_var4.set(1)
             
         self.but_next.configure(command=nxt)
+        self.but_next.grid(row=2,column=1,columnspan=2,sticky='')
+        
+        self.lab_self_call.grid(row=4,column=1,columnspan=2,pady=5,sticky='')
+        self.lab_right_call.grid(row=2,column=3,padx=5,sticky='')
+        self.lab_mate_call.grid(row=0,column=1,columnspan=2,pady=5,sticky='')
+        self.lab_left_call.grid(row=2,column=0,padx=5,sticky='')
         
         self.fr_hlf_bd_center.wait_variable(some_var4)
         
     ############## gui_half_bid_values() end #######################################
     
-    def gui_half_bid_trump(self):
-        pass
+    def gui_half_bid_trump(self,bid_val):
+        
+        self.lab_self_call.grid_forget()
+        self.lab_right_call.grid_forget()
+        self.lab_mate_call.grid_forget()
+        self.lab_left_call.grid_forget()
+        
+        some_var6=tk.IntVar()
+        trump_var=tk.StringVar()
+        
+        def declare():
+            
+            lab_hlf_bd_mes_fnl.configure(text='Trump card set by '+self.players_lst[0])
+            self.but_next.configure(text='Deal full hand')
+            self.but_next.configure(command= lambda: some_var6.set(1))
+        
+        def save_trump():
+            global hlf_bd_trump
+            hlf_bd_trump=trump_var.get()
+            
+            self.lab_hlf_bd_trmp.grid_forget()
+            self.ent_hlf_bd_trmp.grid_forget()
+            self.but_hlf_bd_trmp.grid_forget()
+            
+            self.but_next.configure(command=declare)
+            
+        
+        def take_trump():
+            self.lab_hlf_bd_trmp=tk.Label(self.fr_hlf_bd_center,text='Enter trump card',font=('GNU Unifont',15))
+            self.ent_hlf_bd_trmp=tk.Entry(self.fr_hlf_bd_center,textvariable=trump_var,font=('GNU Unifont',15))
+            self.but_hlf_bd_trmp=tk.Button(self.fr_hlf_bd_center,text='Enter', font=('GNU Unifont',15),\
+                                     command=save_trump)
+
+            self.lab_hlf_bd_trmp.grid(row=2,column=1,sticky='')
+            self.ent_hlf_bd_trmp.grid(row=2,column=2,sticky='')
+            self.but_hlf_bd_trmp.grid(row=3,column=2,sticky='')
+        
+        lab_hlf_bd_mes_fnl=tk.Label(self.fr_hlf_bd_center,\
+                    text=self.players_lst[0]+' made the highest bid '+str(bid_val),font=('GNU Unifont',15))
+        lab_hlf_bd_mes_fnl.grid(row=0,column=1,columnspan=2,pady=5,sticky='')        
+        self.but_next.configure(command=take_trump)
+        
+        
+        self.fr_hlf_bd_center.wait_variable(some_var6)        
+        return(hlf_bd_trump)
+        
     ############## gui_half_bid_trump() end ########################################
     
-    def gui_half_bid_declare(self):
-        pass
+    def gui_half_bid_declare(self,bidder_indx,bid_val):
+        
+        self.lab_self_call.grid_forget()
+        self.lab_right_call.grid_forget()
+        self.lab_mate_call.grid_forget()
+        self.lab_left_call.grid_forget()
+        
+        some_var5=tk.IntVar()
+        
+        def disp_val():
+            lab_hlf_bd_mes_fnl.configure(text='Trump card set by '+self.players_lst[bidder_indx])
+            self.but_next.configure(command= lambda: some_var5.set(1))
+        
+        lab_hlf_bd_mes_fnl=tk.Label(self.fr_hlf_bd_center,\
+                            text=self.players_lst[bidder_indx]+' made the highest bid '+str(bid_val),\
+                                   font=('GNU Unifont',15))
+        lab_hlf_bd_mes_fnl.grid(row=0,column=1,columnspan=2,pady=5,sticky='')
+        
+        self.but_next.configure(command=disp_val)
+        
+        self.fr_hlf_bd_center.wait_variable(some_var5)
     ############## gui_half_bid_declare() end ######################################

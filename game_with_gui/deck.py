@@ -69,7 +69,8 @@ class Deck():
         
         # player names
         #d14)
-        
+
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         # gui window for taking input, using 
         self.rt=tkntr_rt        
         self.gui_handle=wm.Widgets(self.rt)
@@ -81,6 +82,7 @@ class Deck():
         
         self.player_name=self.gui_handle.gui_player_name()
         # calling the appropriate method from the widget_manager module
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         self.player_name.capitalize()
 
 #         self.player_name=input('\nEnter your name: ').capitalize()
@@ -97,15 +99,7 @@ class Deck():
     def obj_deal(self,hold,custom_deal):
         self.cards_copy=self.cards_no_colr.copy()
         if not (hold or custom_deal):
-            # gui message
             
-#             fr2=tk.Frame(self.rt)
-#             fr2.pack(side=tk.TOP, pady=300)
-            
-#             lab3=tk.Label(fr2, text='No hold or custom',font=('GNU Unicode',30))
-#             lab3.pack()
-            
-            #############
             print('\nNo hold or no custom')
             #5.########## var5
             self.obj_deal_lst=[[],[],[],[]]
@@ -166,18 +160,6 @@ class Deck():
                     
             if not redeal_count:
                 
-                #gui message
-                
-#                 lab4=tk.Label(fr2,text='All hands are good to go',font=('GNU Unicode',30))
-#                 lab4.pack()
-                
-#                 def clear_fr2():
-#                     fr2.pack_forget()
-                
-#                 but3=tk.Button(fr2,text='Deal',font=('GNU Unicode',30),command=clear_fr2)
-#                 but3.pack()
-                
-                ############
                 print('\nAll hands are good to go')
 
                 # saving a copy for debugging 
@@ -217,11 +199,12 @@ class Deck():
     #D3)
     def obj_display_half_hands(self):
         
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         # gui window display
         # the gui disp method of Widget() class in widget_manager module is called by its object
         # gui_handle which was created earlier in __init__() of Deck()
         self.gui_handle.gui_disp_half_hands(self.players_lst,self.obj_half_deal_lst)
-        ####################
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         
         print('\n')
         for indxx in range(4):
