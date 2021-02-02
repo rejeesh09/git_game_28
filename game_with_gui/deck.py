@@ -95,6 +95,7 @@ class Deck():
         
     ##################################################################
     # for dealing out the four hands object-based
+    # creates the list obj_deal_lst which is the unsorted original deal_lst
     #D1)
     def obj_deal(self,hold,custom_deal):
         self.cards_copy=self.cards_no_colr.copy()
@@ -177,6 +178,7 @@ class Deck():
     
     ##################################################################          
     # for sorting half the hand, object based
+    # obj_half_deal_lst has the first 4 cards dealt for each player (but sorted among the 4 of them)
     #D2)
     def obj_sort_half_hands(self):
         #5.b.#### var5.b
@@ -247,6 +249,14 @@ class Deck():
     # for displaying the hands object based
     #D5)
     def obj_display_hands(self,show_updated):
+        
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        # gui window display
+        # the gui_disp_full_hands method of Widget() class in widget_manager module is called by its object
+        # gui_handle which was created earlier in __init__() of Deck()
+        self.gui_handle.gui_disp_full_hands(self.obj_deal_lst_sorted)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        
         if not show_updated:
             print('\n')
             for key in self.obj_dictn_of_players_and_hand:

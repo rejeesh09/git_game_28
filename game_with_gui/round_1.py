@@ -25,7 +25,7 @@ class Round_1(Prepare_game):
         super().bid_half_hand(hold,custom_deal)
         # obj_display_hands(False) is called/included within(at the end of) bid_half_hand()
         
-        input("\nStart 2nd bidding: 'Enter' ")
+#         input("\nStart 2nd bidding: 'Enter' ")
         super().bid_full_hand()
         
         # redealing if trump_distrb_good() returns false

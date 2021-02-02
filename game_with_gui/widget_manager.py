@@ -49,34 +49,34 @@ class Widgets():
         
         self.players_lst=players_lst
         
-        fr_0=tk.Frame(self.rt,background='DeepSkyBlue4')
-        fr_0.pack(side=tk.BOTTOM,pady=10)
+        self.fr_0=tk.Frame(self.rt,background='DeepSkyBlue4')
+        self.fr_0.pack(side=tk.BOTTOM,pady=10)
 
-        fr_1=tk.Frame(self.rt,background='DeepSkyBlue4')
-        fr_1.pack(side=tk.RIGHT,padx=30)
+        self.fr_1=tk.Frame(self.rt,background='DeepSkyBlue4')
+        self.fr_1.pack(side=tk.RIGHT,padx=30)
 
-        fr_2=tk.Frame(self.rt,background='DeepSkyBlue4')
-        fr_2.pack(side=tk.TOP,pady=10)
+        self.fr_2=tk.Frame(self.rt,background='DeepSkyBlue4')
+        self.fr_2.pack(side=tk.TOP,pady=10)
 
-        fr_3=tk.Frame(self.rt,background='DeepSkyBlue4')
-        fr_3.pack(side=tk.LEFT,padx=30)
+        self.fr_3=tk.Frame(self.rt,background='DeepSkyBlue4')
+        self.fr_3.pack(side=tk.LEFT,padx=30)
 
-        fr_lst=[fr_0,fr_1,fr_2,fr_3]
+        self.fr_lst=[self.fr_0,self.fr_1,self.fr_2,self.fr_3]
 
         button_lst_4_nme=[]
         for i in range(4):
-            button_lst_4_nme.append(tk.Button(fr_lst[i],text=self.players_lst[i],\
+            button_lst_4_nme.append(tk.Button(self.fr_lst[i],text=self.players_lst[i],\
                                               font=('GNU Unifont',15)))
             button_lst_4_nme[i].pack(side=tk.BOTTOM,pady=10)
 
 
-        button_lst_4_crd=[[],[],[],[]]
+        self.button_lst_4_crd=[[],[],[],[]]
         for j in range(4):
             for i in range(4):
                 k=obj_half_deal_lst[j][i]
-                button_lst_4_crd[j].append(tk.Button(fr_lst[j],text=k.form(),fg=k.colour(),\
+                self.button_lst_4_crd[j].append(tk.Button(self.fr_lst[j],text=k.form(),fg=k.colour(),\
                                                      font=('GNU Unifont',15)))
-                button_lst_4_crd[j][i].pack(side=tk.LEFT)
+                self.button_lst_4_crd[j][i].pack(side=tk.LEFT)
 
         some_var=tk.IntVar()
         
@@ -86,12 +86,45 @@ class Widgets():
         
         fr_center=tk.Frame(self.rt,background='black')
         fr_center.pack()
-        but_cen=tk.Button(fr_center,text='Start bidding',command=clear_fr_cen)
+        but_cen=tk.Button(fr_center,text='Start bidding',font=('GNU Unifont',15),command=clear_fr_cen)
         but_cen.pack(side=tk.TOP,pady=300)
         
         fr_center.wait_variable(some_var)
         
     ############### gui_disp_half_hands() end ######################################
+    
+    def gui_disp_full_hands(self,obj_deal_lst_sorted):
+    # the original sorted list is used here, and all cards including trump are displayed, needs to be
+    # changed to the updated lst with played cards and trump removed
+        
+        self.fr_hlf_bd_center.pack_forget()
+        
+        for j in range(4):
+            for i in range(4):
+                self.button_lst_4_crd[j][i].pack_forget()
+            self.button_lst_4_crd[j].clear()
+            
+        for j in range(4):
+            for k in range(8):
+                h=obj_deal_lst_sorted[j][k]
+                self.button_lst_4_crd[j].append(tk.Button(self.fr_lst[j],text=h.form(),fg=h.colour(),\
+                                                     font=('GNU Unifont',15)))
+                self.button_lst_4_crd[j][k].pack(side=tk.LEFT)
+        
+        some_var7=tk.IntVar()
+        
+        def fll_bd_nxt1():
+            some_var7.set(1)
+        
+        self.fr_fll_bd_center=tk.Frame(self.rt,background='black')
+        self.fr_fll_bd_center.pack(side=tk.TOP,pady=250)
+        self.but_fll_nxt=tk.Button(self.fr_fll_bd_center,text='Start bidding',font=('GNU Unifont',15),\
+                                   command=fll_bd_nxt1)
+        self.but_fll_nxt.grid(row=2,column=1,columnspan=2,sticky='')
+        
+        self.fr_fll_bd_center.wait_variable(some_var7)
+        
+    ############### gui_disp_full_hands() end ######################################
     
     def gui_half_bid_mes(self,first_bidder):
         
@@ -144,17 +177,19 @@ class Widgets():
             lab_hlf_bd_val.grid_forget()
             ent_hlf_bd_val.grid_forget()
             but_hlf_bd_val.grid_forget()
+            self.lab_self_call.grid(row=4,column=1,columnspan=2,pady=5,sticky='')
 
             some_var3.set(1)
         
+        self.lab_self_call.grid_forget()
         lab_hlf_bd_val=tk.Label(self.fr_hlf_bd_center,text='Enter bid value',font=('GNU Unifont',15))
         ent_hlf_bd_val=tk.Entry(self.fr_hlf_bd_center,textvariable=half_bid_var,font=('GNU Unifont',15))
         but_hlf_bd_val=tk.Button(self.fr_hlf_bd_center,text='Enter', font=('GNU Unifont',15),\
                                  command=save_hlf_bd_val)
 
-        lab_hlf_bd_val.grid(row=4,column=1,sticky='')
-        ent_hlf_bd_val.grid(row=4,column=2,sticky='')
-        but_hlf_bd_val.grid(row=5,column=2,sticky='')
+        lab_hlf_bd_val.grid(row=5,column=1,sticky='')
+        ent_hlf_bd_val.grid(row=5,column=2,sticky='')
+        but_hlf_bd_val.grid(row=6,column=2,sticky='')
         
         self.fr_hlf_bd_center.wait_variable(some_var3)
         
@@ -248,6 +283,7 @@ class Widgets():
         
         def disp_val():
             lab_hlf_bd_mes_fnl.configure(text='Trump card set by '+self.players_lst[bidder_indx])
+            self.but_next.configure(text='Deal full hand')
             self.but_next.configure(command= lambda: some_var5.set(1))
         
         lab_hlf_bd_mes_fnl=tk.Label(self.fr_hlf_bd_center,\
