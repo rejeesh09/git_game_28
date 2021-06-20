@@ -92,10 +92,9 @@ class Prepare_game(Deck):
         self.trump_revealed=False # this can be used to make decision on calling trump
         #13.4#### var13.4
         #p10)        
-        self.trump_played_in_round=False # to check if trump played in round, 
-        #to be updated when entry added to dictn['trump'] lst
+        self.trump_played_in_round=False # to check if trump played in round,
+        # to be updated when entry added to dictn['trump'] lst
         
-        ###############################################################
 
     ###################################################################
     # init() end ######################################################
@@ -660,10 +659,6 @@ class Prepare_game(Deck):
             print('\nYour hand: ',end=' ')
             for i in self.obj_half_deal_lst[0][:4]:
                 print(i.show(),end=' ')
-            
-#             self.player_input=input('\nSet trump card; '
-#                 +'\nEnter rank followed by the first letter of the suit, '
-#                 +'\neg. 7s or ah or 10d etc.: ').lower()
 
             # trump input converted to object
             self.obj_trump_checked=self.trump_verify(self.player_input,True)
@@ -677,7 +672,7 @@ class Prepare_game(Deck):
 
         
         # displaying full hands/ pass True to see updated hands after each round
-        self.obj_display_hands(False)
+        self.obj_display_hands(self.highest_bidder_index,self.trump_revealed,show_updated=False,situation=0)
 
     ###################################################################
     # bid_half_hand() end #############################################
@@ -692,7 +687,13 @@ class Prepare_game(Deck):
         # round1_lead_index stores the value of the first bid_turn_index value which was generated 
         # randomly. bid_turn_index and similarly bid2_turn_index get updated during bids 
         
-        print('\nStarting bid2_turn_index is: ',self.round1_lead_index)
+        
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        # gui window for 2nd bid round message
+        self.gui_handle.gui_full_bid_mes(self.players_lst[self.bid2_turn_index])
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+#         print('\nStarting bid2_turn_index is: ',self.round1_lead_index)
         
         self.bid2_value_final=20 # to make sure min starting bid value is 21
         self.bid2_counter=0
@@ -724,7 +725,13 @@ class Prepare_game(Deck):
         while self.bid2_counter<8:
             if self.bid2_turn_index==0:
             # taking bid input if bid_turn_index==0
-                self.bid2_value_inp=input('\nEnter your 2nd round bid (any non-digit input will be considered as pass: ')
+            
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                # gui window for full_bid entry
+                self.bid2_value_inp=self.gui_handle.gui_full_bid_entry()
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+#                 self.bid2_value_inp=input('\nEnter your 2nd round bid (any non-digit input will be considered as pass: ')
                 if self.bid2_value_inp.isdigit():
                     self.bid2_value=int(self.bid2_value_inp)
                     while not (20<self.bid2_value<28):
@@ -968,13 +975,23 @@ class Prepare_game(Deck):
                 self.bid2_value_final=self.bid2_value
                 self.highest_bidder2_index=self.bid2_turn_index
                 
-                print('\n{} calls {}'.format(self.players_lst[self.bid2_turn_index],self.bid2_value))
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                # gui window for full bid call display
+                self.gui_handle.gui_full_bid_values(self.bid2_turn_index,self.bid2_value,calls=True)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#                 print('\n{} calls {}'.format(self.players_lst[self.bid2_turn_index],self.bid2_value))
                 self.bid2_counter+=1
                 self.bid2_turn_index=(self.bid2_turn_index+1)%4
                 self.bid2_any_call=True                
             
             else:
-                print('\n{} passes'.format(self.players_lst[self.bid2_turn_index]))
+                
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                # gui window for full bid call display(pass)
+                self.gui_handle.gui_full_bid_values(self.bid2_turn_index,20,calls=False)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+#                 print('\n{} passes'.format(self.players_lst[self.bid2_turn_index]))
                 
                 if not self.bid2_any_call:
                     if not self.bid2_counter==3:
@@ -998,6 +1015,7 @@ class Prepare_game(Deck):
         
         # if any call was made in bidding round 2
         if self.bid2_any_call:
+            
             print('\n{} made the highest bid: {}'.format(self.players_lst[self.highest_bidder2_index],\
                 self.bid2_value_final))
             
@@ -1014,6 +1032,13 @@ class Prepare_game(Deck):
                 self.trump_set=True
                 self.trump_suit=self.trump_card.suit()
                 self.trump_suit_index=self.suit.index(self.trump_suit)
+                
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                # gui window for declaring 2nd bid round result
+                self.gui_handle.gui_full_bid_declare(self.highest_bidder2_index, self.bid2_value_final,\
+                                                    no_call=False)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                
                 print('\nTrump card set by {}'.format(self.players_lst[self.highest_bidder2_index]))
 
                 # need to remove trump card from the obj_dictn_of_cards_grouped to make sure it is not 
@@ -1026,12 +1051,18 @@ class Prepare_game(Deck):
             
             # if player is the highest bidder
             else:
-                print('\nYour hand: ',end=' ')
-                for i in self.obj_deal_lst_copy[0][:8]:
-                    print(i.show(),end=' ')
-                self.player_input=input('\nSet trump card; '
-                    +'\nEnter rank followed by the first letter of the suit, '
-                    +'\neg. 7s or ah or 10d etc.: ').lower()
+                
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                # gui window for taking trump entry
+                self.player_input=self.gui_handle.gui_full_bid_trump(self.bid2_value_final)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                
+                
+#                 print('\nYour hand: ',end=' ')
+#                 for i in self.obj_deal_lst_copy[0][:8]:
+#                     print(i.show(),end=' ')
+#                 self.player_input=input('\nSet trump card; '
+#                     +'\nEnter rank followed by the first letter of the suit, '
+#                     +'\neg. 7s or ah or 10d etc.: ').lower()
 
                 # trump input converted to object
                 self.obj_trump_checked=self.trump_verify(self.player_input,False)
@@ -1042,6 +1073,12 @@ class Prepare_game(Deck):
                 # storing the trump input to the variable used by all hands(from Prepare_game())
                 self.trump_card=self.obj_trump_checked
                 print('\nTrump card set by {}: {}'.format(self.players_lst[0],self.obj_trump_checked.form()))
+                
+                
+            # displaying full hands/ pass True to see updated hands after each round(option for terminal disp
+            # not applicable for gui display)
+            self.obj_display_hands(self.highest_bidder2_index,\
+                                   self.trump_revealed,show_updated=False,situation=1)
 
         else:
 #             print('\nEveryone passed in 2nd bid round')
@@ -1052,8 +1089,15 @@ class Prepare_game(Deck):
                                             [self.trump_suit_index].remove(self.trump_card)
             self.obj_deal_lst_copy[self.highest_bidder_index].remove(self.trump_card)
 #             print('\nFirst round trump removed from first round highest bidder hand')
+
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+            # gui window for declaring 2nd bid round result
+            self.gui_handle.gui_full_bid_declare(self.highest_bidder1_index,0,no_call=True)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
             print('\nNo one called 21 or above, so trump set by {} stays for the call of {} '.format(self.\
-                    players_lst[self.highest_bidder1_index],self.bid_value_final))
+                    players_lst[self.highest_bidder1_index],self.bid_value_final))    
+        
             
     ###################################################################
     # bid_full_hand() end #############################################
@@ -1075,6 +1119,10 @@ class Prepare_game(Deck):
             return(False)
         else:
             return(True)
+        
+        
+    ###################################################################
+    # trump_distrb_good() end #########################################
     
     #P4)
     # to insert the trump card back in highest bidder dictn once trump is revealed

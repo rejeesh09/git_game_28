@@ -83,7 +83,7 @@ class Deck():
         self.player_name=self.gui_handle.gui_player_name()
         # calling the appropriate method from the widget_manager module
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        self.player_name.capitalize()
+        self.player_name=self.player_name.capitalize()
 
 #         self.player_name=input('\nEnter your name: ').capitalize()
         while (not self.player_name) or (self.player_name.isspace()):
@@ -248,13 +248,13 @@ class Deck():
     ##################################################################          
     # for displaying the hands object based
     #D5)
-    def obj_display_hands(self,show_updated):
+    def obj_display_hands(self,highest_bidder,trump_revealed,show_updated,situation):
         
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         # gui window display
         # the gui_disp_full_hands method of Widget() class in widget_manager module is called by its object
         # gui_handle which was created earlier in __init__() of Deck()
-        self.gui_handle.gui_disp_full_hands(self.obj_deal_lst_sorted)
+        self.gui_handle.gui_disp_full_hands(highest_bidder,trump_revealed,self.obj_deal_lst_copy,situation)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         
         if not show_updated:

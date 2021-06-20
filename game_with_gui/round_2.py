@@ -8,12 +8,12 @@ class Round_2(Round_1):
         self.hold=hold
         self.custom_deal=custom_deal
         self.tkntr_rt=tkntr_rt
-        # don't think the arguments passed have to be made self.
+        # don't think these arguments to be passed below have to be made self as done above.
         super().__init__(self.hold,self.custom_deal,self.tkntr_rt)
         # kind of creating an object instance of Round_1() class with the above __init__()
         super().round1_play()
-        # similarly round2_play(to be defined){as well as __init__()} 
-        # can be called in __init__() of Round_3() and so on.
+        # similarly round2_play(to be defined){as well as super().__init__()} 
+        # can be called in __init__() of class Round_3(Round_2) and so on.
     
     # methods to be defined in this class
     # round2_lead_logic()
