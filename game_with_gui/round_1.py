@@ -1024,12 +1024,20 @@ class Round_1(Prepare_game):
                             print('\nRevealing trump, card set by {} was: {}'.format(\
                                         self.players_lst[self.highest_bidder_index],self.trump_card.show()))
 
-                            # inserting the trump card back into the highest bidder dictionary (if not player)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                            # gui window display
+                            # the gui disp method of Widget() class in widget_manager module is called by its object
+                            # gui_handle which was created earlier in __init__() of Deck()
+                            self.gui_handle.gui_round1_trump_reveal(self.turn_index,self.trump_card)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                            # inserting the trump card back into the highest bidder dictionary 
+                            # (if not player)
                             if self.highest_bidder_index:
                                 self.insert_trump_card_back()
 
                             # if highest bidder himself is revealing trump
-                            # but this cannot happen in round1
+                            # but this cannot happen in round1 - why not? highest bidder is not the one 
+                            # who starts the round
                             
                             if self.highest_bidder_index==self.turn_index:
                                 self.trump_played_in_round=True
