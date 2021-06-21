@@ -305,15 +305,19 @@ class Widgets():
 
             for j in range(4):
                 for k in obj_deal_lst_copy[j]:
+                # trump_card will not be available in obj_deal_lst_copy(except in player hand if player 
+                # himself was highest bidder)
                     l=tk.Button(self.fr_lst[j],text=k.form(),fg=k.colour(),font=('GNU Unifont',15))
                     self.button_lst_4_crd[j].append(l)
                     l.pack(side=tk.LEFT)
 
+            # the trump card will not be available in obj_deal_copy, so instead adding
+            # an extra button in its place
             self.but_trump_card=tk.Button(self.fr_lst[highest_bidder_indx],\
                                               bg='red',text='T',font=('GNU Unifont',15))
 
             if (not trump_revealed) and (highest_bidder_indx!=0):           
-                self.but_trump_card.pack(side=tk.TOP)
+                self.but_trump_card.pack(side=tk.RIGHT,padx=10)
             else:
                 self.but_trump_card.pack_forget()
 
@@ -335,6 +339,7 @@ class Widgets():
             self.fr_fll_bd_center.wait_variable(some_var7)
             
         elif situation==1:
+        # i.e. the full hand display method is being called after bidding is over and round1 to start
             
             for j in range(4):
                 for i in self.button_lst_4_crd[j]:
@@ -348,11 +353,15 @@ class Widgets():
                     l.pack(side=tk.LEFT)
                     
             self.but_trump_card.pack_forget()
-            self.but_trump_card2=tk.Button(self.fr_lst[highest_bidder_indx],\
+            # but_trump_card was created before in situ=0 but,
+            # but_trump_card has to change frame, so defining again in the same name..not sure of this
+            self.but_trump_card=tk.Button(self.fr_lst[highest_bidder_indx],\
                                               bg='red',text='T',font=('GNU Unifont',15))
             
-            if (not trump_revealed) and (highest_bidder_indx!=0):           
-                self.but_trump_card2.pack(side=tk.TOP)
+            if (not trump_revealed) and (highest_bidder_indx!=0): 
+            # actually another method might be called after a trump_reveal to take care of the trump
+            # button. So, the below else statement is not currently useful
+                self.but_trump_card2.pack(side=tk.RIGHT,padx=10)
             else:
                 self.but_trump_card2.pack_forget()
                 
@@ -592,43 +601,34 @@ class Widgets():
     ############## gui_full_bid_declare() end #######################################
     
     def gui_card_played(self,turn_index,card_played):
+    # trump_revealed status is to be checked and the trump_card button is to be dealt with
         
         some_var14=tk.IntVar() 
-        
-        
-#         self.but_played_card_0.grid(column=1,row=2,pady=20)        
-#         self.but_played_card_1.grid(column=2,row=1,padx=20)        
-#         self.but_played_card_2.grid(column=1,row=0,pady=20)       
-#         self.but_played_card_3.grid(column=0,row=1,padx=20)
         
         def nxt_hnd():
             some_var14.set(1)
         
         for i in self.button_lst_4_crd[turn_index]:
             if i['text']==card_played.form():
+                # this is where the played card is removed from the shown hand(button_lst_4_crd)
                 i.pack_forget()
                 
+                # an new button for the played card is formed and packed('grided') according to the 
+                # turn_index
                 but_played_card=tk.Button(self.fr_game_center,text=card_played.form(),\
                                           fg=card_played.colour(),font=('GNU Unifont',15))                                         
                 if turn_index==0:
-#                     self.but_played_card_0.configure(text=card_played.form(),fg=card_played.colour())
-#                     but_played_card.grid(row=4,column=1,columnspan=2,pady=5,sticky='')
                     but_played_card.grid(column=1,row=2,pady=20)
                 elif turn_index==1:
-#                     self.but_played_card_1.configure(text=card_played.form(),fg=card_played.colour())
-#                     but_played_card.grid(row=2,column=3,padx=5,sticky='')
                     but_played_card.grid(column=2,row=1,padx=20)
                 elif turn_index==2:
-#                     self.but_played_card_2.configure(text=card_played.form(),fg=card_played.colour())
-#                     but_played_card.grid(row=0,column=1,columnspan=2,pady=5,sticky='')
                     but_played_card.grid(column=1,row=0,pady=20)
                 elif turn_index==3:
-#                     self.but_played_card_3.configure(text=card_played.form(),fg=card_played.colour())
-#                     but_played_card.grid(row=2,column=0,padx=5,sticky='')
                     but_played_card.grid(column=0,row=1,padx=20)
                 else:
                     print('\nSomething wrong abt turn_index')
                     
+        self.but_game_nxt.grid(column=1,row=1)
         self.but_game_nxt.configure(text='>>',command=nxt_hnd)
         self.but_game_nxt.focus()
         
@@ -642,8 +642,8 @@ class Widgets():
         some_var15=tk.IntVar()
         round1_card=tk.StringVar()
         
-        def nxtt():
-            some_var15.set(1)
+#         def nxtt():
+#             some_var15.set(1)
         
         def save_round1_card():
             global round1_entry
@@ -654,14 +654,15 @@ class Widgets():
             self.fr_game_cen_of_center.grid_forget()
             self.but_round1_card.grid_forget()
             
-            self.but_game_nxt.grid(row=1,column=1,sticky='')
-            self.but_game_nxt.focus()
-            self.but_game_nxt.configure(command=nxtt)
+#             self.but_game_nxt.grid(row=1,column=1,sticky='')
+#             self.but_game_nxt.focus()
+#             self.but_game_nxt.configure(command=nxtt)
+            some_var15.set(1)
                     
 
         self.but_game_nxt.grid_forget()
         
-        self.fr_game_cen_of_center=tk.Frame(self.fr_game_center)
+        self.fr_game_cen_of_center=tk.Frame(self.fr_game_center,background='black')
         self.fr_game_cen_of_center.grid(column=1,row=1,sticky='NSEW')
         self.fr_game_cen_of_center.columnconfigure(0,weight=1)
         self.fr_game_cen_of_center.columnconfigure(1,weight=1)
@@ -724,3 +725,35 @@ class Widgets():
         return(ret_val)
         
     ############## gui_round1_trump_call_instance() end #############################
+    
+    def gui_round1_trump_reveal(self,turn_index,trump_card):
+    # this is to deal with the situ when trump is called and revealed and the 
+    # trump_card/trump_card2 button is to be revealed i.e. replaced with the form() of trump_card
+        
+        some_var16 = tk.IntVar()
+        
+        def trump_reveal():
+            self.but_trump_card.configure(text=trump_card.form(),bg='white',fg=trump_card.colour())
+            lb_trump_call.grid_forget()
+            self.but_game_nxt.configure(command=lambda:some_var16.set(1))
+        
+        lb_trump_call=tk.Label(self.fr_game_center,text='Calling trump',font=('GNU Unifont',15))
+        
+        if turn_index==0:
+            lb_trump_call.grid(column=1,row=2,pady=20)
+        elif turn_index==1:
+            lb_trump_call.grid(column=2,row=1,padx=20)
+        elif turn_index==2:
+            lb_trump_call.grid(column=1,row=0,pady=20)
+        elif turn_index==3:
+            lb_trump_call.grid(column=0,row=1,padx=20)
+        else:
+            print('\nSomething wrong abt turn_index')
+            
+        self.but_game_nxt.grid(column=1,row=1)
+        self.but_game_nxt.focus()
+        self.but_game_nxt.configure(command=trump_reveal)
+        
+        self.fr_game_center.wait_variable(some_var16)
+    
+    ############## gui_round1_trump_reveal() end ####################################
