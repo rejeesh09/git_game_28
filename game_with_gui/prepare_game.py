@@ -672,7 +672,8 @@ class Prepare_game(Deck):
 
         
         # displaying full hands/ pass True to see updated hands after each round
-        self.obj_display_hands(self.highest_bidder_index,self.trump_revealed,show_updated=False,situation=0)
+        self.obj_display_hands(self.highest_bidder_index,self.trump_revealed,self.trump_card,\
+                               show_updated=False,situation=0)
 
     ###################################################################
     # bid_half_hand() end #############################################
@@ -1078,7 +1079,7 @@ class Prepare_game(Deck):
             # displaying full hands/ pass True to see updated hands after each round(option for terminal disp
             # not applicable for gui display)
             self.obj_display_hands(self.highest_bidder2_index,\
-                                   self.trump_revealed,show_updated=False,situation=1)
+                                   self.trump_revealed,self.trump_card,show_updated=False,situation=1)
 
         else:
 #             print('\nEveryone passed in 2nd bid round')

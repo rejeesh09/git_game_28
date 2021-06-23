@@ -248,13 +248,14 @@ class Deck():
     ##################################################################          
     # for displaying the hands object based
     #D5)
-    def obj_display_hands(self,highest_bidder,trump_revealed,show_updated,situation):
+    def obj_display_hands(self,highest_bidder,trump_revealed,trump_card,show_updated,situation):
         
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         # gui window display
         # the gui_disp_full_hands method of Widget() class in widget_manager module is called by its object
         # gui_handle which was created earlier in __init__() of Deck()
-        self.gui_handle.gui_disp_full_hands(highest_bidder,trump_revealed,self.obj_deal_lst_copy,situation)
+        self.gui_handle.gui_disp_full_hands(highest_bidder,trump_revealed,trump_card,\
+                                            self.obj_deal_lst_copy,situation)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         
         if not show_updated:
