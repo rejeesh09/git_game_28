@@ -14,6 +14,9 @@ class Widgets():
         self.name=name_var.get()
         wait_var=tk.IntVar()
         
+        fr1.columnconfigure((0,1),weight=1)
+        fr1.rowconfigure((0,1),weight=1)
+        
         def clear_fr1():
             fr1.pack_forget()
             wait_var.set(1)
@@ -50,13 +53,11 @@ class Widgets():
     
     
     def gui_disp_half_hands(self,players_lst,obj_half_deal_lst):
+    # called from obj_display_half_hands() in Deck()-through __init__ of Round_1() via __init__ of
+    # Prepare_game()
         
-        self.rt.columnconfigure(0,weight=1)
-        self.rt.columnconfigure(1,weight=1)
-        self.rt.columnconfigure(2,weight=1)
-        self.rt.rowconfigure(0,weight=1)
-        self.rt.rowconfigure(1,weight=1)
-        self.rt.rowconfigure(2,weight=1)
+        self.rt.columnconfigure((0,1,2),weight=1)
+        self.rt.rowconfigure((0,1,2),weight=1)
         
         self.players_lst=players_lst
         
@@ -96,7 +97,6 @@ class Widgets():
             some_var.set(1)
         
         fr_center=tk.Frame(self.rt,background='black')
-#         fr_center.pack()
         fr_center.grid(column=1,row=1)
     
         but_cen=tk.Button(fr_center,text='Start bidding',font=('GNU Unifont',15),command=clear_fr_cen)
@@ -111,13 +111,14 @@ class Widgets():
         
         some_var2=tk.IntVar()
         
-        def var2():
-            some_var2.set(1)
+#         def var2():
+#             some_var2.set(1)
         
         def set_bid_labels():
-            lab_mes.pack_forget()
-            but_mes.pack_forget()
+            lab_mes.grid_forget()
+            but_mes.grid_forget()
             
+            # the below labels and button are only getting created and not packed here
             self.lab_self_call=tk.Label(self.fr_hlf_bd_center,text='Waiting bid turn',font=('GNU Unifont',15))
             self.lab_right_call=tk.Label(self.fr_hlf_bd_center,text='Waiting bid turn',font=('GNU Unifont',15))
             self.lab_mate_call=tk.Label(self.fr_hlf_bd_center,text='Waiting bid turn',font=('GNU Unifont',15))
@@ -131,13 +132,20 @@ class Widgets():
             
                    
         self.fr_hlf_bd_center=tk.Frame(self.rt,background='black')
-#         self.fr_hlf_bd_center.pack(side=tk.TOP,pady=250)
-        self.fr_hlf_bd_center.grid(column=1,row=1)
+        # this frame is positioned at the center cell of the self.rt window
+        self.fr_hlf_bd_center.grid(column=1,row=1,sticky='NSEW')
+        
+        # this frame is further configured into 3 rows and 3 columns
+        self.fr_hlf_bd_center.columnconfigure((0,1,2),weight=1)
+        self.fr_hlf_bd_center.rowconfigure((0,1,2),weight=1)
+        
         lab_mes=tk.Label(self.fr_hlf_bd_center,text='Bidding starts with '+first_bidder,\
                         font=('GNU Unifont',15))
-        lab_mes.pack()
-        but_mes=tk.Button(self.fr_hlf_bd_center,text='>>',command=set_bid_labels)
-        but_mes.pack(pady=10)
+#         lab_mes.pack()
+        lab_mes.grid(column=1,row=0,sticky='')
+        but_mes=tk.Button(self.fr_hlf_bd_center,text='>>',font=('GNU Unifont',15),command=set_bid_labels)
+#         but_mes.pack(pady=10)
+        but_mes.grid(column=1,row=1,sticky='')
         but_mes.focus()
         
         self.fr_hlf_bd_center.wait_variable(some_var2)
@@ -149,31 +157,50 @@ class Widgets():
         half_bid_var=tk.StringVar()
         some_var3=tk.IntVar()
         
-        self.lab_self_call.grid(row=4,column=1,columnspan=2,pady=5,sticky='')
-        self.lab_right_call.grid(row=2,column=3,padx=5,sticky='')
-        self.lab_mate_call.grid(row=0,column=1,columnspan=2,pady=5,sticky='')
-        self.lab_left_call.grid(row=2,column=0,padx=5,sticky='')
+#         self.lab_self_call.grid(row=4,column=1,columnspan=2,pady=5,sticky='')
+#         self.lab_right_call.grid(row=2,column=3,padx=5,sticky='')
+#         self.lab_mate_call.grid(row=0,column=1,columnspan=2,pady=5,sticky='')
+#         self.lab_left_call.grid(row=2,column=0,padx=5,sticky='')
+
+        # these are now getting packed('grided') in the 'self.fr_hlf_bd_center' frame
+        self.lab_self_call.grid(row=2,column=1,sticky='')
+        self.lab_right_call.grid(row=1,column=2,sticky='')
+        self.lab_mate_call.grid(row=0,column=1,sticky='')
+        self.lab_left_call.grid(row=1,column=0,sticky='')
             
         
         def save_hlf_bd_val():
             global half_bid_val
             half_bid_val=half_bid_var.get()
-            lab_hlf_bd_val.grid_forget()
-            ent_hlf_bd_val.grid_forget()
-            but_hlf_bd_val.grid_forget()
-            self.lab_self_call.grid(row=4,column=1,columnspan=2,pady=5,sticky='')
+            self.fr_hlf_bd_center_bot.grid_forget()
+#             lab_hlf_bd_val.grid_forget()
+#             ent_hlf_bd_val.grid_forget()
+#             but_hlf_bd_val.grid_forget()
+#             self.lab_self_call.grid(row=4,column=1,columnspan=2,pady=5,sticky='')
+            self.lab_self_call.grid(row=2,column=1,sticky='')
 
             some_var3.set(1)
         
         self.lab_self_call.grid_forget()
-        lab_hlf_bd_val=tk.Label(self.fr_hlf_bd_center,text='Enter bid value',font=('GNU Unifont',15))
-        ent_hlf_bd_val=tk.Entry(self.fr_hlf_bd_center,textvariable=half_bid_var,font=('GNU Unifont',15))
-        but_hlf_bd_val=tk.Button(self.fr_hlf_bd_center,text='Enter', font=('GNU Unifont',15),\
+        
+        # creating a separate frame for player bid value entry
+        self.fr_hlf_bd_center_bot=tk.Frame(self.fr_hlf_bd_center,bg='black')
+        self.fr_hlf_bd_center_bot.columnconfigure((0,1),weight=1)
+        self.fr_hlf_bd_center_bot.rowconfigure((0,1),weight=1)
+        self.fr_hlf_bd_center_bot.grid(column=1,row=2,sticky='NSEW')
+        
+        lab_hlf_bd_val=tk.Label(self.fr_hlf_bd_center_bot,text='Enter bid value',font=('GNU Unifont',15))
+        ent_hlf_bd_val=tk.Entry(self.fr_hlf_bd_center_bot,textvariable=half_bid_var,font=('GNU Unifont',15))
+        but_hlf_bd_val=tk.Button(self.fr_hlf_bd_center_bot,text='Enter', font=('GNU Unifont',15),\
                                  command=save_hlf_bd_val)
 
-        lab_hlf_bd_val.grid(row=5,column=1,sticky='')
-        ent_hlf_bd_val.grid(row=5,column=2,sticky='')
-        but_hlf_bd_val.grid(row=6,column=2,sticky='')
+#         lab_hlf_bd_val.grid(row=5,column=1,sticky='')
+#         ent_hlf_bd_val.grid(row=5,column=2,sticky='')
+#         but_hlf_bd_val.grid(row=6,column=2,sticky='')
+        
+        lab_hlf_bd_val.grid(row=0,column=0,sticky='')
+        ent_hlf_bd_val.grid(row=0,column=1,sticky='')
+        but_hlf_bd_val.grid(row=1,column=1,sticky='')
         
         ent_hlf_bd_val.focus()
         
@@ -199,19 +226,26 @@ class Widgets():
 
             
         self.but_next.configure(command=nxt)
-        self.but_next.grid(row=2,column=1,columnspan=2,sticky='')
+#         self.but_next.grid(row=2,column=1,columnspan=2,sticky='')
+        self.but_next.grid(row=1,column=1,sticky='')
         self.but_next.focus()
         
-        self.lab_self_call.grid(row=4,column=1,columnspan=2,pady=5,sticky='')
-        self.lab_right_call.grid(row=2,column=3,padx=5,sticky='')
-        self.lab_mate_call.grid(row=0,column=1,columnspan=2,pady=5,sticky='')
-        self.lab_left_call.grid(row=2,column=0,padx=5,sticky='')
+#         self.lab_self_call.grid(row=4,column=1,columnspan=2,pady=5,sticky='')
+#         self.lab_right_call.grid(row=2,column=3,padx=5,sticky='')
+#         self.lab_mate_call.grid(row=0,column=1,columnspan=2,pady=5,sticky='')
+#         self.lab_left_call.grid(row=2,column=0,padx=5,sticky='')
+        
+        self.lab_self_call.grid(row=2,column=1,sticky='')
+        self.lab_right_call.grid(row=1,column=2,sticky='')
+        self.lab_mate_call.grid(row=0,column=1,sticky='')
+        self.lab_left_call.grid(row=1,column=0,sticky='')
         
         self.fr_hlf_bd_center.wait_variable(some_var4)
         
     ############## gui_half_bid_values() end ########################################
     
     def gui_half_bid_trump(self,bid_val):
+    # this method is called when player is the highest bidder in half bid and has to set trump
         
         self.lab_self_call.grid_forget()
         self.lab_right_call.grid_forget()
@@ -223,7 +257,7 @@ class Widgets():
         
         def declare():
             
-            lab_hlf_bd_mes_fnl.configure(text='Trump card set by '+self.players_lst[0])
+            self.lab_hlf_bd_mes_fnl.configure(text='Trump card set by '+self.players_lst[0])
             self.but_next.configure(text='Deal full hand')
             self.but_next.configure(command= lambda: some_var6.set(1))
             self.but_next.focus()
@@ -232,29 +266,40 @@ class Widgets():
             global hlf_bd_trump
             hlf_bd_trump=trump_var.get()
             
-            self.lab_hlf_bd_trmp.grid_forget()
-            self.ent_hlf_bd_trmp.grid_forget()
-            self.but_hlf_bd_trmp.grid_forget()
+            self.fr_hlf_bd_center_bot.grid_forget()
+            
+#             self.lab_hlf_bd_trmp.grid_forget()
+#             self.ent_hlf_bd_trmp.grid_forget()
+#             self.but_hlf_bd_trmp.grid_forget()
             
             self.but_next.configure(command=declare)
+            self.but_next.focus()
             
         
         def take_trump():
-            self.lab_hlf_bd_trmp=tk.Label(self.fr_hlf_bd_center,text='Enter trump card',font=('GNU Unifont',15))
-            self.ent_hlf_bd_trmp=tk.Entry(self.fr_hlf_bd_center,textvariable=trump_var,font=('GNU Unifont',15))
-            self.but_hlf_bd_trmp=tk.Button(self.fr_hlf_bd_center,text='Enter', font=('GNU Unifont',15),\
+            self.lab_hlf_bd_trmp=tk.Label(self.fr_hlf_bd_center_bot,text='Enter trump card',font=('GNU Unifont',15))
+            self.ent_hlf_bd_trmp=tk.Entry(self.fr_hlf_bd_center_bot,textvariable=trump_var,font=('GNU Unifont',15))
+            self.but_hlf_bd_trmp=tk.Button(self.fr_hlf_bd_center_bot,text='Enter', font=('GNU Unifont',15),\
                                      command=save_trump)
 
-            self.lab_hlf_bd_trmp.grid(row=2,column=1,sticky='')
-            self.ent_hlf_bd_trmp.grid(row=2,column=2,sticky='')
-            self.but_hlf_bd_trmp.grid(row=3,column=2,sticky='')
+#             self.lab_hlf_bd_trmp.grid(row=2,column=1,sticky='')
+#             self.ent_hlf_bd_trmp.grid(row=2,column=2,sticky='')
+#             self.but_hlf_bd_trmp.grid(row=3,column=2,sticky='')
+
+            self.fr_hlf_bd_center_bot.grid(column=1,row=2,sticky='NSEW')
+            
+            self.lab_hlf_bd_trmp.grid(row=0,column=0,sticky='')
+            self.ent_hlf_bd_trmp.grid(row=0,column=1,sticky='')
+            self.but_hlf_bd_trmp.grid(row=1,column=1,sticky='')
             
             self.ent_hlf_bd_trmp.focus()
         
-        lab_hlf_bd_mes_fnl=tk.Label(self.fr_hlf_bd_center,\
+        self.lab_hlf_bd_mes_fnl=tk.Label(self.fr_hlf_bd_center,\
                     text=self.players_lst[0]+' made the highest bid '+str(bid_val),font=('GNU Unifont',15))
-        lab_hlf_bd_mes_fnl.grid(row=0,column=1,columnspan=2,pady=5,sticky='')        
+#         lab_hlf_bd_mes_fnl.grid(row=0,column=1,columnspan=2,pady=5,sticky='')
+        self.lab_hlf_bd_mes_fnl.grid(row=0,column=1,sticky='')
         self.but_next.configure(command=take_trump)
+        self.but_next.focus()
         
         
         self.fr_hlf_bd_center.wait_variable(some_var6)        
@@ -263,6 +308,7 @@ class Widgets():
     ############## gui_half_bid_trump() end #########################################
     
     def gui_half_bid_declare(self,bidder_indx,bid_val):
+    # this method is called when player is not the highest bidder
         
         self.lab_self_call.grid_forget()
         self.lab_right_call.grid_forget()
@@ -272,15 +318,16 @@ class Widgets():
         some_var5=tk.IntVar()
         
         def disp_val():
-            lab_hlf_bd_mes_fnl.configure(text='Trump card set by '+self.players_lst[bidder_indx])
+            self.lab_hlf_bd_mes_fnl.configure(text='Trump card set by '+self.players_lst[bidder_indx])
             self.but_next.configure(text='Deal full hand')
             self.but_next.configure(command= lambda: some_var5.set(1))
             self.but_next.focus()
         
-        lab_hlf_bd_mes_fnl=tk.Label(self.fr_hlf_bd_center,\
+        self.lab_hlf_bd_mes_fnl=tk.Label(self.fr_hlf_bd_center,\
                             text=self.players_lst[bidder_indx]+' made the highest bid '+str(bid_val),\
                                    font=('GNU Unifont',15))
-        lab_hlf_bd_mes_fnl.grid(row=0,column=1,columnspan=2,pady=5,sticky='')
+#         lab_hlf_bd_mes_fnl.grid(row=0,column=1,columnspan=2,pady=5,sticky='')
+        self.lab_hlf_bd_mes_fnl.grid(row=0,column=1,sticky='')
         
         self.but_next.configure(command=disp_val)
         self.but_next.focus()
@@ -289,20 +336,25 @@ class Widgets():
         
     ############## gui_half_bid_declare() end #######################################
     
-    def gui_disp_full_hands(self,highest_bidder_indx,trump_revealed,obj_deal_lst_copy,situation):
+    def gui_disp_full_hands(self,highest_bidder_indx,trump_revealed,trump_card,obj_deal_lst_copy,situation):
+    # called through obj_display_hands() in Deck(), which is called at the end of bid_half_hand()-
+    # (situation==0) and also at the end of bid_full_hand()-(situation==1) in Prepare_game(s) 
+    
         
         some_var13=tk.IntVar()
         
         if situation==0:
-        # situation==0 corresponds to display before full bid, 1 for aft full bid, maybe 2 for aft 1st round
-        # etc.
+        # situation==0 corresponds to display before full bid, ==1 for aft full bid, 
+        # maybe 2 for aft 1st round etc.
+            
+            # forgetting the center frame and all card buttons in the other 4 frames in root-window
             self.fr_hlf_bd_center.grid_forget()
-
             for j in range(4):
                 for i in range(4):
                     self.button_lst_4_crd[j][i].pack_forget()
                 self.button_lst_4_crd[j].clear()
 
+            # creating new card buttons
             for j in range(4):
                 for k in obj_deal_lst_copy[j]:
                 # trump_card will not be available in obj_deal_lst_copy(except in player hand if player 
@@ -311,12 +363,21 @@ class Widgets():
                     self.button_lst_4_crd[j].append(l)
                     l.pack(side=tk.LEFT)
 
-            # the trump card will not be available in obj_deal_copy, so instead adding
-            # an extra button in its place
+            # the trump card set in first bid will not be available in obj_deal_copy(for the comp hands), 
+            # and the button for that wouldn't be created. But if player was the highest bidder, the 
+            # button corresponding to trump card is being removed here.
+            if (not highest_bidder_indx):
+                for i in self.button_lst_4_crd[0]:
+                    if i['text']==trump_card.form():
+                        i.pack_forget()
+            
+            # adding an extra button to represent trump card
             self.but_trump_card=tk.Button(self.fr_lst[highest_bidder_indx],\
                                               bg='red',text='T',font=('GNU Unifont',15))
 
-            if (not trump_revealed) and (highest_bidder_indx!=0):           
+            # there is no need to actually check this condition, since this method itself is being 
+            # called for now in only two situations, both of which occur before round1 starts
+            if (not trump_revealed):           
                 self.but_trump_card.pack(side=tk.RIGHT,padx=10)
             else:
                 self.but_trump_card.pack_forget()
@@ -329,7 +390,7 @@ class Widgets():
 
             self.fr_fll_bd_center=tk.Frame(self.rt,background='black')
 #             self.fr_fll_bd_center.pack(side=tk.TOP,pady=250)
-            self.fr_fll_bd_center.grid(column=1,row=1)
+            self.fr_fll_bd_center.grid(column=1,row=1,sticky='')
             
             self.but_fll_nxt=tk.Button(self.fr_fll_bd_center,text='Start 2nd bidding',font=('GNU Unifont',15),\
                                        command=fll_bd_nxt1)
@@ -352,22 +413,30 @@ class Widgets():
                     self.button_lst_4_crd[j].append(l)
                     l.pack(side=tk.LEFT)
                     
+            # the trump card set in 2nd bid also will not be available in obj_deal_copy(for the comp hands), 
+            # and the button for that wouldn't be created. But if player was the highest bidder, the 
+            # button corresponding to trump card is being removed here.
+            if (not highest_bidder_indx):
+                for i in self.button_lst_4_crd[0]:
+                    if i['text']==trump_card.form():
+                        i.pack_forget()
+            
+            # since the disply hand is now being called after 2nd bidding, the trump_card button may 
+            # have to change frame if the highest bidder is different, so creating a new button for it.
             self.but_trump_card.pack_forget()
-            # but_trump_card was created before in situ=0 but,
-            # but_trump_card has to change frame, so defining again in the same name..not sure of this
-            self.but_trump_card=tk.Button(self.fr_lst[highest_bidder_indx],\
+            self.but_trump_card2=tk.Button(self.fr_lst[highest_bidder_indx],\
                                               bg='red',text='T',font=('GNU Unifont',15))
             
-            if (not trump_revealed) and (highest_bidder_indx!=0): 
-            # actually another method might be called after a trump_reveal to take care of the trump
-            # button. So, the below else statement is not currently useful
+            # there is no need to actually check this condition, since this method itself is being 
+            # called for now in only two situations, both of which occur before round1 starts
+            if (not trump_revealed):           
                 self.but_trump_card2.pack(side=tk.RIGHT,padx=10)
             else:
                 self.but_trump_card2.pack_forget()
                 
             
             def clear_fll_bd_fr2():
-                self.fr_fll_bd_center.pack_forget()
+                self.fr_fll_bd_center.grid_forget()
                 
                 self.fr_game_center=tk.Frame(self.rt, background='black')
                 self.fr_game_center.pack(side=tk.TOP,pady=250)
@@ -386,6 +455,7 @@ class Widgets():
     ############### gui_disp_full_hands() end #######################################
     
     def gui_full_bid_mes(self,first_bidder):
+    # called from bid_full_hand in Prepare_game()
         
         some_var8=tk.IntVar()
         
@@ -413,6 +483,7 @@ class Widgets():
     ############### gui_full_bid_mes() end ##########################################  
     
     def gui_full_bid_entry(self):
+    # called from bid_full_hand() in Prepare_game()
                 
         full_bid_var=tk.StringVar()
         some_var9=tk.IntVar()
@@ -454,6 +525,7 @@ class Widgets():
     ############### gui_full_bid_entry() end ########################################
     
     def gui_full_bid_values(self,bidder_indx,bid_val,calls):
+    # called from bid_full_hand() in Prepare_game()
 
         
         some_var10=tk.IntVar()
@@ -484,6 +556,7 @@ class Widgets():
     ############## gui_full_bid_values() end ########################################
     
     def gui_full_bid_trump(self,bid_val):
+    # called from bid_full_hand() in Prepare_game()
         
         self.lab_self_fcall.grid_forget()
         self.lab_right_fcall.grid_forget()
@@ -534,6 +607,7 @@ class Widgets():
     ############## gui_full_bid_trump() end #########################################
     
     def gui_full_bid_declare(self,bidder_indx,bid_val,no_call):
+    # called from bid_full_hand() in Prepare_game()
         
         self.lab_self_fcall.grid_forget()
         self.lab_right_fcall.grid_forget()
@@ -601,6 +675,7 @@ class Widgets():
     ############## gui_full_bid_declare() end #######################################
     
     def gui_card_played(self,turn_index,card_played):
+    # called from round1_lead_logic() in Round_1()
     # trump_revealed status is to be checked and the trump_card button is to be dealt with
         
         some_var14=tk.IntVar() 
@@ -637,7 +712,8 @@ class Widgets():
     ############## gui_card_played() end ############################################
     
     def gui_round1_card_entry(self):
-        # should be named card_select since it is now button based and not entry
+    # called from round1_lead_logic() in Round_1()
+    # should be named card_select since it is now button based and not entry
         
         some_var15=tk.IntVar()
         round1_card=tk.StringVar()
@@ -688,6 +764,7 @@ class Widgets():
     ############## gui_round1_card_entry() end ######################################
     
     def gui_round1_trump_call_instance(self,turn_index):
+    # called from round1_follow_logic() in Round_1()
     # this is to deal with the situation of trump call in round1
         
 #         ret_val=0
@@ -727,6 +804,7 @@ class Widgets():
     ############## gui_round1_trump_call_instance() end #############################
     
     def gui_round1_trump_reveal(self,turn_index,trump_card):
+    # called from round1_follow_logic() in Round_1()
     # this is to deal with the situ when trump is called and revealed and the 
     # trump_card/trump_card2 button is to be revealed i.e. replaced with the form() of trump_card
         
