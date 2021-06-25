@@ -165,7 +165,8 @@ class Round_1(Prepare_game):
             # case1 - highest bidder himself starting
 
                 if len(self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index])>2:
-                # case1.a - has 4 or more trump cards (including self.trump_card)
+                # case1.a - has 4 or more trump cards (including self.trump_card,(which wld be removed,
+                # hence len > 2))
 
                     for keyy in self.obj_dictn_of_cards_grouped[self.turn_index]:
                         if len(self.obj_dictn_of_cards_grouped[self.turn_index][keyy])==1 \
@@ -185,17 +186,23 @@ class Round_1(Prepare_game):
                                 break
                     if not found:
                     # no single J or non-9 single card found
+#                         print('\n Checking for a non-trump J')
                         for crd in self.obj_deal_lst_copy[self.turn_index]:
                             if crd.suit()!=self.trump_suit and crd.rank()=='J':
                             # play any non-trump J present
                                 self.round1_lead_card=crd
+#                                 print('\n found a J')
+                                found=True
                                 break
                     if not found:
                     # no single J or non-9 single card or no J found
+#                         print('\n playing first pointless card')
                         for crd in self.obj_deal_lst_copy[self.turn_index]:
                             if crd.suit()!=self.trump_suit and int(crd.point())==0:
                             # play the first pointless card
                                 self.round1_lead_card=crd
+#                                 print('\n found a pointless card')
+                                found=True
                                 break
                     if not found:
                     # no single J or non-9 single card or no J or no pointless card found
@@ -203,6 +210,7 @@ class Round_1(Prepare_game):
                             if crd.suit()!=self.trump_suit and crd.rank()!='9':
                             # play any non-trump, non-9 card
                                 self.round1_lead_card=crd
+                                found=True
                                 break
                     if not found:
                     # reaching here means that all non-trump cards present are 9's
@@ -210,6 +218,7 @@ class Round_1(Prepare_game):
                             if crd.suit()!=self.trump_suit:
                             # play first non-trump 9
                                 self.round1_lead_card=crd
+                                found=True
                                 break
                 else:
                 # case1.b - has less than 4 trump cards (including self.trump_card)
@@ -1056,22 +1065,19 @@ class Round_1(Prepare_game):
                         if not found:
 
                             #Strategy scenario7a 
-                            # no trump in hand scenario6 repeat except not checking for trump suit
-                            
+                            # no trump in hand - this is scenario6 repeat except not checking for trump suit                            
                             if len(self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index])==0:
                                 strategy_scenario7a()
                                 
                             #Strategy scenario7b 
-                            # trump in hand and has to play trump
-                            
+                            # trump in hand and has to play trump                            
                             else:
                                 #print('\nreached line 824')
                                 self.trump_played_in_round=True
                                 strategy_scenario7b()
                     
                     #Strategy scenario7c 
-                    # trump has already been played in round and has to play a trump that is higher
-                    
+                    # trump has already been played in round and has to play a trump that is higher                    
                     else:
                         #print('\nreached line 825')
                         for item in self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index]:
@@ -1106,30 +1112,33 @@ class Round_1(Prepare_game):
                     self.check_val=self.gui_handle.gui_round1_trump_call_instance(self.turn_index)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-#                     self.trump_enquiry=input("\nTo reveal trump, 't' "
-#                         +"else just 'Enter' :").strip().lower()
-
                     if self.check_val:
-#                     if self.trump_enquiry=='t':
-#                         print('\nRevealing trump, card set by {} was: {}'.format(\
-#                                         self.players_lst[self.highest_bidder_index],self.trump_card.show()))
                         self.trump_revealed=True
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        # gui window display
+                        # the gui disp method of Widget() class in widget_manager module is called by its object
+                        # gui_handle which was created earlier in __init__() of Deck()
+                        self.gui_handle.gui_round1_trump_reveal(self.turn_index,self.trump_card)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                         
                         if len(self.obj_dictn_of_cards_grouped[0][self.trump_suit_index]):
                         # trump called and trump present
                             if self.turn_index==self.highest_bidder_index:
                             # player was highest bidder
-                                input("\nHave to play trump card itself: 'Enter'")
+#                                 input("\nHave to play trump card itself: 'Enter'")
                                 self.card_played=self.trump_card
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                
+                                # the below lines have been commented out, since gui_card_played 
+                                # needs to be called only once and only at the end of this 
+                                # follow_logic() method
+                                #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                 # gui window for round1 (follow card)
-                                self.gui_handle.gui_card_played(self.turn_index,self.card_played)
+                                # self.gui_handle.gui_card_played(self.turn_index,self.card_played)
                                 # the object gui_handle of the Widgets() class is created in Deck() 
                                 # class in deck.py module
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                 
                             else:
-#                                 self.player_input=input('\nEnter the trump card you want to play: ')
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                 # gui window for taking card input
                                 self.player_input=self.gui_handle.gui_round1_card_entry()
@@ -1138,7 +1147,6 @@ class Round_1(Prepare_game):
                                 self.card_played=self.inp_parse_check(self.player_input)
                                 # making sure a trump is played
                                 while (self.card_played.suit()!=self.trump_suit):
-#                                     self.player_input=input('\nEnter the trump card you want to play: ')
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                     # gui window for taking card input
                                     self.player_input=self.gui_handle.gui_round1_card_entry()
@@ -1153,17 +1161,7 @@ class Round_1(Prepare_game):
                             played=True
                 if not played:
                 # trump is already revealed or trump called but no trump card in hand 
-                # or trump not called
-#                     print('\n')
-#                     print('\nYour hand: ',end=' ')
-#                     for i in self.obj_deal_lst_copy[self.turn_index]:
-#                         print(i.show(),end=' ')
-#                     self.player_input=input('\nPlay your card; '
-#                         +'\nEnter rank followed by the first letter of the suit,'
-#                         +'\neg. 7s or ah or 10d etc.'
-#                         +'\n(or 0 to stop game): ').lower()
-#                     self.card_played=self.inp_parse_check(self.player_input)
-                    
+                # or trump not called                    
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                     # gui window for taking card input
                     self.player_input=self.gui_handle.gui_round1_card_entry()
@@ -1180,21 +1178,12 @@ class Round_1(Prepare_game):
                             self.obj_dictn_of_highest_card_and_turn['trump'].extend(\
                                                                         [self.turn_index,self.card_played])
             else:
-                # played suit in hand
-                
+                # played suit in hand                
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 # gui window for taking card input
                 self.player_input=self.gui_handle.gui_round1_card_entry()
                 self.player_input=self.player_input.lower()
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-#                 print('\n')
-#                 print('\nYour hand: ',end=' ')
-#                 for i in self.obj_deal_lst_copy[self.turn_index]:
-#                     print(i.show(),end=' ')
-#                 self.player_input=input('\nPlay your card; '
-#                     +'\nEnter rank followed by the first letter of the suit, '
-#                     +'\neg. 7s or ah or 10d etc.'
-#                     +'\n(or 0 to stop game): ').lower()
 
                 self.card_played=self.inp_parse_check(self.player_input)
 
@@ -1202,8 +1191,12 @@ class Round_1(Prepare_game):
                 # this is being updated only coz of doubt whether this has already been used to 
                 # check conditions
                 self.round1_highest_point_sofar=max(self.card_played.point(),self.round1_highest_point_sofar)
-
-                if (not self.obj_dictn_of_highest_card_and_turn['suit']) or \
+#??????????????????????????????????????????????????????????????????????????????????
+                # the below if statement did not have len() before was just if not self.obj_dic..
+                # though the code had not thrown any error before with that line, it is being changed 
+                # as it doesn't make any sense. come back and see if code throws error in this regard in
+                # future
+                if (not len(self.obj_dictn_of_highest_card_and_turn['suit'])) or \
                     (self.obj_dictn_of_highest_card_and_turn['suit'][1].point()<self.card_played.point()):
                     self.obj_dictn_of_highest_card_and_turn['suit']=[self.turn_index,self.card_played]
                     #print('\nreached line 845')

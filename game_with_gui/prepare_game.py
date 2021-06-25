@@ -980,7 +980,6 @@ class Prepare_game(Deck):
                 # gui window for full bid call display
                 self.gui_handle.gui_full_bid_values(self.bid2_turn_index,self.bid2_value,calls=True)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-#                 print('\n{} calls {}'.format(self.players_lst[self.bid2_turn_index],self.bid2_value))
                 self.bid2_counter+=1
                 self.bid2_turn_index=(self.bid2_turn_index+1)%4
                 self.bid2_any_call=True                
@@ -991,8 +990,6 @@ class Prepare_game(Deck):
                 # gui window for full bid call display(pass)
                 self.gui_handle.gui_full_bid_values(self.bid2_turn_index,20,calls=False)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-#                 print('\n{} passes'.format(self.players_lst[self.bid2_turn_index]))
                 
                 if not self.bid2_any_call:
                     if not self.bid2_counter==3:
@@ -1057,13 +1054,6 @@ class Prepare_game(Deck):
                 # gui window for taking trump entry
                 self.player_input=self.gui_handle.gui_full_bid_trump(self.bid2_value_final)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                
-                
-#                 print('\nYour hand: ',end=' ')
-#                 for i in self.obj_deal_lst_copy[0][:8]:
-#                     print(i.show(),end=' ')
-#                 self.player_input=input('\nSet trump card; '
-#                     +'\nEnter rank followed by the first letter of the suit, '
-#                     +'\neg. 7s or ah or 10d etc.: ').lower()
 
                 # trump input converted to object
                 self.obj_trump_checked=self.trump_verify(self.player_input,False)
@@ -1083,12 +1073,17 @@ class Prepare_game(Deck):
 
         else:
 #             print('\nEveryone passed in 2nd bid round')
-            
-            # removing the trump card of first bidding round again from the first round's 
-            # highest bidder's hand
-            self.obj_dictn_of_cards_grouped[self.highest_bidder_index]\
-                                            [self.trump_suit_index].remove(self.trump_card)
-            self.obj_deal_lst_copy[self.highest_bidder_index].remove(self.trump_card)
+            # this is a problem due to gradual developing of code. initially the code ran for only
+            # half hand. in that scenario,
+            # after half bid, trump_card was removed from the hands 1-3,(dictn_of_cards_grouped and 
+            # deal_lst_copy) to prevent playing trump/face down card before trump_reveal. but it is now 
+            # inserted back before full bid for obvious reasons. But if there are no new calls in full 
+            # bid, the previous trump remains and it has to be once again removed from the highest 
+            # bidder's hand(only for hands 1-3)
+            if self.highest_bidder_index:
+                self.obj_dictn_of_cards_grouped[self.highest_bidder_index]\
+                                                [self.trump_suit_index].remove(self.trump_card)
+                self.obj_deal_lst_copy[self.highest_bidder_index].remove(self.trump_card)
 #             print('\nFirst round trump removed from first round highest bidder hand')
 
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
