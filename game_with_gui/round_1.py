@@ -11,6 +11,9 @@ import time
 import sys
 # sys used in inp_parse_check to exit 
 # sys and time used in follow_logic to print played cards with delay before taking player inp
+# search for the term unfolder using the find and replace option under the edit tab(f in comm mode) and 
+# replace it with the same to get all the folded blocks of code unblocked. or else 
+# searching using ctl-f will not yield results from the folded blocks
 #######################################################################
 class Round_1(Prepare_game):
     def __init__(self,hold,custom_deal,tkntr_rt):
@@ -145,15 +148,6 @@ class Round_1(Prepare_game):
             self.player_input=self.player_input.lower()
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-#             print('\nYour hand: ',end=' ')
-#             for i in self.obj_deal_lst_copy[0][:8]:
-#                 print(i.show(),end=' ')
-
-#             self.player_input=input('\nPlay your card; '
-#                 +'\nEnter rank followed by the first letter of the suit,'
-#                 +'\neg. 7s or ah or 10d etc.'
-#                 +'\n(or 0 to stop game): ').lower()
-            # input converted to object
             #15.######### var15
             self.round1_lead_card=self.inp_parse_check(self.player_input)
         else:
@@ -1243,10 +1237,6 @@ class Round_1(Prepare_game):
 
     def round1_play(self):
         # round1_play() method  #######################################
-        
-#         print('\nYour hand: ',end=' ')
-#         for i in self.obj_deal_lst_copy[0][:8]:
-#             print(i.show(),end=' ')
                 
         while(len(self.obj_played_card_lst)<4):
 
@@ -1271,6 +1261,7 @@ class Round_1(Prepare_game):
             key = self.obj_dictn_of_highest_card_and_turn['trump'][0]
 
         self.round2_lead_index=key
+        self.round2_lead_player=self.players_lst[key]
         
         # calculating points scored by each team
         if key in [0,2]:
@@ -1278,6 +1269,14 @@ class Round_1(Prepare_game):
         else:
             self.point_oppo_team=sum(int(i.point()) for i in self.obj_played_card_lst)
 
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        # gui window display
+        # the gui disp method of Widget() class in widget_manager module is called by its object
+        # gui_handle which was created earlier in __init__() of Deck()
+        self.gui_handle.gui_round1_summary(self.point_oppo_team,self.point_player_team,\
+                                          self.round2_lead_player)
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        
         time.sleep(0.5)
         print('\n')
         print(20*' '+'Mate:'+'{}'.format(self.obj_dictn_of_played_card_and_player['Mate'][0].show()))

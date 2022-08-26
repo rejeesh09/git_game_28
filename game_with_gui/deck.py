@@ -10,6 +10,9 @@ import tkinter as tk
 import widget_manager as wm
 # widget_manager is a module to collect all gui related code in one place
 #####################################################################
+# search for the term unfolder using the find and replace option under the edit tab(f in comm mode) and 
+# replace it with the same to get all the folded blocks of code unblocked. or else 
+# searching using ctl-f will not yield results from the folded blocks
 ####################################################################
 class Deck():
     def __init__(self,dictn_of_card_objects,tkntr_rt):
