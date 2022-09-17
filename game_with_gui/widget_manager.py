@@ -40,12 +40,12 @@ class Widgets():
         # making a list of the 4 frames
         self.fr_lst=[self.fr_0,self.fr_1,self.fr_2,self.fr_3]
         # another frame for the center of the root window, only used till bidding starts (i.e. half bid)
-        self.fr_center=tk.Frame(self.rt,background='black')
+        self.fr_center=tk.Frame(self.rt,background='white')
         
         
         # the below frame hosts all widgets for the first round bidding (half bid)
         # it should be getting attached at the center of root windows, used only till end of half bid
-        self.fr_hlf_bd_center=tk.Frame(self.rt,background='black')
+        self.fr_hlf_bd_center=tk.Frame(self.rt,background='white')
         self.fr_hlf_bd_center.columnconfigure((0,1,2),weight=1)
         self.fr_hlf_bd_center.rowconfigure((0,1,2),weight=1)
         # the below widgets display the bid values in half bid
@@ -64,14 +64,14 @@ class Widgets():
         # it could be used for both bid value and trump entry if any (frame: fr_hlf_bd_center)
         # it should be getting attached in the cell(column=1,row=2) of the root window and is used only
         # in half bid round
-        self.fr_hlf_bd_center_bot=tk.Frame(self.fr_hlf_bd_center,bg='black')
+        self.fr_hlf_bd_center_bot=tk.Frame(self.fr_hlf_bd_center,bg='white')
         self.fr_hlf_bd_center_bot.columnconfigure((0,1),weight=1)
         self.fr_hlf_bd_center_bot.rowconfigure((0,1),weight=1)
         
         
         # the below frame hosts all the widgets in full bid round. It should be getting attached at the 
         # center of the root window. Used only till end of full bid.
-        self.fr_fll_bd_center=tk.Frame(self.rt,background='black')
+        self.fr_fll_bd_center=tk.Frame(self.rt,background='white')
         self.fr_fll_bd_center.columnconfigure((0,1,2),weight=1)
         self.fr_fll_bd_center.rowconfigure((0,1,2),weight=1)        
         # a center clickable-button in frame fr_fll_bd_center
@@ -79,14 +79,9 @@ class Widgets():
         
         
         # the below fram hosts all widgets for play in round 1.
-        self.fr_game_center=tk.Frame(self.rt, background='black')
+        self.fr_game_center=tk.Frame(self.rt, background='white')
         self.fr_game_center.columnconfigure((0,1,2),weight=1)
         self.fr_game_center.rowconfigure((0,1,2),weight=1)       
-        # 
-        
-        
-        
-        
         
     ########################## __init__() end #######################################   
     
@@ -139,6 +134,7 @@ class Widgets():
         self.fr1.wait_variable(wait_var)
         
         return(name)
+    
     ########################## gui_player_name() end ################################
         
     def gui_disp_half_hands(self,players_lst,obj_half_deal_lst):
@@ -626,7 +622,7 @@ class Widgets():
         
         # creating a frame in the bottom cell (col=1,rw=2) of the fll_bd_center frame
         # to take full bid entry from player
-        self.fr_fll_bd_center_bot=tk.Frame(self.fr_fll_bd_center,bg='black')
+        self.fr_fll_bd_center_bot=tk.Frame(self.fr_fll_bd_center,bg='white')
         self.fr_fll_bd_center_bot.grid(column=1,row=2,sticky='NSEW')
         
         self.fr_fll_bd_center_bot.columnconfigure((0,1),weight=1)
@@ -700,12 +696,12 @@ class Widgets():
         # detatching the center button as well (frame: fr_fll_bd_center)
         self.but_fll_nxt.grid_forget()
         
-        self.fr_game_center=tk.Frame(self.rt, background='black')
+        self.fr_game_center=tk.Frame(self.rt, background='white')
         self.fr_game_center.columnconfigure((0,1,2),weight=1)
         self.fr_game_center.rowconfigure((0,1,2),weight=1)
         
         # an additional frame in the bottom middle cell of fr_game_center for player input
-        self.fr_game_center_bot=tk.Frame(self.fr_game_center,background='black')
+        self.fr_game_center_bot=tk.Frame(self.fr_game_center,background='white')
         self.fr_game_center_bot.columnconfigure((0,1),weight=1)
         self.fr_game_center_bot.rowconfigure((0,1),weight=1)
         
@@ -783,12 +779,12 @@ class Widgets():
         
         some_var12=tk.IntVar()
         
-        self.fr_game_center=tk.Frame(self.rt, background='black')
+        self.fr_game_center=tk.Frame(self.rt, background='white')
         self.fr_game_center.columnconfigure((0,1,2),weight=1)
         self.fr_game_center.rowconfigure((0,1,2),weight=1)
         
         # an additional frame in the bottom middle cell of fr_game_center for player input
-        self.fr_game_center_bot=tk.Frame(self.fr_game_center,background='black')
+        self.fr_game_center_bot=tk.Frame(self.fr_game_center,background='white')
         self.fr_game_center_bot.columnconfigure((0,1),weight=1)
         self.fr_game_center_bot.rowconfigure((0,1),weight=1)
         
@@ -838,9 +834,15 @@ class Widgets():
         
     ############## gui_full_bid_declare() end #######################################
     
+    
+    #----------------------------- round1 widgets ----------------------------------#
+    
+    
     def gui_card_played(self,turn_index,card_played):
-    # called from the end of round1_lead_logic() and round1_follow_logic() in Round_1()
-    # trump_revealed status is to be checked and the trump_card button is to be dealt with
+        """
+        This method is called from the end of round1_lead_logic() and round1_follow_logic() in Round_1().
+        trump_revealed status is to be checked and trump_card_button is to be dealt with
+        """
         
         some_var14=tk.IntVar() 
 
@@ -851,7 +853,7 @@ class Widgets():
                 # this is where the played card is removed from the shown hand(button_lst_4_crd)
                 i.pack_forget()
                 
-                # an new button for the played card is formed and attached according to the 
+                # a new button for the played card is formed and attached according to the 
                 # turn_index and appended to the list which holds these buttons
                 self.but_r1_played_card_lst.append(tk.Button(self.fr_game_center,text=card_played.form(),\
                                           fg=card_played.colour(),font=('GNU Unifont',15)))
@@ -884,7 +886,12 @@ class Widgets():
     ############## gui_card_played() end ############################################
     
     def gui_round1_card_entry(self):
-    # called from round1_lead_logic() in Round_1()
+        """
+        This method is used whenever the player(not comp) has to input a card, 
+        either while leading the round or following in the round
+        The method brings up the widgets specific to taking input.
+        The method is called from round1_lead_logic() and round1_follow_logic() in Round_1()
+        """
         
         some_var15=tk.IntVar()
         round1_card=tk.StringVar()
@@ -923,9 +930,10 @@ class Widgets():
     ############## gui_round1_card_entry() end ######################################
     
     def gui_round1_trump_call_instance(self,turn_index):
-    # called from round1_follow_logic() in Round_1()
-    # this is to deal with the situation of trump call by player in round1
-    # actually no need to pass the turn_index, since this method is called only for the turn_index==0 case
+        """
+        This method deals with the situation of trump call by a player in round1
+        This method is called from round1_follow_logic() in Round_1().
+        """
         
 #         ret_val=0
         ret_var=tk.IntVar()
@@ -975,9 +983,11 @@ class Widgets():
     ############## gui_round1_trump_call_instance() end #############################
     
     def gui_round1_trump_reveal(self,turn_index,trump_card):
-    # called from round1_follow_logic() in Round_1()
-    # this is to deal with the situ when trump is called (by comp hand) and revealed and the 
-    # trump_card/trump_card2 button is to be revealed i.e. replaced with the form() of trump_card
+        """
+        This method is called from round1_follow_logic() in Round_1()
+        The method with the situ when trump is called (by comp hand) and revealed and the 
+        trump_card/trump_card2 button is to be revealed i.e. replaced with the form() of trump_card
+        """
         
         some_var16 = tk.IntVar()
         
@@ -1017,7 +1027,9 @@ class Widgets():
     ############## gui_round1_trump_reveal() end ####################################
     
     def gui_round1_summary(self,point_oppo_team,point_player_team,round2_lead_player):
-    # this method displays the summary at the end of round1, called from round1_paly() in Round_1()
+        """
+        This method displays the summary at the end of round1, called from round1_paly() in Round_1()
+        """
     
         some_var17=tk.IntVar()
         
@@ -1058,3 +1070,248 @@ class Widgets():
         self.fr_game_center.wait_variable(some_var17)
         
     ############## gui_round1_summary() end #########################################
+    
+    
+    #----------------------------- round2 widgets ----------------------------------#
+    
+    
+    def gui_card_played2(self,turn_index,card_played):
+        """
+        This method is called from the end of round2_lead_logic() and round2_follow_logic() in Round_2().
+        trump_revealed status is to be checked and trump_card_button is to be dealt with
+        """
+        
+        some_var14b=tk.IntVar() 
+
+        self.but_r2_played_card_lst=[]
+        
+        for i in self.button_lst_4_crd[turn_index]:
+            if i['text']==card_played.form():
+                # this is where the played card is removed from the shown hand(button_lst_4_crd)
+                i.pack_forget()
+                
+                # a new button for the played card is formed and attached according to the 
+                # turn_index and appended to the list which holds these buttons
+                self.but_r2_played_card_lst.append(tk.Button(self.fr_game_center,text=card_played.form(),\
+                                          fg=card_played.colour(),font=('GNU Unifont',15)))
+                # attaching the buttons based on the turn index. Each button is given a name as detaching 
+                # them by accessing through list index doesnot seem to work in gui_round2_summary() method
+                if turn_index==0:
+                    self.but_r2_player_card=self.but_r2_played_card_lst[-1]
+                    self.but_r2_player_card.grid(column=1,row=2,pady=20)
+                elif turn_index==1:
+                    self.but_r2_right_card=self.but_r2_played_card_lst[-1]
+                    self.but_r2_right_card.grid(column=2,row=1,padx=20)
+                elif turn_index==2:
+                    self.but_r2_mate_card=self.but_r2_played_card_lst[-1]
+                    self.but_r2_mate_card.grid(column=1,row=0,pady=20)
+                elif turn_index==3:
+                    self.but_r2_left_card=self.but_r2_played_card_lst[-1]
+                    self.but_r2_left_card.grid(column=0,row=1,padx=20)
+                else:
+                    print('\nSomething wrong abt turn_index')
+        
+                    
+        self.but_game_nxt.configure(text='>>',command=lambda:some_var14b.set(1))
+        self.but_game_nxt.grid(column=1,row=1)
+        self.but_game_nxt.focus()
+        
+        self.fr_game_center.wait_variable(some_var14b)
+        
+    ############## gui_card_played2() end ############################################
+    
+    def gui_round2_card_entry(self):
+        """
+        This method is used whenever the player(not comp) has to input a card, 
+        either while leading the round or following in the round
+        The method brings up the widgets specific to taking input.
+        The method is called from round2_lead_logic() and round2_follow_logic() in Round_2()
+        """
+        
+        some_var16=tk.IntVar()
+        round2_card=tk.StringVar()
+        
+        def save_round2_card():
+            global round2_entry
+            round2_entry=round2_card.get()
+
+            self.fr_game_center_bot.grid_forget()
+
+            some_var16.set(1)
+                    
+        # detaching the clickable next button (frame: fr_game_center)
+        self.but_game_nxt.grid_forget()
+        
+        # attaching the bottom frame in fr_game_center for player input
+        self.fr_game_center_bot.grid(column=1,row=2,sticky='NSEW')
+
+        
+        # this is nw in a frame inside the cell at (2,1) of the fr_game_center
+        self.lab_round2_card=tk.Label(self.fr_game_center_bot,text='Enter card',font=('GNU Unifont',15))
+        self.ent_round2_card=tk.Entry(self.fr_game_center_bot,textvariable=round2_card,font=('GNU Unifont',15))
+        self.lab_round2_card.grid(row=0,column=0,sticky='')
+        self.ent_round2_card.grid(row=0,column=1,sticky='')
+        self.ent_round2_card.focus()
+
+        self.but_round2_card=tk.Button(self.fr_game_center_bot,text='Enter', font=('GNU Unifont',15),\
+                                 command=save_round2_card)        
+        self.but_round2_card.grid(row=1,column=1,sticky='')
+                        
+        
+        self.fr_game_center.wait_variable(some_var16)
+        
+        return(round2_entry)
+        
+    ############## gui_round2_card_entry() end ######################################
+    
+    def gui_round2_trump_call_instance(self,turn_index):
+        """
+        This method deals with the situation of trump call by a player in round1
+        This method is called from round2_follow_logic() in Round_2().
+        """
+        
+        ret_var=tk.IntVar()
+        
+        def ret1():
+            """
+            For the situation when trump is called.
+            """
+            global ret_val
+            ret_val=1
+            ret_var.set(1)
+            bt_plyr_trmp_choice1.grid_forget()
+            bt_plyr_trmp_choice2.grid_forget()
+            self.fr_game_center_bot.grid_forget()
+            self.but_game_nxt.configure(text='Revealing trump')
+            self.but_game_nxt.grid(column=1,row=1)
+            
+        def ret2():
+            """
+            For the situation when trum is not called.
+            """
+            global ret_val
+            ret_val=0
+            ret_var.set(1)
+            bt_plyr_trmp_choice1.grid_forget()
+            bt_plyr_trmp_choice2.grid_forget()
+            self.fr_game_center_bot.grid_forget()
+            self.but_game_nxt.grid(column=1,row=1)
+        
+        if not turn_index:
+        # no need for checking the turn_index, since the method is called only for turn_index==0
+            self.but_game_nxt.grid_forget()
+            # below comments apply to round1 - modify as required
+            # fr_game_center_bot is created in full_bid_declare() but not packed there. it is getting 
+            # 'packed' in round1_card_entry() but getting packed again here as this method may get 
+            # called before card_entry() is called
+            self.fr_game_center_bot.grid(column=1,row=2,sticky='NSEW')
+            
+            bt_plyr_trmp_choice1=tk.Button(self.fr_game_center_bot,text='Calling trump'\
+                                          ,font=('GNU Unifont',15),command=ret1)
+            # fr_center_bot is defined in gui_round1_card_entry and it will always be called before this
+            # method, since it is called in lead_logic()
+            bt_plyr_trmp_choice2=tk.Button(self.fr_game_center_bot,text='Not calling trump'\
+                                          ,font=('GNU Unifont',15),command=ret2)
+            bt_plyr_trmp_choice1.grid(column=0,row=0)
+            bt_plyr_trmp_choice2.grid(column=1,row=0)
+            bt_plyr_trmp_choice1.focus()
+            
+            
+        self.fr_game_center.wait_variable(ret_var)
+        
+        return(ret_val)
+        
+    ############## gui_round1_trump_call_instance() end #############################
+    
+    def gui_round2_trump_reveal(self,turn_index,trump_card):
+        """
+        This method is called from round2_follow_logic() in Round_2()
+        The method with the situ when trump is called (by comp hand) and revealed and the 
+        trump_card/trump_card2 button is to be revealed i.e. replaced with the form() of trump_card
+        """
+        
+        some_var16b = tk.IntVar()
+        
+        def trump_reveal():
+            self.but_trump_card.configure(text=trump_card.form(),bg='white',fg=trump_card.colour())
+            # adding the new card created to list for card buttons, so that when that card is 
+            # played, it can be removed from the button list as well like other cards
+            self.button_lst_4_crd[turn_index].append(self.but_trump_card)
+            if turn_index:
+                # checking since lb_trump_call is not packed for turn_index==0
+                lb_trump_call.grid_forget()
+            self.but_game_nxt.configure(text='Trump revealed',command=lambda:some_var16b.set(1))
+            self.but_game_nxt.focus()
+        
+        lb_trump_call=tk.Label(self.fr_game_center,text='Calling trump',font=('GNU Unifont',15))
+        
+        if turn_index==0:
+            # the choice of revealing or not already obtained from trump_call_instance() method for 
+            # turn_index==0
+            pass
+        elif turn_index==1:
+            lb_trump_call.grid(column=2,row=1,padx=20)
+        elif turn_index==2:
+            lb_trump_call.grid(column=1,row=0,pady=20)
+        elif turn_index==3:
+            lb_trump_call.grid(column=0,row=1,padx=20)
+        else:
+            print('\nSomething wrong abt turn_index')
+            
+        self.but_game_nxt.grid(column=1,row=1)
+        self.but_game_nxt.focus()
+        self.but_game_nxt.configure(command=trump_reveal)
+        
+        self.fr_game_center.wait_variable(some_var16b)
+    
+    ############## gui_round2_trump_reveal() end ####################################
+    
+    def gui_round2_summary(self,point_oppo_team,point_player_team,round3_lead_player):
+        """
+        This method displays the summary at the end of round2, called from round2_paly() in Round_2()
+        """
+    
+        some_var17b=tk.IntVar()
+        
+        # button command
+        def round3_lead():
+            self.lb_point_oppo_team.grid_forget()
+            self.lb_point_player_team.grid_forget()
+            lb_r3_lead=tk.Label(self.fr_game_center,text='Round 3 starts with: '+round3_lead_player,\
+                               font=('GNU Unifont',15))
+            lb_r3_lead.grid(column=1,row=0,sticky='')
+            self.but_game_nxt.configure(text='>>',command=lambda:some_var17b.set(1))
+            self.but_game_nxt.focus()
+            
+        # button command
+        def points():
+            # using grid_forget with list iteration does not seem to work, it detaches only the last 
+            # button in list. Therefore each card in list is given separate name and detached (why?)
+            self.but_r2_player_card.grid_forget()
+            self.but_r2_right_card.grid_forget()
+            self.but_r2_mate_card.grid_forget()
+            self.but_r2_left_card.grid_forget()
+            # labels for displaying each team points (frame: fr_game_center)
+            self.lb_point_oppo_team=tk.Label(self.fr_game_center,text='Oppo_team: '+str(point_oppo_team),\
+                                        font=('GNU Unifont',15))
+            self.lb_point_player_team=tk.Label(self.fr_game_center,text='Your_team: '+str(point_player_team),\
+                                         font=('GNU Unifont',15))
+            self.lb_point_oppo_team.grid(column=1,row=0,sticky='')
+            self.lb_point_player_team.grid(column=1,row=2,sticky='')
+            # clickable next button (frame: fr_game_center)
+            self.but_game_nxt.configure(text='>>',command=round3_lead)
+            self.but_game_nxt.focus()
+        
+        # configuring and attaching clickable next button (frame: fr_game_center)
+        self.but_game_nxt.configure(text='Points taken',command=points)
+        self.but_game_nxt.grid(column=1,row=1,stick='')
+        self.but_game_nxt.focus()
+                
+        self.fr_game_center.wait_variable(some_var17b)
+        
+    ############## gui_round2_summary() end #########################################
+    
+    
+    #----------------------------- round3 widgets ----------------------------------#
+    
+    
