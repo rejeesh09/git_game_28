@@ -1268,6 +1268,10 @@ class Round_1(Prepare_game):
             self.point_player_team=sum(int(i.point()) for i in self.obj_played_card_lst)
         else:
             self.point_oppo_team=sum(int(i.point()) for i in self.obj_played_card_lst)
+            
+        # storing points for the whole game
+        self.point_player_team_sofar = self.point_player_team
+        self.point_oppo_team_sofar = self.point_oppo_team
 
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         # gui window display

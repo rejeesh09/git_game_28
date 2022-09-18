@@ -1,4 +1,5 @@
 #########################################################################
+#unfolder - finding and replacing unfolder with itself helps to unfold all the code.
 from round_1 import Round_1
 # Round_1() class is where the first round of the game takes place(i.e. round1_play() method in Round_1())
 # so the round1_play() method has to be called from Round_2 and round2_play() from Round_3 and so on
@@ -333,6 +334,10 @@ class Round_2(Round_1):
             self.point_player_team=sum(int(i.point()) for i in self.obj_played_card_lst)
         else:
             self.point_oppo_team=sum(int(i.point()) for i in self.obj_played_card_lst)
+            
+        # storing points for the whole game
+        self.point_player_team_sofar += self.point_player_team
+        self.point_oppo_team_sofar += self.point_oppo_team
 
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         # gui window display
@@ -344,13 +349,13 @@ class Round_2(Round_1):
         
         time.sleep(0.5)
         print('\n')
-        print(20*' '+'Mate:'+'{}'.format(self.obj_dictn_of_played_card_and_player['Mate'][0].show()))
+        print(20*' '+'Mate:'+'{}'.format(self.obj_dictn_of_played_card_and_player['Mate'][1].show()))
         print('Oppo_left:'+'{}'.format(self.obj_dictn_of_played_card_and_player\
-                                       ['Oppo_left'][0].show()),end=' ')
+                                       ['Oppo_left'][1].show()),end=' ')
         print(21*' '+'Oppo_right:'+'{}'.format(self.obj_dictn_of_played_card_and_player\
-                                               ['Oppo_right'][0].show()))
+                                               ['Oppo_right'][1].show()))
         print(20*' '+'{}:'.format(self.players_lst[0]),end=' ')
-        print(self.obj_dictn_of_played_card_and_player[self.players_lst[0]][0].show())
+        print(self.obj_dictn_of_played_card_and_player[self.players_lst[0]][1].show())
         print("\nRound2 - starting from {}, counter_clockwise: ".format\
               (self.players_lst[self.round1_lead_index]),end=' ')        
         for i in self.obj_played_card_lst:

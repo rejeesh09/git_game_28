@@ -1037,9 +1037,9 @@ class Widgets():
         def round2_lead():
             self.lb_point_oppo_team.grid_forget()
             self.lb_point_player_team.grid_forget()
-            lb_r2_lead=tk.Label(self.fr_game_center,text='Round 2 starts with: '+round2_lead_player,\
+            self.lb_r2_lead=tk.Label(self.fr_game_center,text='Round 2 starts with: '+round2_lead_player,\
                                font=('GNU Unifont',15))
-            lb_r2_lead.grid(column=1,row=0,sticky='')
+            self.lb_r2_lead.grid(column=1,row=0,sticky='')
             self.but_game_nxt.configure(text='>>',command=lambda:some_var17.set(1))
             self.but_game_nxt.focus()
             
@@ -1090,6 +1090,9 @@ class Widgets():
                 # this is where the played card is removed from the shown hand(button_lst_4_crd)
                 i.pack_forget()
                 
+                #to remove the widget displaying round2 lead
+                self.lb_r2_lead.grid_forget()
+                
                 # a new button for the played card is formed and attached according to the 
                 # turn_index and appended to the list which holds these buttons
                 self.but_r2_played_card_lst.append(tk.Button(self.fr_game_center,text=card_played.form(),\
@@ -1139,6 +1142,9 @@ class Widgets():
 
             some_var16.set(1)
                     
+        #to remove the widget displaying round2 lead
+        self.lb_r2_lead.grid_forget()
+        
         # detaching the clickable next button (frame: fr_game_center)
         self.but_game_nxt.grid_forget()
         
