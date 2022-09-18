@@ -47,11 +47,12 @@ class Round_2(Round_1):
             self.round2_lead_card=self.inp_parse_check(self.player_input)
         else:
         # starting by other players - lead_logic for other players
+        # just playing the maximum point card for now
 #             input("\nStart game: 'Enter'")
             found=False
             
             if not found:
-                # play the card with the max point
+            # play the card with the max point
                     mx=max(crdd.point() for crdd in self.obj_deal_lst_copy[self.turn_index])
                     for crdd in self.obj_deal_lst_copy[self.turn_index]:
                         if crdd.point()==mx:
@@ -84,6 +85,9 @@ class Round_2(Round_1):
         .append(self.round2_lead_card)
 
         self.obj_dictn_of_played_card_and_suit[self.round2_lead_card.suit()].append(self.round2_lead_card)
+        
+        # updating an additional dictionary from 18/09/2022
+        self.obj_dictn_of_player_index_and_hand[self.turn_index].remove(self.round2_lead_card)
         
         #16.######### var16
         self.round2_lead_card_suit=self.round2_lead_card.suit()
@@ -118,7 +122,7 @@ class Round_2(Round_1):
         #round2_follow_logic()'s point_sofar() function end ########
 
 
-# round1_follow_logic() main body###################################
+# round2_follow_logic() main body###################################
 
         # turn_index!=0, i.e. engine to play
         if self.turn_index:
@@ -127,27 +131,42 @@ class Round_2(Round_1):
             if len(self.obj_dictn_of_cards_grouped[self.turn_index][self.x]) != 0:
                 #print('\nreached line 733')
                 
-                # playing highest card of the lead suit of the round
-                self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1]
+                # if same team started the round
+                if abs(self.round2_lead_index - self.turn_index) == 2:
+                    
+                    # playing highest card of the lead suit of the round
+                    self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1]
+
+                    # updating highest point in round, if applicable
+                    if self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1].point()>\
+                        self.round2_highest_point_sofar:
+                        # updating highest point
+                        self.round2_highest_point_sofar=self.card_played.point()
+                        # updating dictionary of highest card and its turn
+                        self.obj_dictn_of_highest_card_and_turn['suit'].clear()
+                        self.obj_dictn_of_highest_card_and_turn['suit'].extend(\
+                                                                [self.turn_index,self.card_played])
                 
-                if self.obj_dictn_of_cards_grouped[self.turn_index][self.x][-1].point()>\
-                    self.round2_highest_point_sofar:
-                    # updating highest point
-                    self.round2_highest_point_sofar=self.card_played.point()
-                    # updating dictionary of highest card and its turn
-                    self.obj_dictn_of_highest_card_and_turn['suit'].clear()
-                    self.obj_dictn_of_highest_card_and_turn['suit'].extend(\
-                                                            [self.turn_index,self.card_played])
+                # team player has not started the round
+                else:
+                    
+                    # playing lowest card of the lead suit of the round
+                    self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][0]
                 
                 # removing played card from hand
                 self.obj_dictn_of_cards_grouped[self.turn_index][self.x].pop(-1)
                 
 
-            # if played suit not in hand - playing the last card in card list
+            # if played suit not in hand - playing the min card in card list
             else:
                 
+                # play the card with the min point remaining in hand (first card if many)
+                mi=min(crdd.point() for crdd in self.obj_deal_lst_copy[self.turn_index])
+                for crdd in self.obj_deal_lst_copy[self.turn_index]:
+                    if crdd.point()==mi:
+                        self.card_played=crdd
                 
-                self.card_played=self.obj_dictn_of_players_and_hand[self.players_lst[self.turn_index]][-1]
+#                 self.card_played=self.obj_dictn_of_players_and_hand[self.players_lst[self.turn_index]][-1]
                 suit_name = self.card_played.suit()
                 suit_no = self.suit_dictn[suit_name]
                 
@@ -275,6 +294,10 @@ class Round_2(Round_1):
         .append(self.card_played)
         self.obj_dictn_of_played_card_and_suit[self.card_played.suit()]\
         .append(self.card_played)
+        
+        # updating an additional dictionary from 18/09/2022
+        self.obj_dictn_of_player_index_and_hand[self.turn_index].remove(self.card_played)
+        
         #print('\nreached line 847')
         
         # removing the card played from deal_lst_copy. it is already removed from grouped dictn
