@@ -335,6 +335,9 @@ class Round_1(Prepare_game):
 
         self.obj_dictn_of_played_card_and_suit[self.round1_lead_card.suit()].append(self.round1_lead_card)
         
+        # updating an additional dictionary from 18/09/2022
+        self.obj_dictn_of_player_index_and_hand[self.turn_index].remove(self.round1_lead_card)
+        
         #16.######### var16
         self.round1_lead_card_suit=self.round1_lead_card.suit()
         self.round1_lead_suit_index=self.suit_dictn[self.round1_lead_card_suit]
@@ -1208,6 +1211,10 @@ class Round_1(Prepare_game):
         .append(self.card_played)
         self.obj_dictn_of_played_card_and_suit[self.card_played.suit()]\
         .append(self.card_played)
+        
+        # updating an additional dictionary from 18/09/2022
+        self.obj_dictn_of_player_index_and_hand[self.turn_index].remove(self.card_played)
+        
         #print('\nreached line 847')
         
         # removing the card played from deal_lst_copy. it is already removed from grouped dictn

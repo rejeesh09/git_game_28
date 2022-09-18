@@ -247,6 +247,8 @@ class Deck():
         #6.###### var6
         self.obj_dictn_of_players_and_hand = dict([self.players_lst[i],\
                                                    self.obj_deal_lst_sorted[i]] for i in range(4))
+        #additional edit on 18/09/2022
+        self.obj_dictn_of_player_index_and_hand = dict([i,self.obj_deal_lst_sorted[i]] for i in range(4))
 
     ##################################################################          
     # for displaying the hands object based
