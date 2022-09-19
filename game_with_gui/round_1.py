@@ -42,6 +42,13 @@ class Round_1(Prepare_game):
     
     ###################################################################
     def inp_parse_check(self,inp):
+        """
+        This method which takes the input string as argument is used to check the 
+        validity of the input string in round1 and the lead_logic() of all subsequent rounds
+        A different method defined in Round_2(), inp_parse_check_modified which takes an 
+        additional input of the lead suit in the particular round as well is to be 
+        used for varifying inp in follow_logic() of all subsequent rounds.
+        """
         # checks and converts the input to unicode and then to Card object        
         #import sys
         # to use sys.exit()
