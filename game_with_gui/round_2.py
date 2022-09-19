@@ -4,6 +4,9 @@ from round_1 import Round_1
 # Round_1() class is where the first round of the game takes place(i.e. round1_play() method in Round_1())
 # so the round1_play() method has to be called from Round_2 and round2_play() from Round_3 and so on
 ########################################################################
+from cards import Cards
+#Cards() class is explicitly called in inp_parse_check_modified() to make card objects
+
 import time
 import sys
 # sys used in inp_parse_check to exit 
@@ -22,9 +25,110 @@ class Round_2(Round_1):
         # can be called in __init__() of class Round_3(Round_2) and so on.
     
     # methods in this class are:
+    # inp_parse_check_modified()
     # round2_lead_logic()
     # round2_follow_logic()
     # round2_play()
+    
+    def inp_parse_check_modified(self,inp,which_suit):
+        """
+        This method in Round_2() class is a modification of inp_parse_check() in Round_1 and takes 
+        as additional input the suit of the lead card in the round.
+        It is to be used in the follow_logic() methods of round2 and all subsequent rounds.
+        """
+        # checks and converts the input to unicode and then to Card object        
+        #import sys
+        # to use sys.exit()
+        control_count=0
+        
+        # modification made from inp_parse_check
+        s_name_dict = {0:'spade',1:'hearts',2:'clubs',3:'diamonds'}
+        self.rnd = which_suit
+        self.ld_suit_name = s_name_dict[self.rnd]
+        
+        self.inp=inp
+        self.inp_cpy=self.inp #??
+        self.inp_cpy.strip(" ") # doesn't seem to work
+        self.inp_cpy.replace(" ","") # this seems to work only for space inside the string
+        ###############################################################
+        if self.inp=='0':
+        #1) to stop game by giving 0 as input; what's a better way? can't seem to do it w/o exception/tb
+            try:
+                sys.exit(0)
+            except SystemExit as e:
+                print('\nGame has been stopped\n')
+                sys.tracebacklimit = None
+                sys.exit(e)
+        ###############################################################
+        if self.inp_cpy.capitalize() not in self.legal_card_lst:
+        #2) checkin for a legal card entry
+            print('\nYou did not enter a valid card')
+            self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
+                +'\n7s or ah or 10d etc.: ').lower()
+            self.inp_parse_check_modified(self.player_input,self.rnd)
+        else:
+            if self.inp_cpy[-1]=='s':
+                if self.inp_cpy[0]!='1':
+                    self.inp_uni=self.inp_cpy[0].upper()+'\u2660'
+                else:
+                    self.inp_uni=self.inp_cpy[0].upper()+'0'+'\u2660'
+            elif self.inp_cpy[-1]=='h':
+                if self.inp_cpy[0]!='1':
+                    self.inp_uni=self.inp_cpy[0].upper()+'\u2665'
+                else:
+                    self.inp_uni=self.inp_cpy[0].upper()+'0'+'\u2665'
+            elif self.inp_cpy[-1]=='c':
+                if self.inp_cpy[0]!='1':
+                    self.inp_uni=self.inp_cpy[0].upper()+'\u2663'
+                else:
+                    self.inp_uni=self.inp_cpy[0].upper()+'0'+'\u2663'
+            elif self.inp_cpy[-1]=='d':
+                if self.inp_cpy[0]!='1':
+                    self.inp_uni=self.inp_cpy[0].upper()+'\u2666'
+                else:
+                    self.inp_uni=self.inp_cpy[0].upper()+'0'+'\u2666'
+        ###############################################################
+        # input to object
+        self.inp_uni_obj=Cards(self.inp_uni)
+        ###############################################################
+        # the counter is used since there are instructions in the functions 
+        # which come after recursive call
+        if control_count==0:
+            if self.inp_uni_obj not in self.obj_dictn_of_players_and_hand[self.player_name]:
+            #3) played card not in hand
+                print('\nEntered card not in hand')
+                self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
+                    +'\n7s or ah or 10d etc.: ').lower()
+                self.inp_parse_check_modified(self.player_input,self.rnd)
+            elif (not self.trump_revealed) and (self.inp_uni_obj==self.trump_card):
+            #4) if facedown card is played
+                print('\nFace down card cannot be played unless revealed')
+                self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
+                    +'\n7s or ah or 10d etc.: ').lower()
+                self.inp_parse_check_modified(self.player_input,self.rnd)
+            elif (self.highest_bidder_index==0) and (not len(self.obj_played_card_lst)) and \
+                (self.inp_uni_obj.suit()==self.obj_trump_checked.suit()) and (not self.trump_revealed):
+            #5) opening a round with trump by highest bidder(Player)
+                print('\nYou cannot play from trump suit now')
+                self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
+                    +'\n7s or ah or 10d etc.: ').lower()
+                self.inp_parse_check_modified(self.player_input,self.rnd)
+            elif (len(self.obj_played_card_lst)) and (len(self.obj_dictn_of_cards_grouped[self.turn_index]\
+                [self.rnd])) and (self.inp_uni_obj.suit()!=self.ld_suit_name):
+            #6) lead suit in hand but played another card(this wouldn't apply for face down trump card
+            # as it is separately taken care of)
+                print('\nYou have to play from the same suit as of lead card')
+                self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
+                    +'\n7s or ah or 10d etc.: ').lower()
+                self.inp_parse_check_modified(self.player_input,self.rnd)
+            else:
+                control_count+=1
+        # returns the input, converted to Cards object
+        return(self.inp_uni_obj)
+
+    ###################################################################
+    #inp_parse_check_modified() method end ############################
+    
     
     def round2_lead_logic(self):
         # logic for opening turn of round
@@ -49,15 +153,15 @@ class Round_2(Round_1):
         # starting by other players - lead_logic for other players
         # just playing the maximum point card for now
 #             input("\nStart game: 'Enter'")
-            found=False
+#             found=False
             
-            if not found:
+#             if not found:
             # play the card with the max point
-                    mx=max(crdd.point() for crdd in self.obj_deal_lst_copy[self.turn_index])
-                    for crdd in self.obj_deal_lst_copy[self.turn_index]:
-                        if crdd.point()==mx:
-                            self.round2_lead_card=crdd
-                            found=True
+            mx=max(crdd.point() for crdd in self.obj_deal_lst_copy[self.turn_index])
+            for crdd in self.obj_deal_lst_copy[self.turn_index]:
+                if crdd.point()==mx:
+                    self.round2_lead_card=crdd
+#                     found=True
                     
         ###############################################################
                         
@@ -154,10 +258,10 @@ class Round_2(Round_1):
                     self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][0]
                 
                 # removing played card from hand
-                self.obj_dictn_of_cards_grouped[self.turn_index][self.x].pop(-1)
+                self.obj_dictn_of_cards_grouped[self.turn_index][self.x].remove(self.card_played)
                 
 
-            # if played suit not in hand - playing the min card in card list
+            # if played suit not in hand play min point card in hand
             else:
                 
                 # play the card with the min point remaining in hand (first card if many)
@@ -171,7 +275,7 @@ class Round_2(Round_1):
                 suit_no = self.suit_dictn[suit_name]
                 
                 # removing played card from hand
-                self.obj_dictn_of_cards_grouped[self.turn_index][suit_no].pop(-1)
+                self.obj_dictn_of_cards_grouped[self.turn_index][suit_no].remove(self.card_played)
 
         #---------------------------------------------------------------------------------------
         
@@ -224,7 +328,7 @@ class Round_2(Round_1):
                                 self.player_input=self.gui_handle.gui_round2_card_entry()
                                 self.player_input=self.player_input.lower()
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                                self.card_played=self.inp_parse_check(self.player_input)
+                                self.card_played=self.inp_parse_check_modified(self.player_input,self.x)
                                 # making sure a trump is played
                                 while (self.card_played.suit()!=self.trump_suit):
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -232,7 +336,7 @@ class Round_2(Round_1):
                                     self.player_input=self.gui_handle.gui_round2_card_entry()
                                     self.player_input=self.player_input.lower()
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                                    self.card_played=self.inp_parse_check(self.player_input)
+                                    self.card_played=self.inp_parse_check_modified(self.player_input,self.x)
 
                             self.trump_played_in_round=True
                             self.obj_dictn_of_highest_card_and_turn['trump'].clear()
@@ -248,7 +352,7 @@ class Round_2(Round_1):
                     self.player_input=self.player_input.lower()
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                     
-                    self.card_played=self.inp_parse_check(self.player_input)
+                    self.card_played=self.inp_parse_check_modified(self.player_input,self.x)
         
                     if self.trump_revealed and (self.card_played.suit==self.trump_suit):
                         self.trump_played_in_round=True
@@ -263,9 +367,10 @@ class Round_2(Round_1):
                 # gui window for taking card input
                 self.player_input=self.gui_handle.gui_round2_card_entry()
                 self.player_input=self.player_input.lower()
+#                 print("player inp in round2 is :",self.player_input)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-                self.card_played=self.inp_parse_check(self.player_input)
+                self.card_played=self.inp_parse_check_modified(self.player_input,self.x)
 
                 # updating highest point sofar - need to check if this has to be used from round2
                 # this is being updated only coz of doubt whether this has already been used to 
@@ -355,8 +460,10 @@ class Round_2(Round_1):
         # calculating points scored by each team
         if key in [0,2]:
             self.point_player_team=sum(int(i.point()) for i in self.obj_played_card_lst)
+            self.point_oppo_team=0
         else:
             self.point_oppo_team=sum(int(i.point()) for i in self.obj_played_card_lst)
+            self.point_player_team=0
             
         # storing points for the whole game
         self.point_player_team_sofar += self.point_player_team
@@ -380,7 +487,7 @@ class Round_2(Round_1):
         print(20*' '+'{}:'.format(self.players_lst[0]),end=' ')
         print(self.obj_dictn_of_played_card_and_player[self.players_lst[0]][1].show())
         print("\nRound2 - starting from {}, counter_clockwise: ".format\
-              (self.players_lst[self.round1_lead_index]),end=' ')        
+              (self.players_lst[self.round2_lead_index]),end=' ')        
         for i in self.obj_played_card_lst:
             print(i.show(),end=' ')
         print('')
