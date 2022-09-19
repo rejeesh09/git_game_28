@@ -938,6 +938,9 @@ class Widgets():
         
 #         ret_val=0
         ret_var=tk.IntVar()
+    
+#         # to remove widgets from round1_card_entry
+#         self.fr_game_center_bot.grid_forget()
         
         def ret1():
             global ret_val
@@ -1178,6 +1181,10 @@ class Widgets():
         """
         
         ret_var=tk.IntVar()
+        
+        # to remove widgets from round1_card_entry
+        self.lab_round1_card.grid_forget()
+        self.ent_round1_card.grid_forget()
         
         def ret1():
             """
@@ -1424,6 +1431,13 @@ class Widgets():
         """
         
         ret_var=tk.IntVar()
+        
+        # to remove widgets from round2_card_entry
+        # find some other way
+        self.lab_round1_card.grid_forget()
+        self.ent_round1_card.grid_forget()
+        self.lab_round2_card.grid_forget()
+        self.ent_round2_card.grid_forget()
         
         def ret1():
             """
