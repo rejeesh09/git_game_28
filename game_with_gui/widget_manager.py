@@ -931,7 +931,8 @@ class Widgets():
     
     def gui_round1_trump_call_instance(self,turn_index):
         """
-        This method deals with the situation of trump call by a player in round1
+        This method deals with the situation of trump call by player in round1
+        Not applicable to comp hands and only for the player.
         This method is called from round1_follow_logic() in Round_1().
         """
         
@@ -1227,7 +1228,7 @@ class Widgets():
         
         return(ret_val)
         
-    ############## gui_round1_trump_call_instance() end #############################
+    ############## gui_round2_trump_call_instance() end #############################
     
     def gui_round2_trump_reveal(self,turn_index,trump_card):
         """
@@ -1274,7 +1275,7 @@ class Widgets():
     
     def gui_round2_summary(self,point_oppo_team,point_player_team,round3_lead_player):
         """
-        This method displays the summary at the end of round2, called from round2_paly() in Round_2()
+        This method displays the summary at the end of round2, called from round2_play() in Round_2()
         """
     
         some_var17b=tk.IntVar()
@@ -1283,9 +1284,9 @@ class Widgets():
         def round3_lead():
             self.lb_point_oppo_team.grid_forget()
             self.lb_point_player_team.grid_forget()
-            lb_r3_lead=tk.Label(self.fr_game_center,text='Round 3 starts with: '+round3_lead_player,\
+            self.lb_r3_lead=tk.Label(self.fr_game_center,text='Round 3 starts with: '+round3_lead_player,\
                                font=('GNU Unifont',15))
-            lb_r3_lead.grid(column=1,row=0,sticky='')
+            self.lb_r3_lead.grid(column=1,row=0,sticky='')
             self.but_game_nxt.configure(text='>>',command=lambda:some_var17b.set(1))
             self.but_game_nxt.focus()
             
@@ -1319,5 +1320,252 @@ class Widgets():
     
     
     #----------------------------- round3 widgets ----------------------------------#
+    
+    
+    def gui_card_played3(self,turn_index,card_played):
+        """
+        This method is called from the end of round3_lead_logic() and round3_follow_logic() in Round_3().
+        trump_revealed status is to be checked and trump_card_button is to be dealt with
+        """
+        
+        some_var14c=tk.IntVar() 
+
+        self.but_r3_played_card_lst=[]
+        
+        for i in self.button_lst_4_crd[turn_index]:
+            if i['text']==card_played.form():
+                # this is where the played card is removed from the shown hand(button_lst_4_crd)
+                i.pack_forget()
+                
+                #to remove the widget displaying round2 lead
+                self.lb_r3_lead.grid_forget()
+                
+                # a new button for the played card is formed and attached according to the 
+                # turn_index and appended to the list which holds these buttons
+                self.but_r3_played_card_lst.append(tk.Button(self.fr_game_center,text=card_played.form(),\
+                                          fg=card_played.colour(),font=('GNU Unifont',15)))
+                # attaching the buttons based on the turn index. Each button is given a name as detaching 
+                # them by accessing through list index doesnot seem to work in gui_round2_summary() method
+                if turn_index==0:
+                    self.but_r3_player_card=self.but_r3_played_card_lst[-1]
+                    self.but_r3_player_card.grid(column=1,row=2,pady=20)
+                elif turn_index==1:
+                    self.but_r3_right_card=self.but_r3_played_card_lst[-1]
+                    self.but_r3_right_card.grid(column=2,row=1,padx=20)
+                elif turn_index==2:
+                    self.but_r3_mate_card=self.but_r3_played_card_lst[-1]
+                    self.but_r3_mate_card.grid(column=1,row=0,pady=20)
+                elif turn_index==3:
+                    self.but_r3_left_card=self.but_r3_played_card_lst[-1]
+                    self.but_r3_left_card.grid(column=0,row=1,padx=20)
+                else:
+                    print('\nSomething wrong abt turn_index')
+        
+                    
+        self.but_game_nxt.configure(text='>>',command=lambda:some_var14c.set(1))
+        self.but_game_nxt.grid(column=1,row=1)
+        self.but_game_nxt.focus()
+        
+        self.fr_game_center.wait_variable(some_var14c)
+        
+    ############## gui_card_played3() end ############################################
+    
+    def gui_round3_card_entry(self):
+        """
+        This method is used whenever the player(not comp) has to input a card, 
+        either while leading the round or following in the round
+        The method brings up the widgets specific to taking input.
+        The method is called from round3_lead_logic() and round3_follow_logic() in Round_3()
+        """
+        
+        some_var16c=tk.IntVar()
+        round3_card=tk.StringVar()
+        
+        def save_round3_card():
+            global round3_entry
+            round3_entry=round3_card.get()
+
+            self.fr_game_center_bot.grid_forget()
+
+            some_var16c.set(1)
+                    
+        #to remove the widget displaying round3 lead
+        self.lb_r3_lead.grid_forget()
+        
+        # detaching the clickable next button (frame: fr_game_center)
+        self.but_game_nxt.grid_forget()
+        
+        # attaching the bottom frame in fr_game_center for player input
+        self.fr_game_center_bot.grid(column=1,row=2,sticky='NSEW')
+
+        
+        # this is nw in a frame inside the cell at (2,1) of the fr_game_center
+        self.lab_round3_card=tk.Label(self.fr_game_center_bot,text='Enter card',font=('GNU Unifont',15))
+        self.ent_round3_card=tk.Entry(self.fr_game_center_bot,textvariable=round3_card,font=('GNU Unifont',15))
+        self.lab_round3_card.grid(row=0,column=0,sticky='')
+        self.ent_round3_card.grid(row=0,column=1,sticky='')
+        self.ent_round3_card.focus()
+
+        self.but_round3_card=tk.Button(self.fr_game_center_bot,text='Enter', font=('GNU Unifont',15),\
+                                 command=save_round3_card)        
+        self.but_round3_card.grid(row=1,column=1,sticky='')
+                        
+        
+        self.fr_game_center.wait_variable(some_var16c)
+        
+        return(round3_entry)
+        
+    ############## gui_round3_card_entry() end #######################################
+    
+    def gui_round3_trump_call_instance(self,turn_index):
+        """
+        This method deals with the situation of trump call by a player in round1
+        This method is called from round3_follow_logic() in Round_3().
+        """
+        
+        ret_var=tk.IntVar()
+        
+        def ret1():
+            """
+            For the situation when trump is called.
+            """
+            global ret_val
+            ret_val=1
+            ret_var.set(1)
+            bt_plyr_trmp_choice1.grid_forget()
+            bt_plyr_trmp_choice2.grid_forget()
+            self.fr_game_center_bot.grid_forget()
+            self.but_game_nxt.configure(text='Revealing trump')
+            self.but_game_nxt.grid(column=1,row=1)
+            
+        def ret2():
+            """
+            For the situation when trum is not called.
+            """
+            global ret_val
+            ret_val=0
+            ret_var.set(1)
+            bt_plyr_trmp_choice1.grid_forget()
+            bt_plyr_trmp_choice2.grid_forget()
+            self.fr_game_center_bot.grid_forget()
+            self.but_game_nxt.grid(column=1,row=1)
+        
+        if not turn_index:
+        # no need for checking the turn_index, since the method is called only for turn_index==0
+            self.but_game_nxt.grid_forget()
+            # below comments apply to round1 - modify as required
+            # fr_game_center_bot is created in full_bid_declare() but not packed there. it is getting 
+            # 'packed' in round1_card_entry() but getting packed again here as this method may get 
+            # called before card_entry() is called
+            self.fr_game_center_bot.grid(column=1,row=2,sticky='NSEW')
+            
+            bt_plyr_trmp_choice1=tk.Button(self.fr_game_center_bot,text='Calling trump'\
+                                          ,font=('GNU Unifont',15),command=ret1)
+            # fr_center_bot is defined in gui_round1_card_entry and it will always be called before this
+            # method, since it is called in lead_logic()
+            bt_plyr_trmp_choice2=tk.Button(self.fr_game_center_bot,text='Not calling trump'\
+                                          ,font=('GNU Unifont',15),command=ret2)
+            bt_plyr_trmp_choice1.grid(column=0,row=0)
+            bt_plyr_trmp_choice2.grid(column=1,row=0)
+            bt_plyr_trmp_choice1.focus()
+            
+            
+        self.fr_game_center.wait_variable(ret_var)
+        
+        return(ret_val)
+        
+    ############## gui_round3_trump_call_instance() end #############################
+    
+    def gui_round3_trump_reveal(self,turn_index,trump_card):
+        """
+        This method is called from round3_follow_logic() in Round_3()
+        The method with the situ when trump is called (by comp hand) and revealed and the 
+        trump_card/trump_card2 button is to be revealed i.e. replaced with the form() of trump_card
+        """
+        
+        some_var16c = tk.IntVar()
+        
+        def trump_reveal():
+            self.but_trump_card.configure(text=trump_card.form(),bg='white',fg=trump_card.colour())
+            # adding the new card created to list for card buttons, so that when that card is 
+            # played, it can be removed from the button list as well like other cards
+            self.button_lst_4_crd[turn_index].append(self.but_trump_card)
+            if turn_index:
+                # checking since lb_trump_call is not packed for turn_index==0
+                lb_trump_call.grid_forget()
+            self.but_game_nxt.configure(text='Trump revealed',command=lambda:some_var16c.set(1))
+            self.but_game_nxt.focus()
+        
+        lb_trump_call=tk.Label(self.fr_game_center,text='Calling trump',font=('GNU Unifont',15))
+        
+        if turn_index==0:
+            # the choice of revealing or not already obtained from trump_call_instance() method for 
+            # turn_index==0
+            pass
+        elif turn_index==1:
+            lb_trump_call.grid(column=2,row=1,padx=20)
+        elif turn_index==2:
+            lb_trump_call.grid(column=1,row=0,pady=20)
+        elif turn_index==3:
+            lb_trump_call.grid(column=0,row=1,padx=20)
+        else:
+            print('\nSomething wrong abt turn_index')
+            
+        self.but_game_nxt.grid(column=1,row=1)
+        self.but_game_nxt.focus()
+        self.but_game_nxt.configure(command=trump_reveal)
+        
+        self.fr_game_center.wait_variable(some_var16c)
+    
+    ############## gui_round3_trump_reveal() end ####################################
+    
+    def gui_round3_summary(self,point_oppo_team,point_player_team,round4_lead_player):
+        """
+        This method displays the summary at the end of round3, called from round3_play() in Round_3()
+        """
+    
+        some_var17c=tk.IntVar()
+        
+        # button command
+        def round4_lead():
+            self.lb_point_oppo_team.grid_forget()
+            self.lb_point_player_team.grid_forget()
+            lb_r4_lead=tk.Label(self.fr_game_center,text='Round 4 starts with: '+round4_lead_player,\
+                               font=('GNU Unifont',15))
+            lb_r4_lead.grid(column=1,row=0,sticky='')
+            self.but_game_nxt.configure(text='>>',command=lambda:some_var17c.set(1))
+            self.but_game_nxt.focus()
+            
+        # button command
+        def points():
+            # using grid_forget with list iteration does not seem to work, it detaches only the last 
+            # button in list. Therefore each card in list is given separate name and detached (why?)
+            self.but_r3_player_card.grid_forget()
+            self.but_r3_right_card.grid_forget()
+            self.but_r3_mate_card.grid_forget()
+            self.but_r3_left_card.grid_forget()
+            # labels for displaying each team points (frame: fr_game_center)
+            self.lb_point_oppo_team=tk.Label(self.fr_game_center,text='Oppo_team: '+str(point_oppo_team),\
+                                        font=('GNU Unifont',15))
+            self.lb_point_player_team=tk.Label(self.fr_game_center,text='Your_team: '+str(point_player_team),\
+                                         font=('GNU Unifont',15))
+            self.lb_point_oppo_team.grid(column=1,row=0,sticky='')
+            self.lb_point_player_team.grid(column=1,row=2,sticky='')
+            # clickable next button (frame: fr_game_center)
+            self.but_game_nxt.configure(text='>>',command=round4_lead)
+            self.but_game_nxt.focus()
+        
+        # configuring and attaching clickable next button (frame: fr_game_center)
+        self.but_game_nxt.configure(text='Points taken',command=points)
+        self.but_game_nxt.grid(column=1,row=1,stick='')
+        self.but_game_nxt.focus()
+                
+        self.fr_game_center.wait_variable(some_var17c)
+        
+    ############## gui_round3_summary() end #########################################
+    
+    
+    #----------------------------- round4 widgets ----------------------------------#
+    
     
     
