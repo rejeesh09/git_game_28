@@ -118,7 +118,7 @@ class Round_4(Round_3):
         def point_sofar():
             return(sum(int(i.point()) for i in self.obj_played_card_lst))
         ############################################################
-        #round3_follow_logic()'s point_sofar() function end ########
+        #round4_follow_logic()'s point_sofar() function end ########
 
 
 # round4_follow_logic() main body###################################
@@ -151,6 +151,18 @@ class Round_4(Round_3):
                     
                     # playing lowest card of the lead suit of the round
                     self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][0]
+                    
+                    # updating highest point in round, if applicable(this can happen if the lowest 
+                    # card in hand is still higher the highest card so far)
+                    if self.obj_dictn_of_cards_grouped[self.turn_index][self.x][0].point()>\
+                        self.round4_highest_point_sofar:
+                        # updating highest point
+                        self.round4_highest_point_sofar=self.card_played.point()
+                        # updating dictionary of highest card and its turn
+                        self.obj_dictn_of_highest_card_and_turn['suit'].clear()
+                        self.obj_dictn_of_highest_card_and_turn['suit'].extend(\
+                                                                [self.turn_index,self.card_played])
+                    
                 
                 # removing played card from hand
                 self.obj_dictn_of_cards_grouped[self.turn_index][self.x].remove(self.card_played)

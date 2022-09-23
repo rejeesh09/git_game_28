@@ -256,6 +256,18 @@ class Round_2(Round_1):
                     
                     # playing lowest card of the lead suit of the round
                     self.card_played=self.obj_dictn_of_cards_grouped[self.turn_index][self.x][0]
+                    
+                    # updating highest point in round, if applicable(this can happen if the lowest 
+                    # card in hand is still higher the highest card so far)
+                    if self.obj_dictn_of_cards_grouped[self.turn_index][self.x][0].point()>\
+                        self.round2_highest_point_sofar:
+                        # updating highest point
+                        self.round2_highest_point_sofar=self.card_played.point()
+                        # updating dictionary of highest card and its turn
+                        self.obj_dictn_of_highest_card_and_turn['suit'].clear()
+                        self.obj_dictn_of_highest_card_and_turn['suit'].extend(\
+                                                                [self.turn_index,self.card_played])
+                    
                 
                 # removing played card from hand
                 self.obj_dictn_of_cards_grouped[self.turn_index][self.x].remove(self.card_played)
