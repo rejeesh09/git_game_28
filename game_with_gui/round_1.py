@@ -39,6 +39,7 @@ class Round_1(Prepare_game):
             super().__init__(False,False)
             # keeping the same bid_turn_index as the last normal deal
             super().bid_half_hand(True,False)
+            super().bid_full_hand() # added on 24/09/2022 - not tested
     
     ###################################################################
     def inp_parse_check(self,inp):
