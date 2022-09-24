@@ -1007,7 +1007,7 @@ class Widgets():
         
     ############## gui_round1_trump_call_instance() end #############################
     
-    def gui_round1_trump_reveal(self,turn_index,trump_card):
+    def gui_round1_trump_reveal(self,turn_index,trump_card,highest_bidder_index):
         """
         This method is called from round1_follow_logic() in Round_1()
         The method with the situ when trump is called (by comp hand) and revealed and the 
@@ -1020,7 +1020,12 @@ class Widgets():
             self.but_trump_card.configure(text=trump_card.form(),bg='white',fg=trump_card.colour())
             # adding the new card created to list for card buttons, so that when that card is 
             # played, it can be removed from the button list as well like other cards
-            self.button_lst_4_crd[turn_index].append(self.but_trump_card)
+#             self.button_lst_4_crd[turn_index].append(self.but_trump_card)
+            # the trump card needs to be added to the list of highest bidder and not the 
+            # current_turn_index
+            self.button_lst_4_crd[highest_bidder_index].append(self.but_trump_card)
+
+#             print(f"\ndebug print - turn_index = {turn_index}")
             if turn_index:
                 # checking since lb_trump_call is not packed for turn_index==0
                 lb_trump_call.grid_forget()
