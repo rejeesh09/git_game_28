@@ -1,4 +1,5 @@
 #########################################################################
+#unfolder - finding and replacing unfolder with itself helps to unfold all the code.
 from round_3 import Round_3
 # Round_3() class is where the third round of the game takes place(i.e. round3_play() method in Round_3())
 # so the round3_play() method has to be called from Round_4 and round4_play() from Round_5 and so on
@@ -209,7 +210,8 @@ class Round_4(Round_3):
                         # gui window display
                         # the gui disp method of Widget() class in widget_manager module is called by its object
                         # gui_handle which was created earlier in __init__() of Deck()
-                        self.gui_handle.gui_round4_trump_reveal(self.turn_index,self.trump_card)
+                        self.gui_handle.gui_round4_trump_reveal(self.turn_index,\
+                                                                self.trump_card,self.highest_bidder_index)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                         
                         if len(self.obj_dictn_of_cards_grouped[0][self.trump_suit_index]):

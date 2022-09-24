@@ -1,4 +1,5 @@
 #########################################################################
+#unfolder - finding and replacing unfolder with itself helps to unfold all the code.
 from round_6 import Round_6
 # Round_6() class is where the sixth round of the game takes place(i.e. round6_play() method in Round_6())
 # so the round6_play() method has to be called from Round_7 and round7_play() from Round_8.
