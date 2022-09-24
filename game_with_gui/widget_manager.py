@@ -1263,7 +1263,7 @@ class Widgets():
         
     ############## gui_round2_trump_call_instance() end #############################
     
-    def gui_round2_trump_reveal(self,turn_index,trump_card):
+    def gui_round2_trump_reveal(self,turn_index,trump_card,highest_bidder_index):
         """
         This method is called from round2_follow_logic() in Round_2()
         The method with the situ when trump is called (by comp hand) and revealed and the 
@@ -1276,7 +1276,7 @@ class Widgets():
             self.but_trump_card.configure(text=trump_card.form(),bg='white',fg=trump_card.colour())
             # adding the new card created to list for card buttons, so that when that card is 
             # played, it can be removed from the button list as well like other cards
-            self.button_lst_4_crd[turn_index].append(self.but_trump_card)
+            self.button_lst_4_crd[highest_bidder_index].append(self.but_trump_card)
             if turn_index:
                 # checking since lb_trump_call is not packed for turn_index==0
                 lb_trump_call.grid_forget()
@@ -1516,7 +1516,7 @@ class Widgets():
         
     ############## gui_round3_trump_call_instance() end #############################
     
-    def gui_round3_trump_reveal(self,turn_index,trump_card):
+    def gui_round3_trump_reveal(self,turn_index,trump_card,highest_bidder_index):
         """
         This method is called from round3_follow_logic() in Round_3()
         The method with the situ when trump is called (by comp hand) and revealed and the 
@@ -1529,7 +1529,7 @@ class Widgets():
             self.but_trump_card.configure(text=trump_card.form(),bg='white',fg=trump_card.colour())
             # adding the new card created to list for card buttons, so that when that card is 
             # played, it can be removed from the button list as well like other cards
-            self.button_lst_4_crd[turn_index].append(self.but_trump_card)
+            self.button_lst_4_crd[highest_bidder_index].append(self.but_trump_card)
             if turn_index:
                 # checking since lb_trump_call is not packed for turn_index==0
                 lb_trump_call.grid_forget()
@@ -1773,7 +1773,7 @@ class Widgets():
         
     ############## gui_round4_trump_call_instance() end #############################
     
-    def gui_round4_trump_reveal(self,turn_index,trump_card):
+    def gui_round4_trump_reveal(self,turn_index,trump_card,highest_bidder_index):
         """
         This method is called from round4_follow_logic() in Round_4()
         The method with the situ when trump is called (by comp hand) and revealed and the 
@@ -1786,7 +1786,7 @@ class Widgets():
             self.but_trump_card.configure(text=trump_card.form(),bg='white',fg=trump_card.colour())
             # adding the new card created to list for card buttons, so that when that card is 
             # played, it can be removed from the button list as well like other cards
-            self.button_lst_4_crd[turn_index].append(self.but_trump_card)
+            self.button_lst_4_crd[highest_bidder_index].append(self.but_trump_card)
             if turn_index:
                 # checking since lb_trump_call is not packed for turn_index==0
                 lb_trump_call.grid_forget()
@@ -2032,7 +2032,7 @@ class Widgets():
         
     ############## gui_round5_trump_call_instance() end ##############################
     
-    def gui_round5_trump_reveal(self,turn_index,trump_card):
+    def gui_round5_trump_reveal(self,turn_index,trump_card,highest_bidder_index):
         """
         This method is called from round5_follow_logic() in Round_5()
         The method with the situ when trump is called (by comp hand) and revealed and the 
@@ -2045,7 +2045,7 @@ class Widgets():
             self.but_trump_card.configure(text=trump_card.form(),bg='white',fg=trump_card.colour())
             # adding the new card created to list for card buttons, so that when that card is 
             # played, it can be removed from the button list as well like other cards
-            self.button_lst_4_crd[turn_index].append(self.but_trump_card)
+            self.button_lst_4_crd[highest_bidder_index].append(self.but_trump_card)
             if turn_index:
                 # checking since lb_trump_call is not packed for turn_index==0
                 lb_trump_call.grid_forget()
@@ -2293,7 +2293,7 @@ class Widgets():
         
     ############## gui_round6_trump_call_instance() end ##############################
     
-    def gui_round6_trump_reveal(self,turn_index,trump_card):
+    def gui_round6_trump_reveal(self,turn_index,trump_card,highest_bidder_index):
         """
         This method is called from round6_follow_logic() in Round_6()
         The method with the situ when trump is called (by comp hand) and revealed and the 
@@ -2306,7 +2306,7 @@ class Widgets():
             self.but_trump_card.configure(text=trump_card.form(),bg='white',fg=trump_card.colour())
             # adding the new card created to list for card buttons, so that when that card is 
             # played, it can be removed from the button list as well like other cards
-            self.button_lst_4_crd[turn_index].append(self.but_trump_card)
+            self.button_lst_4_crd[highest_bidder_index].append(self.but_trump_card)
             if turn_index:
                 # checking since lb_trump_call is not packed for turn_index==0
                 lb_trump_call.grid_forget()

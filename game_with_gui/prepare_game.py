@@ -1049,6 +1049,8 @@ class Prepare_game(Deck):
                 self.obj_dictn_of_cards_grouped[self.highest_bidder2_index]\
                                                 [self.trump_suit_index].remove(self.trump_card)
                 self.obj_deal_lst_copy[self.highest_bidder2_index].remove(self.trump_card)
+                
+#                 print("\nprint for debug aft trump set message in bid_full_hand() in prepare_game()\n")
             
             # if player is the highest bidder
             else:
@@ -1068,11 +1070,14 @@ class Prepare_game(Deck):
                 self.trump_card=self.obj_trump_checked
                 print('\nTrump card set by {}: {}'.format(self.players_lst[0],self.obj_trump_checked.form()))
                 
-                
+            
             # displaying full hands/ pass True to see updated hands after each round(option for terminal disp
             # not applicable for gui display)
             self.obj_display_hands(self.highest_bidder2_index,\
                                    self.trump_revealed,self.trump_card,show_updated=False,situation=1)
+            
+#             print("\nprint for debug aft obj_display_hands() is called at the end of \
+#             bid_full_hand() in prepare_game()\n")
 
         else:
 #             print('\nEveryone passed in 2nd bid round')
@@ -1097,7 +1102,8 @@ class Prepare_game(Deck):
             print('\nNo one called 21 or above, so trump set by {} stays for the call of {} '.format(self.\
                     players_lst[self.highest_bidder1_index],self.bid_value_final))    
         
-            
+#         print("\nprint for debug at the end of bid_full_hand() in prepare_game()\n")
+        
     ###################################################################
     # bid_full_hand() end #############################################
     

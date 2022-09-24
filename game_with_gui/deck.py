@@ -273,6 +273,7 @@ class Deck():
         else:
         # if show_updated value is True, then display without already played cards and even trump removed if
         # trump card is not yet revealed - to be used for successive rounds
+        # why can't this be used even for not show_updated?
             print('\n')
             for key in range(4):
                 print("{}: ".format(self.players_lst[key]))
