@@ -539,9 +539,6 @@ class Widgets():
             else:
                 self.but_trump_card2.pack_forget()
                 
-            #to see if this has any effect
-#             def giving_time_to_forget():
-#                 self.fr_fll_bd_center.grid_forget()
             
             # button command to detach fr_fll_bd_center and attach fr_game_center with widgets
             def clear_fll_bd_fr2():
@@ -549,14 +546,6 @@ class Widgets():
                 if self.fr_fll_bd_center.winfo_ismapped():
 #                     print("\ndebug print - fr_fll_bd_center is packed")
                     self.fr_fll_bd_center.grid_forget()
-#                     print("\ndebug print - fr_fll_bd_center is now unpacked")
-        
-#                 self.fr_fll_bd_center.grid_forget()
-            
-#                 # the above code to forget fr_fll_bd_center is moved to a function to see if it has
-#                 # any effect. this is done because a button in that frame needs to be seen first 
-#                 # and then unpacked when clicked on it - no effect seen
-#                 giving_time_to_forget()
                 
                 # attaching the frame fr_game_center to the center of root window
                 self.fr_game_center.grid(column=1,row=1,sticky='NSEW')
@@ -829,6 +818,8 @@ class Widgets():
             self.but_r1_played_card_lst=[]
         
             self.but_game_nxt.configure(command=lambda:some_var12.set(1))
+            # the below code was causing problem since it is a duplicate of what happens in 
+            # disp_full_hands when called through obj_display_hands() - not tested enough
 #             self.but_game_nxt.configure(command=set_var)
 #             self.but_game_nxt.focus()
 #             print("\nprint for debug in gui_full_bid_declare()\n")
