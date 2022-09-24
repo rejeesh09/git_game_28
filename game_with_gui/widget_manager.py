@@ -113,8 +113,8 @@ class Widgets():
             ent1.grid_forget()
             but1.grid_forget()
             
-            lab2=tk.Label(self.fr1,text='Name entered is: '+name,font=('GNU Unifont',30))
-            but2=tk.Button(self.fr1, text='Deal',font=('GNU Unifont',30),command=clear_fr1)
+            lab2=tk.Label(self.fr1,text='Name entered is: '+name,font=('GNU Unifont',20))
+            but2=tk.Button(self.fr1, text='Deal',font=('GNU Unifont',20),command=clear_fr1)
             lab2.pack()
             but2.pack()
             
@@ -503,6 +503,9 @@ class Widgets():
             
             some_var13=tk.IntVar()
             
+            if self.lab_full_bd_mes_fnl.winfo_ismapped():
+                self.lab_full_bd_mes_fnl.grid_forget()
+            
             for j in range(4):
                 for i in self.button_lst_4_crd[j]:
                     i.pack_forget()
@@ -536,9 +539,24 @@ class Widgets():
             else:
                 self.but_trump_card2.pack_forget()
                 
+            #to see if this has any effect
+#             def giving_time_to_forget():
+#                 self.fr_fll_bd_center.grid_forget()
+            
             # button command to detach fr_fll_bd_center and attach fr_game_center with widgets
             def clear_fll_bd_fr2():
-                self.fr_fll_bd_center.grid_forget()
+                
+                if self.fr_fll_bd_center.winfo_ismapped():
+#                     print("\ndebug print - fr_fll_bd_center is packed")
+                    self.fr_fll_bd_center.grid_forget()
+#                     print("\ndebug print - fr_fll_bd_center is now unpacked")
+        
+#                 self.fr_fll_bd_center.grid_forget()
+            
+#                 # the above code to forget fr_fll_bd_center is moved to a function to see if it has
+#                 # any effect. this is done because a button in that frame needs to be seen first 
+#                 # and then unpacked when clicked on it - no effect seen
+#                 giving_time_to_forget()
                 
                 # attaching the frame fr_game_center to the center of root window
                 self.fr_game_center.grid(column=1,row=1,sticky='NSEW')
@@ -547,8 +565,11 @@ class Widgets():
                 # the frame did not show the button when defined in init and just attached here.??
                 self.but_game_nxt=tk.Button(self.fr_game_center,text='Round 1',font=('GNU Unifont',15))
                 self.but_game_nxt.grid(row=1,column=1,sticky='')
+                
                 self.but_game_nxt.configure(command=lambda:some_var13.set(1))
                 self.but_game_nxt.focus()
+#                 print("\nprint for debug in gui_disp_full_hands after 2nd bid()\n")
+#                 print("1_some_var13 is set to: \n",some_var13.get())
 
             # attaching and configuring the clickable-button (frame: fr_fll_bd_center)
             self.but_fll_nxt.configure(text='Start game',command= clear_fll_bd_fr2)
@@ -777,6 +798,7 @@ class Widgets():
         self.lab_mate_fcall.grid_forget()
         self.lab_left_fcall.grid_forget()
         
+        global some_var12
         some_var12=tk.IntVar()
         
         self.fr_game_center=tk.Frame(self.rt, background='white')
@@ -788,7 +810,10 @@ class Widgets():
         self.fr_game_center_bot.columnconfigure((0,1),weight=1)
         self.fr_game_center_bot.rowconfigure((0,1),weight=1)
         
-        def clear_fll_bd_fr():
+#         def set_var():
+#             some_var12.set(1)
+        
+        def clear_fll_bd_fr1():
             
             self.fr_fll_bd_center.grid_forget()
             
@@ -798,19 +823,24 @@ class Widgets():
             self.but_game_nxt=tk.Button(self.fr_game_center,text='Round1',font=('GNU Unifont',15))
             self.but_game_nxt.grid(column=1,row=1,sticky='')
             self.but_game_nxt.focus()
+#             print("1_some_var12 is set to: \n",some_var12.get())
             
             # creating a list to hold the card buttons played in gui_card_played
             self.but_r1_played_card_lst=[]
         
             self.but_game_nxt.configure(command=lambda:some_var12.set(1))
-            self.but_game_nxt.focus()
+#             self.but_game_nxt.configure(command=set_var)
+#             self.but_game_nxt.focus()
+#             print("\nprint for debug in gui_full_bid_declare()\n")
+#             print("2_some_var12 is set to: \n",some_var12.get())
+#             some_var12.set(1)
 #             some_var12.set(1)
         
         def disp_val_f():
             self.lab_full_bd_mes_fnl.configure(text='Trump card set by '+self.players_lst[bidder_indx])
             self.but_fll_nxt.configure(text='>>')
-#             self.but_fll_nxt.configure(command= lambda: some_var12.set(1))
-            self.but_fll_nxt.configure(command= clear_fll_bd_fr)
+            self.but_fll_nxt.configure(command= lambda: some_var12.set(1))
+#             self.but_fll_nxt.configure(command= clear_fll_bd_fr2)
             self.but_fll_nxt.focus()
         
         if not no_call:
@@ -826,7 +856,7 @@ class Widgets():
             self.lab_full_bd_mes_fnl.grid(row=0,column=1,sticky='')
             
             self.but_fll_nxt.configure(text='Start game')
-            self.but_fll_nxt.configure(command= clear_fll_bd_fr)
+            self.but_fll_nxt.configure(command= clear_fll_bd_fr1)
             self.but_fll_nxt.focus()
             
         
