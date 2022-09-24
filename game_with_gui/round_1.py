@@ -30,6 +30,8 @@ class Round_1(Prepare_game):
         
 #         input("\nStart 2nd bidding: 'Enter' ")
         super().bid_full_hand()
+    
+#         print("\nprint for debug after bid_full_hand() call in __init__ of Round_1()\n")
         
         # redealing if trump_distrb_good() returns false
         # this has not been tested for errors
@@ -162,19 +164,23 @@ class Round_1(Prepare_game):
         # starting by other players - lead_logic for other players
 #             input("\nStart game: 'Enter'")
             found=False
-
+            
+#             print("\nprint for debug in the beginning of round1_lead_logic()\n")
+            
             if self.turn_index==self.highest_bidder_index:
             # case1 - highest bidder himself starting
 
                 if len(self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index])>2:
                 # case1.a - has 4 or more trump cards (including self.trump_card,(which wld be removed,
                 # hence len > 2))
-
+                    
+#                     print("\nprint for debug in the applicable case in round1_lead_logic()\n")
                     for keyy in self.obj_dictn_of_cards_grouped[self.turn_index]:
                         if len(self.obj_dictn_of_cards_grouped[self.turn_index][keyy])==1 \
                             and self.obj_dictn_of_cards_grouped[self.turn_index][keyy][0].rank()=='J':
                         # if a non-trump single J present
                             self.round1_lead_card=self.obj_dictn_of_cards_grouped[self.turn_index][keyy][0]
+#                             print("\nprint for debug round1_lead_logic() - lead_card found\n")
                             found=True
                             break
                     if not found:
@@ -1042,7 +1048,8 @@ class Round_1(Prepare_game):
                             # gui window display
                             # the gui disp method of Widget() class in widget_manager module is called by its object
                             # gui_handle which was created earlier in __init__() of Deck()
-                            self.gui_handle.gui_round1_trump_reveal(self.turn_index,self.trump_card)
+                            self.gui_handle.gui_round1_trump_reveal(self.turn_index,\
+                                                                self.trump_card,self.highest_bidder_index)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                             # inserting the trump card back into the highest bidder dictionary 
                             # (if not player)
@@ -1123,7 +1130,8 @@ class Round_1(Prepare_game):
                         # gui window display
                         # the gui disp method of Widget() class in widget_manager module is called by its object
                         # gui_handle which was created earlier in __init__() of Deck()
-                        self.gui_handle.gui_round1_trump_reveal(self.turn_index,self.trump_card)
+                        self.gui_handle.gui_round1_trump_reveal(self.turn_index,\
+                                                                self.trump_card,self.highest_bidder_index)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                         
                         if len(self.obj_dictn_of_cards_grouped[0][self.trump_suit_index]):
@@ -1254,7 +1262,8 @@ class Round_1(Prepare_game):
         # round1_play() method  #######################################
                 
         while(len(self.obj_played_card_lst)<4):
-
+            
+#             print("\nprint for debug in round1_play() just before calling lead_logic()\n")
             # calling the round1 lead_logic for the first turn
             if len(self.obj_played_card_lst)==0:                
                 self.round1_lead_logic()
