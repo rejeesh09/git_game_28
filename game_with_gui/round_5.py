@@ -342,7 +342,7 @@ class Round_5(Round_4):
                 
         while(len(self.obj_played_card_lst)<4):
 
-            # calling the round4 lead_logic for the first turn
+            # calling the round5 lead_logic for the first turn
             if len(self.obj_played_card_lst)==0:                
                 self.round5_lead_logic()
 
@@ -356,7 +356,7 @@ class Round_5(Round_4):
             self.round5_follow_logic(self.round5_lead_suit_index)
 
 
-        # determining round5_lead_index
+        # determining round6_lead_index
         if len(self.obj_dictn_of_highest_card_and_turn['trump'])==0:
             key = self.obj_dictn_of_highest_card_and_turn['suit'][0]
         else:
