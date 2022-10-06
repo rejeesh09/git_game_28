@@ -81,7 +81,39 @@ class Widgets():
         # the below fram hosts all widgets for play in round 1.
         self.fr_game_center=tk.Frame(self.rt, background='white')
         self.fr_game_center.columnconfigure((0,1,2),weight=1)
-        self.fr_game_center.rowconfigure((0,1,2),weight=1)       
+        self.fr_game_center.rowconfigure((0,1,2),weight=1)   
+        
+        
+        #-----------------edit-06102022-----------------------------------
+        # creating some dictionaries of gui methods for all rounds so that 
+        # code in each round can be made round agnostic and more easily scalable
+        # each round has 5 gui methods, which are being collected into single 
+        # dictionaries for each category
+        # round*8 entries not made since they are not yet defined
+        
+        self.gui_card_played = {1:self.gui_round1_card_played,2:self.gui_round2_card_played,\
+                               3:self.gui_round3_card_played,4:self.gui_round4_card_played,\
+                               5:self.gui_round5_card_played,6:self.gui_round6_card_played,\
+                               7:self.gui_round7_card_played}
+        self.gui_card_entry = {1:self.gui_round1_card_entry,2:self.gui_round2_card_entry,\
+                              3:self.gui_round3_card_entry,4:self.gui_round4_card_entry,\
+                              5:self.gui_round5_card_entry,6:self.gui_round6_card_entry,\
+                              7:self.gui_round7_card_entry}
+        self.gui_trump_call_instance = {1:self.gui_round1_trump_call_instance,\
+                                        2:self.gui_round2_trump_call_instance,\
+                              3:self.gui_round3_trump_call_instance,4:self.gui_round4_trump_call_instance,\
+                              5:self.gui_round5_trump_call_instance,6:self.gui_round6_trump_call_instance,\
+                              7:self.gui_round7_trump_call_instance}
+        self.gui_trump_reveal = {1:self.gui_round1_trump_reveal,2:self.gui_round2_trump_reveal,\
+                              3:self.gui_round3_trump_reveal,4:self.gui_round4_trump_reveal,\
+                              5:self.gui_round5_trump_reveal,6:self.gui_round6_trump_reveal,\
+                              7:self.gui_round7_trump_reveal}
+        self.gui_summary = {1:self.gui_round1_summary,2:self.gui_round2_summary,\
+                              3:self.gui_round3_summary,4:self.gui_round4_summary,\
+                              5:self.gui_round5_summary,6:self.gui_round6_summary,\
+                              7:self.gui_round7_summary}
+        
+        #-----------------edit-06102022-----------------------------------
         
     ########################## __init__() end #######################################   
     
@@ -859,7 +891,7 @@ class Widgets():
     #----------------------------- round1 widgets ----------------------------------#
     
     
-    def gui_card_played(self,turn_index,card_played):
+    def gui_round1_card_played(self,turn_index,card_played):
         """
         This method is called from the end of round1_lead_logic() and round1_follow_logic() in Round_1().
         trump_revealed status is to be checked and trump_card_button is to be dealt with
@@ -1105,7 +1137,7 @@ class Widgets():
     #----------------------------- round2 widgets ----------------------------------#
     
     
-    def gui_card_played2(self,turn_index,card_played):
+    def gui_round2_card_played(self,turn_index,card_played):
         """
         This method is called from the end of round2_lead_logic() and round2_follow_logic() in Round_2().
         trump_revealed status is to be checked and trump_card_button is to be dealt with
@@ -1355,7 +1387,7 @@ class Widgets():
     #----------------------------- round3 widgets ----------------------------------#
     
     
-    def gui_card_played3(self,turn_index,card_played):
+    def gui_round3_card_played(self,turn_index,card_played):
         """
         This method is called from the end of round3_lead_logic() and round3_follow_logic() in Round_3().
         trump_revealed status is to be checked and trump_card_button is to be dealt with
@@ -1608,7 +1640,7 @@ class Widgets():
     #----------------------------- round4 widgets ----------------------------------#
     
     
-    def gui_card_played4(self,turn_index,card_played):
+    def gui_round4_card_played(self,turn_index,card_played):
         """
         This method is called from the end of round4_lead_logic() and round4_follow_logic() in Round_4().
         trump_revealed status is to be checked and trump_card_button is to be dealt with
@@ -1865,7 +1897,7 @@ class Widgets():
     #----------------------------- round5 widgets ----------------------------------#
     
     
-    def gui_card_played5(self,turn_index,card_played):
+    def gui_round5_card_played(self,turn_index,card_played):
         """
         This method is called from the end of round5_lead_logic() and round5_follow_logic() in Round_5().
         trump_revealed status is to be checked and trump_card_button is to be dealt with
@@ -2124,7 +2156,7 @@ class Widgets():
     #----------------------------- round6 widgets ----------------------------------#
     
     
-    def gui_card_played6(self,turn_index,card_played):
+    def gui_round6_card_played(self,turn_index,card_played):
         """
         This method is called from the end of round6_lead_logic() and round6_follow_logic() in Round_6().
         trump_revealed status is to be checked and trump_card_button is to be dealt with
@@ -2385,7 +2417,7 @@ class Widgets():
     #----------------------------- round7 widgets ----------------------------------#
     
     
-    def gui_card_played7(self,turn_index,card_played):
+    def gui_round7_card_played(self,turn_index,card_played):
         """
         This method is called from the end of round7_lead_logic() and round7_follow_logic() in Round_7().
         trump_revealed status is to be checked and trump_card_button is to be dealt with
