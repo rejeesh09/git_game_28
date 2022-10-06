@@ -42,6 +42,33 @@ class Round_1(Prepare_game):
             # keeping the same bid_turn_index as the last normal deal
             super().bid_half_hand(True,False)
             super().bid_full_hand() # added on 24/09/2022 - not tested
+            
+        #-----------------------edit-05102022--------------------------
+        self.cards_in_suit_so_far = {'spade':0,'hearts':0,'clubs':0,'diamonds':0}
+        #-----------------------edit-05102022--------------------------
+        
+        #---------------edit-06102022----------------------------
+        # scalable verisions of all round specific variables used
+        # only for variables/attributes and not methods
+        # methods -> both round_* class methods and gui methods
+        
+        self.round_no = 1 
+        
+        self.round_cards = {}
+        self.round_cards[self.round_no] = ['']*4
+        self.round_lead_index = {}
+        self.round_lead_player = {}
+        self.round_lead_card = {}
+        self.round_lead_card_suit = {}
+        self.round_lead_suit_index = {}
+        self.round_highest_point_sofar = {}
+        
+        # filenames for writing each round cards
+        self.cards_in_round_filenames = {1:'round1_cards.txt',2:'round2_cards.txt',3:'round3_cards.txt',\
+                                         4:'round4_cards.txt',5:'round5_cards.txt',6:'round6_cards.txt',\
+                                         7:'round7_cards.txt',8:'round8_cards.txt'}
+        
+        #---------------edit-06102022----------------------------
     
     ###################################################################
     def inp_parse_check(self,inp):
@@ -334,8 +361,8 @@ class Round_1(Prepare_game):
         
         
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        # gui window for round1 lead card
-        self.gui_handle.gui_card_played(self.turn_index,self.round1_lead_card)
+        # gui window for round*1 lead card
+        self.gui_handle.gui_round1_card_played(self.turn_index,self.round1_lead_card)
         # the object gui_handle of the Widgets() class is created in Deck() class in 
         # deck.py module
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -352,11 +379,17 @@ class Round_1(Prepare_game):
         # updating an additional dictionary from 18/09/2022
         self.obj_dictn_of_player_index_and_hand[self.turn_index].remove(self.round1_lead_card)
         
+        
         #16.######### var16
         self.round1_lead_card_suit=self.round1_lead_card.suit()
         self.round1_lead_suit_index=self.suit_dictn[self.round1_lead_card_suit]
         #17.######### var17
         self.round1_highest_point_sofar=self.round1_lead_card.point()
+        
+        #-----------------------edit-05102022--------------------------
+        # incrementing the count of the suit of which the card is played
+        self.cards_in_suit_so_far[self.round1_lead_card_suit] += 1
+        #-----------------------edit-05102022--------------------------
         
         # removing card played from lst and dictn
         self.obj_deal_lst_copy[self.turn_index].remove(self.round1_lead_card)
@@ -1141,12 +1174,12 @@ class Round_1(Prepare_game):
 #                                 input("\nHave to play trump card itself: 'Enter'")
                                 self.card_played=self.trump_card
                                 
-                                # the below lines have been commented out, since gui_card_played 
+                                # the below lines have been commented out, since gui_round*1_card_played 
                                 # needs to be called only once and only at the end of this 
                                 # follow_logic() method
                                 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                 # gui window for round1 (follow card)
-                                # self.gui_handle.gui_card_played(self.turn_index,self.card_played)
+                                # self.gui_handle.gui_round*1_card_played(self.turn_index,self.card_played)
                                 # the object gui_handle of the Widgets() class is created in Deck() 
                                 # class in deck.py module
                                 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1200,7 +1233,7 @@ class Round_1(Prepare_game):
 
                 self.card_played=self.inp_parse_check(self.player_input)
 
-                # updating highest point sofar - need to check if this has to be used from round2
+                # updating highest point sofar - need to check if this has to be used from round*2
                 # this is being updated only coz of doubt whether this has already been used to 
                 # check conditions
                 self.round1_highest_point_sofar=max(self.card_played.point(),self.round1_highest_point_sofar)
@@ -1217,7 +1250,7 @@ class Round_1(Prepare_game):
             # need to remove card from grouped_dictn
             self.obj_dictn_of_cards_grouped[self.turn_index]\
                     [self.suit_dictn[self.card_played.suit()]].remove(self.card_played)
-            #########################################################
+        #########################################################
             
         # adding card to played card lst
         self.obj_played_card_lst.append(self.card_played)
@@ -1227,6 +1260,11 @@ class Round_1(Prepare_game):
         .append(self.card_played)
         self.obj_dictn_of_played_card_and_suit[self.card_played.suit()]\
         .append(self.card_played)
+        
+        #-----------------------edit-05102022--------------------------
+        # incrementing the count of the suit from which the card is played
+        self.cards_in_suit_so_far[self.card_played.suit()] += 1
+        #-----------------------edit-05102022--------------------------
         
         # updating an additional dictionary from 18/09/2022
         self.obj_dictn_of_player_index_and_hand[self.turn_index].remove(self.card_played)
@@ -1248,7 +1286,7 @@ class Round_1(Prepare_game):
         
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         # gui window for round1 (follow card)
-        self.gui_handle.gui_card_played(self.turn_index,self.card_played)
+        self.gui_handle.gui_round1_card_played(self.turn_index,self.card_played)
         # the object gui_handle of the Widgets() class is created in Deck() class in 
         # deck.py module
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1278,14 +1316,26 @@ class Round_1(Prepare_game):
             self.round1_follow_logic(self.round1_lead_suit_index)
 
 
-        # determining round2_lead_index
+        # determining round*2_lead_index
         if len(self.obj_dictn_of_highest_card_and_turn['trump'])==0:
             key = self.obj_dictn_of_highest_card_and_turn['suit'][0]
         else:
             key = self.obj_dictn_of_highest_card_and_turn['trump'][0]
+        
+        
+        #----------------edit-06102022-------------------------------
+        
+        self.round_lead_index[self.round_no] = self.highest_bidder_index 
+        self.round_lead_player[self.round_no] = self.players_lst[self.highest_bidder_index]
+             
+        next_round = self.round_no + 1
 
-        self.round2_lead_index=key
-        self.round2_lead_player=self.players_lst[key]
+        self.round_lead_index[next_round] = key
+        self.round_lead_player[next_round] = self.players_lst[key]
+        #self.round*2_lead_index=key
+        #self.round*2_lead_player=self.players_lst[key]
+        
+        #----------------edit-06102022-------------------------------
         
         # calculating points scored by each team
         if key in [0,2]:
@@ -1302,7 +1352,7 @@ class Round_1(Prepare_game):
         # the gui disp method of Widget() class in widget_manager module is called by its object
         # gui_handle which was created earlier in __init__() of Deck()
         self.gui_handle.gui_round1_summary(self.point_oppo_team,self.point_player_team,\
-                                          self.round2_lead_player)
+                                          self.round_lead_player[next_round])
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
         
         time.sleep(0.5)
@@ -1319,7 +1369,7 @@ class Round_1(Prepare_game):
         for i in self.obj_played_card_lst:
             print(i.show(),end=' ')
         print('')
-        print('\nround2_lead_index: ',self.round2_lead_index)
+        print('\nround-2_lead_index: ',self.round_lead_index[next_round])
         print('\nPoints scored - Your_team:{} , Oppo_team:{}'.format(\
                                     self.point_player_team,self.point_oppo_team))
 
