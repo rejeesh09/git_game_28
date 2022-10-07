@@ -25,7 +25,31 @@ class Cards():
     ##################################################################
     
     def form(self):
+        """
+        If the Cards object is made in standalone code, form() method returns whatever argument 
+        is given to make the card object.
+        But in the game Card objects are made by giving unicode arguments - so form() method in 
+        game returns corresponding figure character for each suit
+        """
         return(self.x)
+    
+    def form_alpha_num(self):
+        """
+        To return the alpha-numeric form of the card object
+        """
+        if self.x[0] == "1":
+            val = "10"
+        else:
+            val = self.x[0]
+        
+        if self.x.count('\u2660')!=0:
+            return(val+'s')
+        if self.x.count('\u2665')!=0:
+            return(val+'h')
+        if self.x.count('\u2663')!=0:
+            return(val+'c')
+        if self.x.count('\u2666')!=0:
+            return(val+'d')
     
     def show(self):
         red_begin='\033[31m'
@@ -52,22 +76,31 @@ class Cards():
             return('diamonds')
     
     def rank(self):
-        if self.x.count('7')!=0:
-            return('7')
-        if self.x.count('8')!=0:
-            return('8')
-        if self.x.count('Q')!=0:
-            return('Q')
-        if self.x.count('K')!=0:
-            return('K')
-        if self.x.count('10')!=0:
-            return('10')
-        if self.x.count('A')!=0:
-            return('A')
-        if self.x.count('9')!=0:
-            return('9')
-        if self.x.count('J')!=0:
-            return('J')
+        """
+        The method just returns the 1st character of the string argument used to create the object
+        (except for 10). Earlier implementation was unnecessary and commented out, but revert if 
+        any problem occurs.
+        """
+#         if self.x.count('7')!=0:
+#             return('7')
+#         if self.x.count('8')!=0:
+#             return('8')
+#         if self.x.count('Q')!=0:
+#             return('Q')
+#         if self.x.count('K')!=0:
+#             return('K')
+#         if self.x.count('10')!=0:
+#             return('10')
+#         if self.x.count('A')!=0:
+#             return('A')
+#         if self.x.count('9')!=0:
+#             return('9')
+#         if self.x.count('J')!=0:
+#             return('J')
+        if self.x[0] == '1':
+            return(self.x[0]+'0')
+        else:
+            return(self.x[0])
     
     def point(self):
         if self.x.count('7')!=0:
