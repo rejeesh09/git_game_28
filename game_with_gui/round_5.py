@@ -446,9 +446,12 @@ class Round_5(Round_4):
 
         # writing all cards played in round together to file for debugging
         # each card can be accessed with turn_index from round_cards list which contains all cards in list
-        f=open(self.cards_in_round_filenames[self.round_no],"wb")
-        pickle.dump(self.round_cards[self.round_no],f)
-        f.close()
+        # writing the cards to file only if all 4 cards in round has been played such that the previous 
+        # file would stay even if the game stops mid round due to some reason
+        if len(self.round_cards[self.round_no]) == 4:
+            f=open(self.cards_in_round_filenames[self.round_no],"wb")
+            pickle.dump(self.round_cards[self.round_no],f)
+            f.close()
         
         # determining round*5_lead_index
         if len(self.obj_dictn_of_highest_card_and_turn['trump'])==0:
@@ -501,7 +504,20 @@ class Round_5(Round_4):
         print('\nround-6_lead_index: ',self.round_lead_index[next_round])
         print('\nPoints scored - Your_team:{} , Oppo_team:{}'.format(\
                                     self.point_player_team,self.point_oppo_team))
+        
+        #-----------------------------edit-07102022------------------------------
+        c_list = [i.form_alpha_num() for i in self.obj_played_card_lst]
+        lead = str(self.round_lead_index[self.round_no])
+        wr_str = lead + ":" + " ".join(c_list) + "\n"
+        
+        gdf = open(self.game_data_file_name,'a')
+        gdf.write(wr_str)
 
+        gdf.writelines(["#round-6\n","#-------------------------\n"])
+        gdf.close()
+        
+        #-----------------------------edit-07102022------------------------------
+        
         # updating and clearing variables
         self.obj_played_card_lst_of_32.extend(self.obj_played_card_lst)
         self.obj_played_card_lst.clear()

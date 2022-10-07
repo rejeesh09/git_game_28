@@ -98,6 +98,27 @@ class Prepare_game(Deck):
         self.trump_played_in_round=False # to check if trump played in round,
         # to be updated when entry added to dictn['trump'] lst
         
+        #------------------------edit-07102022------------------------
+        # a file now stores the game counter
+        gc = open("game_counter.txt",'r')
+        self.game_count = int(gc.readline())
+        gc.close()       
+        
+        # creating a file for storing all the game data; to be used later for 
+        # learning implementation
+        self.game_count += 1
+        self.game_data_file_name = "game_data_"+f"{self.game_count:03d}"+".txt"
+        try:
+            gdf = open(self.game_data_file_name,'x')
+            gdf.close()
+        except:
+            pass
+        
+        gdf = open(self.game_data_file_name,'w')
+        gdf.writelines(["#half_bid_calls\n","#-------------------------\n"])
+        gdf.close()
+        #------------------------edit-07102022------------------------
+        
 
     ###################################################################
     # init() end ######################################################
@@ -179,7 +200,7 @@ class Prepare_game(Deck):
             # selecting the first turn for bidding, randomly
             self.round1_lead_index=self.bid_turn_index
             # the one who starts the bid, starts/lead the first round. 
-            # round1_lead_index will be used in Round_1() class.
+            # round*1_lead_index will be used in Round_*1() class.
 
             fb=open("last_starting_bid_turn.txt","wb")
             # saving a copy for debugging 
@@ -595,6 +616,12 @@ class Prepare_game(Deck):
                 self.gui_handle.gui_half_bid_values(self.bid_turn_index,self.bid_value_final,calls=True)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 
+                #------------------------edit-07102022---------------------------
+                gdf = open(self.game_data_file_name,'a')
+                gdf.write(str(self.bid_turn_index)+":"+str(self.bid_value_final)+"\n")
+                gdf.close()
+                #------------------------edit-07102022---------------------------
+                
                 print('\n{} calls {}'.format(self.players_lst[self.bid_turn_index],self.bid_value_final))
                 self.bid_turn_index=(self.bid_turn_index+1)%4
                 self.bid_counter+=1
@@ -626,6 +653,15 @@ class Prepare_game(Deck):
                 break
 
         #########################################
+        
+        #------------------------edit-07102022---------------------------
+        gdf = open(self.game_data_file_name,'a')
+        gdf.writelines(["#half_bid_highest_call\n","#-------------------------\n"])
+        gdf.write(str(self.highest_bidder_index)+":"+str(self.bid_value_final)+"\n")
+        gdf.writelines(["#full_bid_calls\n","#-------------------------\n"])
+        gdf.close()
+
+        #------------------------edit-07102022---------------------------
         
         print('\n{} made the highest bid: {}'.format(self.players_lst[self.highest_bidder_index],\
                                                     self.bid_value_final))
@@ -688,7 +724,7 @@ class Prepare_game(Deck):
     # repeated if that was what was required.
         self.bid2_turn_index=self.round1_lead_index
         # the player who started the first round bidding gets to start the second round bidding as well,
-        # round1_lead_index stores the value of the first bid_turn_index value which was generated 
+        # round*1_lead_index stores the value of the first bid_turn_index value which was generated 
         # randomly. bid_turn_index and similarly bid2_turn_index get updated during bids 
         
         
@@ -697,7 +733,7 @@ class Prepare_game(Deck):
         self.gui_handle.gui_full_bid_mes(self.players_lst[self.bid2_turn_index])
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-#         print('\nStarting bid2_turn_index is: ',self.round1_lead_index)
+#         print('\nStarting bid2_turn_index is: ',self.round*1_lead_index)
         
         self.bid2_value_final=20 # to make sure min starting bid value is 21
         self.bid2_counter=0
@@ -979,6 +1015,12 @@ class Prepare_game(Deck):
                 self.bid2_value_final=self.bid2_value
                 self.highest_bidder2_index=self.bid2_turn_index
                 
+                #------------------------edit-07102022---------------------------
+                gdf = open(self.game_data_file_name,'a')
+                gdf.write(str(self.highest_bidder2_index)+":"+str(self.bid2_value_final)+"\n")
+                gdf.close()
+                #------------------------edit-07102022---------------------------
+                
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 # gui window for full bid call display
                 self.gui_handle.gui_full_bid_values(self.bid2_turn_index,self.bid2_value,calls=True)
@@ -1016,6 +1058,15 @@ class Prepare_game(Deck):
         
         # if any call was made in bidding round 2
         if self.bid2_any_call:
+            
+            #------------------------edit-07102022---------------------------
+            gdf = open(self.game_data_file_name,'a')
+            gdf.writelines(["#full_bid_highest_call\n","#-------------------------\n"])
+            gdf.write(str(self.highest_bidder2_index)+":"+str(self.bid2_value_final)+"\n")
+            gdf.writelines(["#round-1\n","#-------------------------\n"])
+            gdf.close()
+
+            #------------------------edit-07102022---------------------------
             
             print('\n{} made the highest bid: {}'.format(self.players_lst[self.highest_bidder2_index],\
                 self.bid2_value_final))
@@ -1098,7 +1149,19 @@ class Prepare_game(Deck):
             # gui window for declaring 2nd bid round result
             self.gui_handle.gui_full_bid_declare(self.highest_bidder1_index,0,no_call=True)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
+            
+            #------------------------edit-07102022---------------------------
+            # since no calls were made in 2nd bid, adding empty space in file
+            gdf = open(self.game_data_file_name,'a')
+            gdf.write("\n")
+    
+            gdf.writelines(["#full_bid_highest_call\n","#-------------------------\n"])
+            gdf.write("\n")
+            
+            gdf.writelines(["#round-1\n","#-------------------------\n"])
+            gdf.close()
+            #------------------------edit-07102022---------------------------
+            
             print('\nNo one called 21 or above, so trump set by {} stays for the call of {} '.format(self.\
                     players_lst[self.highest_bidder1_index],self.bid_value_final))    
         

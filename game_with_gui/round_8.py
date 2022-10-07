@@ -24,6 +24,15 @@ class Round_8(Round_7):
         # kind of creating an object instance of Round_*7() class with the above __init__()
         super().round7_play()
         # round*8_play() to be called from main code
+        
+        #------------------------edit-07102022------------------------
+        # put the below lines of code wherever appropriate so that the game is successfully 
+        # finished by then
+        
+        gc = open("game_counter.txt",'w')
+        gc.write(str(self.game_count))
+        gc.close()    
+        #------------------------edit-07102022------------------------
     
     # methods in this class are:
     # round*8_play()
