@@ -94,7 +94,7 @@ class Widgets():
         self.gui_card_played = {1:self.gui_round1_card_played,2:self.gui_round2_card_played,\
                                3:self.gui_round3_card_played,4:self.gui_round4_card_played,\
                                5:self.gui_round5_card_played,6:self.gui_round6_card_played,\
-                               7:self.gui_round7_card_played}
+                               7:self.gui_round7_card_played,8:self.gui_round8_card_played}
         self.gui_card_entry = {1:self.gui_round1_card_entry,2:self.gui_round2_card_entry,\
                               3:self.gui_round3_card_entry,4:self.gui_round4_card_entry,\
                               5:self.gui_round5_card_entry,6:self.gui_round6_card_entry,\
@@ -107,11 +107,11 @@ class Widgets():
         self.gui_trump_reveal = {1:self.gui_round1_trump_reveal,2:self.gui_round2_trump_reveal,\
                               3:self.gui_round3_trump_reveal,4:self.gui_round4_trump_reveal,\
                               5:self.gui_round5_trump_reveal,6:self.gui_round6_trump_reveal,\
-                              7:self.gui_round7_trump_reveal}
+                              7:self.gui_round7_trump_reveal,8:self.gui_round8_trump_reveal}
         self.gui_summary = {1:self.gui_round1_summary,2:self.gui_round2_summary,\
                               3:self.gui_round3_summary,4:self.gui_round4_summary,\
                               5:self.gui_round5_summary,6:self.gui_round6_summary,\
-                              7:self.gui_round7_summary}
+                              7:self.gui_round7_summary,8:self.gui_round8_summary}
         
         #-----------------edit-06102022-----------------------------------
         
@@ -2552,7 +2552,7 @@ class Widgets():
             
         def ret2():
             """
-            For the situation when trum is not called.
+            For the situation when trump is not called.
             """
             global ret_val
             ret_val=0
@@ -2680,4 +2680,140 @@ class Widgets():
     #----------------------------- round8 widgets ----------------------------------#
     
     
+    def gui_round8_card_played(self,turn_index,card_played):
+        """
+        This method is called from the end of round*8_lead and round*8_follow methods in Round_8().
+        trump_revealed status is to be checked and trump_card_button is to be dealt with
+        """
+        
+        some_var18g=tk.IntVar() 
+
+        self.but_r8_played_card_lst=[]
+        
+        for i in self.button_lst_4_crd[turn_index]:
+            if i['text']==card_played.form():
+                # this is where the played card is removed from the shown hand(button_lst_4_crd)
+                i.pack_forget()
+                
+                #to remove the widget displaying round*8 lead
+                self.lb_r8_lead.grid_forget()
+                
+                # a new button for the played card is formed and attached according to the 
+                # turn_index and appended to the list which holds these buttons
+                self.but_r8_played_card_lst.append(tk.Button(self.fr_game_center,text=card_played.form(),\
+                                          fg=card_played.colour(),font=('GNU Unifont',15)))
+                # attaching the buttons based on the turn index. Each button is given a name as detaching 
+                # them by accessing through list index doesnot seem to work in gui_round5_summary() method
+                if turn_index==0:
+                    self.but_r8_player_card=self.but_r8_played_card_lst[-1]
+                    self.but_r8_player_card.grid(column=1,row=2,pady=20)
+                elif turn_index==1:
+                    self.but_r8_right_card=self.but_r8_played_card_lst[-1]
+                    self.but_r8_right_card.grid(column=2,row=1,padx=20)
+                elif turn_index==2:
+                    self.but_r8_mate_card=self.but_r8_played_card_lst[-1]
+                    self.but_r8_mate_card.grid(column=1,row=0,pady=20)
+                elif turn_index==3:
+                    self.but_r8_left_card=self.but_r8_played_card_lst[-1]
+                    self.but_r8_left_card.grid(column=0,row=1,padx=20)
+                else:
+                    print('\nSomething wrong abt turn_index')
+        
+                    
+        self.but_game_nxt.configure(text='>>',command=lambda:some_var18g.set(1))
+        self.but_game_nxt.grid(column=1,row=1)
+        self.but_game_nxt.focus()
+        
+        self.fr_game_center.wait_variable(some_var18g)
+        
+    ############## gui_card_played8() end ############################################
+    
+    def gui_round8_trump_reveal(self,turn_index,trump_card,highest_bidder_index):
+        """
+        This method is called from round*8_lead() or follow() as required in Round_8()
+        The method with the situ when trump is called (by comp hand) and revealed and the 
+        trump_card/trump_card2 button is to be revealed i.e. replaced with the form() of trump_card
+        """
+        
+        some_var19g = tk.IntVar()
+        
+        def trump_reveal():
+            self.but_trump_card.configure(text=trump_card.form(),bg='white',fg=trump_card.colour())
+            # adding the new card created to list for card buttons, so that when that card is 
+            # played, it can be removed from the button list as well like other cards
+            self.button_lst_4_crd[highest_bidder_index].append(self.but_trump_card)
+#             if turn_index:
+#                 # checking since lb_trump_call is not packed for turn_index==0
+            lb_trump_call.grid_forget()
+            self.but_game_nxt.configure(text='Trump revealed',command=lambda:some_var19g.set(1))
+            self.but_game_nxt.focus()
+        
+        lb_trump_call=tk.Label(self.fr_game_center,text='Calling trump',font=('GNU Unifont',15))
+        
+        if turn_index==0:
+            lb_trump_call.grid(column=1,row=2,padx=20)
+        elif turn_index==1:
+            lb_trump_call.grid(column=2,row=1,padx=20)
+        elif turn_index==2:
+            lb_trump_call.grid(column=1,row=0,pady=20)
+        elif turn_index==3:
+            lb_trump_call.grid(column=0,row=1,padx=20)
+        else:
+            print('\nSomething wrong abt turn_index')
+            
+        self.but_game_nxt.grid(column=1,row=1)
+        self.but_game_nxt.focus()
+        self.but_game_nxt.configure(command=trump_reveal)
+        
+        self.fr_game_center.wait_variable(some_var19g)
+    
+    ############## gui_round*8_trump_reveal() end #####################################
+    
+    def gui_round8_summary(self,point_oppo_team,point_player_team,winner_indx,pl_team_point):
+        """
+        This method displays the summary at the end of round*8, called from round*8_play() in Round_*8()
+        """
+    
+        some_var20g=tk.IntVar()
+        winner = {0:'Your team',1:'Oppo team'}
+        opp_point = 28-pl_team_point
+        point = {0:pl_team_point,1:opp_point}
+        
+        # button command
+        def result():
+            self.lb_point_oppo_team.grid_forget()
+            self.lb_point_player_team.grid_forget()
+            self.lb_r8_lead=tk.Label(self.fr_game_center,text=winner[winner_indx]+' won with '+\
+                                     str(point[winner_indx])+' points!!',font=('GNU Unifont',15))
+            self.lb_r8_lead.grid(column=1,row=0,sticky='')
+            self.but_game_nxt.configure(text='>>',command=lambda:some_var20g.set(1))
+            self.but_game_nxt.focus()
+            
+        # button command
+        def points():
+            # using grid_forget with list iteration does not seem to work, it detaches only the last 
+            # button in list. Therefore each card in list is given separate name and detached (why?)
+            self.but_r8_player_card.grid_forget()
+            self.but_r8_right_card.grid_forget()
+            self.but_r8_mate_card.grid_forget()
+            self.but_r8_left_card.grid_forget()
+            # labels for displaying each team points (frame: fr_game_center)
+            self.lb_point_oppo_team=tk.Label(self.fr_game_center,text='Oppo_team: '+str(point_oppo_team),\
+                                        font=('GNU Unifont',15))
+            self.lb_point_player_team=tk.Label(self.fr_game_center,text='Your_team: '+str(point_player_team),\
+                                         font=('GNU Unifont',15))
+            self.lb_point_oppo_team.grid(column=1,row=0,sticky='')
+            self.lb_point_player_team.grid(column=1,row=2,sticky='')
+            # clickable next button (frame: fr_game_center)
+            self.but_game_nxt.configure(text='>>',command=result)
+            self.but_game_nxt.focus()
+        
+        # configuring and attaching clickable next button (frame: fr_game_center)
+        self.but_game_nxt.configure(text='Points taken',command=points)
+        self.but_game_nxt.grid(column=1,row=1,stick='')
+        self.but_game_nxt.focus()
+                
+        self.fr_game_center.wait_variable(some_var20g)
+        
+    ############## gui_round*8_summary() end ##########################################
     

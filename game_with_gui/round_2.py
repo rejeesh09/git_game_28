@@ -18,7 +18,35 @@ import random
 import pickle
 #########################################################################
 class Round_2(Round_1):
+    """
+    Module/class where round*2 of game takes place.
+    
+    Methods:
+            __init__()
+            inp_parse_check_modified()
+            round*2_lead_logic()
+            round*2_follow_logic()
+            round*2_play()
+    
+    __docu_end"""
+    
     def __init__(self,hold,custom_deal,tkntr_rt):
+        """
+        __init__() method of Round_2.
+        
+        Arguments: 
+                hold - type(bool)
+                custom_deal - type(bool)
+                tkntr_rt - type(Tkinter object - root window)
+        
+        Methods:
+                Only inherited methods
+        
+        Attributes:
+                Only inherited variables
+        
+        __docu_end"""
+        
         self.hold=hold
         self.custom_deal=custom_deal
         self.tkntr_rt=tkntr_rt
@@ -31,30 +59,48 @@ class Round_2(Round_1):
         
         
         #---------------edit-06102022----------------------------
-        # scalable verisions of all round specific variables used
+        # scalable versions of all round specific variables used
         # only for variables/attributes and not methods
         # methods -> both round_* class methods and gui methods
         # the below set is to be repeated with modification in each round
         # others are defined in Round_1
         
         self.round_no = 2  
-        self.round_cards[self.round_no] = ['']*4
+        self.round_cards[self.round_no] = {}
         
         #---------------edit-06102022----------------------------
         
-    
-    # methods in this class are:
-    # inp_parse_check_modified()
-    # round*2_lead_logic()
-    # round*2_follow_logic()
-    # round*2_play()
+        # the below statement is just for aesthetic purposes when code folding is used
+        place_holder = 0
+        
+    ###################################################################
+    #__init__() method end---------------------------------------------
     
     def inp_parse_check_modified(self,inp,which_suit):
         """
         This method in Round_2() class is a modification of inp_parse_check() in Round_1 and takes 
         as additional input the suit of the lead card in the round.
-        It is to be used in the follow_logic() methods of round*2 and all subsequent rounds.
-        """
+        This makes it easier to check validity of card in follow_logic rounds and was done separately 
+        for not messing up the inp_parse_check method in round*1 which was left as it was.
+        This is partly a result of broken/ad hoc/once in a while code development.
+        It is to be used in the follow_logic()(follow_logic only) methods of round*2 and all subsequent rounds.
+        
+        Arguments:
+                inp - type(str)
+                which_suit - type(int)
+        
+        Methods:
+                Only inherited methods
+
+        Attributes:
+                control_count - type(int)
+                s_name_dict - type(dict)
+                self.rnd - type(int)
+                self.ld_suit_name - type(str)
+                ...
+                
+        __docu_end"""
+        
         # checks and converts the input to unicode and then to Card object        
         #import sys
         # to use sys.exit()
@@ -83,7 +129,7 @@ class Round_2(Round_1):
         #2) checkin for a legal card entry
             print('\nYou did not enter a valid card')
             self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
-                +'\n7s or ah or 10d etc.: ').lower()
+                +'\n7s or ah or 10d etc.: ').lower().strip()
             self.inp_parse_check_modified(self.player_input,self.rnd)
         else:
             if self.inp_cpy[-1]=='s':
@@ -117,44 +163,73 @@ class Round_2(Round_1):
             #3) played card not in hand
                 print('\nEntered card not in hand')
                 self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
-                    +'\n7s or ah or 10d etc.: ').lower()
+                    +'\n7s or ah or 10d etc.: ').lower().strip()
                 self.inp_parse_check_modified(self.player_input,self.rnd)
             elif (not self.trump_revealed) and (self.inp_uni_obj==self.trump_card):
             #4) if facedown card is played
-                print('\nFace down card cannot be played unless revealed')
-                self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
-                    +'\n7s or ah or 10d etc.: ').lower()
-                self.inp_parse_check_modified(self.player_input,self.rnd)
+                if self.round_no == 8:
+                # allowed if round*8 is being played, i.e. only card left - added on 20/01/2023
+                    control_count += 1
+                else:
+                    print('\nFace down card cannot be played unless revealed')
+                    self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
+                        +'\n7s or ah or 10d etc.: ').lower().strip()
+                    self.inp_parse_check_modified(self.player_input,self.rnd)
             elif (self.highest_bidder_index==0) and (not len(self.obj_played_card_lst)) and \
                 (self.inp_uni_obj.suit()==self.obj_trump_checked.suit()) and (not self.trump_revealed):
             #5) opening a round with trump by highest bidder(Player)
-                print('\nYou cannot play from trump suit now')
-                self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
-                    +'\n7s or ah or 10d etc.: ').lower()
-                self.inp_parse_check_modified(self.player_input,self.rnd)
+                if len(self.obj_deal_lst_copy[self.turn_index]) == \
+                len(self.obj_dictn_of_cards_grouped[self.turn_index][self.trump_suit_index]):
+                # allowed if only trump suit left in hand - added on 20/01/2023 p.s. this doesn't 
+                # actually matter here as this method is called in only the follow_logic methods
+                    control_count += 1
+                else:
+                    print('\nYou cannot play from trump suit now')
+                    self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
+                        +'\n7s or ah or 10d etc.: ').lower().strip()
+                    self.inp_parse_check_modified(self.player_input,self.rnd)
             elif (len(self.obj_played_card_lst)) and (len(self.obj_dictn_of_cards_grouped[self.turn_index]\
                 [self.rnd])) and (self.inp_uni_obj.suit()!=self.ld_suit_name):
             #6) lead suit in hand but played another card(this wouldn't apply for face down trump card
             # as it is separately taken care of)
-                print('\nYou have to play from the same suit as of lead card')
-                self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
-                    +'\n7s or ah or 10d etc.: ').lower()
-                self.inp_parse_check_modified(self.player_input,self.rnd)
+                if self.turn_index == self.highest_bidder_index and \
+                self.round_lead_suit_index[self.round_no] == self.trump_suit_index and \
+                (len(self.obj_dictn_of_cards_grouped[self.turn_index]\
+                [self.round_lead_suit_index[self.round_no]])) == 1:
+                # this situation corresponds to the only card of the lead suit in hand being the face down
+                # trump card, i.e. trump not revealed yet.
+                    control_count+=1
+                else:
+                    print('\nYou have to play from the same suit as of lead card')
+                    self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
+                        +'\n7s or ah or 10d etc.: ').lower().strip()
+                    self.inp_parse_check_modified(self.player_input,self.rnd)
             else:
                 control_count+=1
         # returns the input, converted to Cards object
         return(self.inp_uni_obj)
-
+    
     ###################################################################
-    #inp_parse_check_modified() method end ############################
-    
-    
+    #inp_parse_check_modified() method end-----------------------------
+       
     def round2_lead_logic(self):
-        # logic for opening turn of round
+        """
+        Method for the leading hand in round*2.
+        
+        Arguments:
+                nil
+        
+        Methods:
+                Only inherited methods
+        
+        Attributes:
+                self.turn_index - type(int)
+                ...
+        
+        __docu_end"""
         
         self.turn_index=self.round_lead_index[self.round_no]
         
-        ###############################################################
         if not self.turn_index:
         # i.e. player gets to start 
         
@@ -163,7 +238,7 @@ class Round_2(Round_1):
             self.player_input=self.gui_handle.gui_card_entry[self.round_no]()
             # the object gui_handle of the Widgets() class is created in Deck() class in 
             # deck.py module
-            self.player_input=self.player_input.lower()
+            self.player_input=self.player_input.lower().strip()
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
             #15.######### var15
@@ -174,7 +249,7 @@ class Round_2(Round_1):
         # point card or the minimum point card or a completely random card is played
         
             # if not a debugging round
-            if not self.hold:
+            if not self.hold and self.round_till_which_written <= self.round_no:
                 option = random.choice([1,2,3])
 
                 if option == 1:
@@ -252,12 +327,12 @@ class Round_2(Round_1):
         self.obj_deal_lst_copy[self.turn_index].remove(self.round_lead_card[self.round_no])
         self.obj_dictn_of_cards_grouped[self.turn_index]\
                                         [self.round_lead_suit_index[self.round_no]].remove(self.round_lead_card[self.round_no])    
-    ###################################################################
-    #round*2_lead_logic() method end ###################################
-
     
-    ###################################################################    
+    ###################################################################
+    #round*2_lead_logic() method end-----------------------------------
+      
     def round2_follow_logic(self,suit_played):
+        
         # logic followed by turns_index 1,2 and 3
         self.x=suit_played
         self.card_found=True # currently no use for this
@@ -282,7 +357,7 @@ class Round_2(Round_1):
         if self.turn_index:
             
             # normal play - not last hand repeat for debugging
-            if not self.hold:
+            if not self.hold and self.round_till_which_written <= self.round_no:
         
                 # if played suit in hand
                 if len(self.obj_dictn_of_cards_grouped[self.turn_index][self.x]) != 0:
@@ -349,7 +424,7 @@ class Round_2(Round_1):
                 # if played suit not in hand
                 else:
 
-                    # play the card with the min point remaining in hand (first card if many)
+                    # play the card with the min point remaining in hand (last card if many)
                     mi=min(crdd.point() for crdd in self.obj_deal_lst_copy[self.turn_index])
                     for crdd in self.obj_deal_lst_copy[self.turn_index]:
                         if crdd.point()==mi:
@@ -369,6 +444,24 @@ class Round_2(Round_1):
                 self.round_cards[self.round_no] = pickle.load(f)
                 self.card_played=self.round_cards[self.round_no][self.turn_index]
                 f.close()
+                
+                # updating highest point in round, if applicable
+                if (self.card_played.suit() == self.round_lead_card[self.round_no].suit()) and \
+                (self.card_played.point() > self.round_highest_point_sofar[self.round_no]):
+                    # updating highest point
+                    self.round_highest_point_sofar[self.round_no]=self.card_played.point()
+                    # updating dictionary of highest card and its turn
+                    self.obj_dictn_of_highest_card_and_turn['suit'].clear()
+                    self.obj_dictn_of_highest_card_and_turn['suit'].extend(\
+                                                            [self.turn_index,self.card_played])                  
+
+                suit_name = self.card_played.suit()
+                suit_no = self.suit_dictn[suit_name]
+                
+                # removing played card from hand
+                self.obj_dictn_of_cards_grouped[self.turn_index][suit_no].remove(self.card_played)
+                #------------------------edits-------------------
+
 
         #---------------------------------------------------------------------------------------
         
@@ -382,12 +475,12 @@ class Round_2(Round_1):
             # played suit not in hand
                 if not self.trump_revealed:
 
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                     # gui window display
                     # the gui disp method of Widget() class in widget_manager module is called by its object
                     # gui_handle which was created earlier in __init__() of Deck()
                     self.check_val=self.gui_handle.gui_trump_call_instance[self.round_no](self.turn_index)
-#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
                     if self.check_val:
                         self.trump_revealed=True
@@ -398,6 +491,11 @@ class Round_2(Round_1):
                         self.gui_handle.gui_trump_reveal[self.round_no](self.turn_index,\
                                                                 self.trump_card,self.highest_bidder_index)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+                        # inserting the trump card back into the highest bidder dictionary 
+                        # (if not player)
+                        if self.highest_bidder_index:
+                            self.insert_trump_card_back()
                         
                         if len(self.obj_dictn_of_cards_grouped[0][self.trump_suit_index]):
                         # trump called and trump present
@@ -420,7 +518,7 @@ class Round_2(Round_1):
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                 # gui window for taking card input
                                 self.player_input=self.gui_handle.gui_card_entry[self.round_no]()
-                                self.player_input=self.player_input.lower()
+                                self.player_input=self.player_input.lower().strip()
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                 self.card_played=self.inp_parse_check_modified(self.player_input,self.x)
                                 # making sure a trump is played
@@ -428,7 +526,7 @@ class Round_2(Round_1):
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                     # gui window for taking card input
                                     self.player_input=self.gui_handle.gui_card_entry[self.round_no]()
-                                    self.player_input=self.player_input.lower()
+                                    self.player_input=self.player_input.lower().strip()
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                     self.card_played=self.inp_parse_check_modified(self.player_input,self.x)
 
@@ -443,7 +541,7 @@ class Round_2(Round_1):
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                     # gui window for taking card input
                     self.player_input=self.gui_handle.gui_card_entry[self.round_no]()
-                    self.player_input=self.player_input.lower()
+                    self.player_input=self.player_input.lower().strip()
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                     
                     self.card_played=self.inp_parse_check_modified(self.player_input,self.x)
@@ -460,7 +558,7 @@ class Round_2(Round_1):
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 # gui window for taking card input
                 self.player_input=self.gui_handle.gui_card_entry[self.round_no]()
-                self.player_input=self.player_input.lower()
+                self.player_input=self.player_input.lower().strip()
 #                 print("player inp in round*2 is :",self.player_input)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -527,13 +625,16 @@ class Round_2(Round_1):
         # the object gui_handle of the Widgets() class is created in Deck() class in 
         # deck.py module
         #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    
+        
+        # the below statements only purpose is to make the function look good when code folding 
+        # is done. the last comment lines are shown when code-folded, so a harmless statement 
+        # which is not comment solves that problem
+        just_a_place_holder = 0
+        
     ###################################################################
-    #round*2_follow_logic() method end #################################
-
+    #round*2_follow_logic() method end---------------------------------
 
     def round2_play(self):
-        # round*2_play() method  #######################################
                 
         while(len(self.obj_played_card_lst)<4):
 
@@ -558,6 +659,10 @@ class Round_2(Round_1):
             f=open(self.cards_in_round_filenames[self.round_no],"wb")
             pickle.dump(self.round_cards[self.round_no],f)
             f.close()
+            
+            # to keep a track of till which round the cards where written to 
+            # file in case the game is stopped mid round
+            self.round_till_which_written = self.round_no
         
         # determining round*3_lead_index
         if len(self.obj_dictn_of_highest_card_and_turn['trump'])==0:
@@ -631,8 +736,10 @@ class Round_2(Round_1):
         self.obj_played_card_lst.clear()
         self.obj_dictn_of_highest_card_and_turn['suit'].clear()
         self.obj_dictn_of_highest_card_and_turn['trump'].clear()
-        ###############################################################
-        #round*2_play() method end #####################################
+        
+    ###################################################################
+    #round*2_play() method end-----------------------------------------
+    
 
 #######################################################################
-#round_*2() class end ##################################################
+#round_*2() class end--------------------------------------------------

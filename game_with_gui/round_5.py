@@ -34,7 +34,7 @@ class Round_5(Round_4):
         # others are defined in Round_1
         
         self.round_no = 5  
-        self.round_cards[self.round_no] = ['']*4
+        self.round_cards[self.round_no] = {}
         
         #---------------edit-06102022----------------------------
     
@@ -57,7 +57,7 @@ class Round_5(Round_4):
             self.player_input=self.gui_handle.gui_card_entry[self.round_no]()
             # the object gui_handle of the Widgets() class is created in Deck() class in 
             # deck.py module
-            self.player_input=self.player_input.lower()
+            self.player_input=self.player_input.lower().strip()
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
             #15.######### var15
@@ -68,7 +68,7 @@ class Round_5(Round_4):
         # point card or the minimum point card or a completely random card is played
 
             # if not a debugging round
-            if not self.hold:
+            if not self.hold and self.round_till_which_written <= self.round_no:
                 option = random.choice([1,2,3])
 
                 if option == 1:
@@ -176,7 +176,7 @@ class Round_5(Round_4):
         if self.turn_index:
             
             # normal play - not last hand repeat for debugging
-            if not self.hold:
+            if not self.hold and self.round_till_which_written <= self.round_no:
         
                 # if played suit in hand
                 if len(self.obj_dictn_of_cards_grouped[self.turn_index][self.x]) != 0:
@@ -263,6 +263,23 @@ class Round_5(Round_4):
                 self.round_cards[self.round_no] = pickle.load(f)
                 self.card_played=self.round_cards[self.round_no][self.turn_index]
                 f.close()
+                
+                # updating highest point in round, if applicable
+                if (self.card_played.suit() == self.round_lead_card[self.round_no].suit()) and \
+                (self.card_played.point() > self.round_highest_point_sofar[self.round_no]):
+                    # updating highest point
+                    self.round_highest_point_sofar[self.round_no]=self.card_played.point()
+                    # updating dictionary of highest card and its turn
+                    self.obj_dictn_of_highest_card_and_turn['suit'].clear()
+                    self.obj_dictn_of_highest_card_and_turn['suit'].extend(\
+                                                            [self.turn_index,self.card_played])                  
+
+                suit_name = self.card_played.suit()
+                suit_no = self.suit_dictn[suit_name]
+                
+                # removing played card from hand
+                self.obj_dictn_of_cards_grouped[self.turn_index][suit_no].remove(self.card_played)
+                #------------------------edits-------------------
 
         #---------------------------------------------------------------------------------------
         
@@ -292,6 +309,11 @@ class Round_5(Round_4):
                         self.gui_handle.gui_trump_reveal[self.round_no](self.turn_index,\
                                                                 self.trump_card,self.highest_bidder_index)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+                        # inserting the trump card back into the highest bidder dictionary 
+                        # (if not player)
+                        if self.highest_bidder_index:
+                            self.insert_trump_card_back()
                         
                         if len(self.obj_dictn_of_cards_grouped[0][self.trump_suit_index]):
                         # trump called and trump present
@@ -314,7 +336,7 @@ class Round_5(Round_4):
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                 # gui window for taking card input
                                 self.player_input=self.gui_handle.gui_card_entry[self.round_no]()
-                                self.player_input=self.player_input.lower()
+                                self.player_input=self.player_input.lower().strip()
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                 self.card_played=self.inp_parse_check_modified(self.player_input,self.x)
                                 # making sure a trump is played
@@ -322,7 +344,7 @@ class Round_5(Round_4):
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                     # gui window for taking card input
                                     self.player_input=self.gui_handle.gui_card_entry[self.round_no]()
-                                    self.player_input=self.player_input.lower()
+                                    self.player_input=self.player_input.lower().strip()
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                                     self.card_played=self.inp_parse_check_modified(self.player_input,self.x)
 
@@ -337,7 +359,7 @@ class Round_5(Round_4):
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                     # gui window for taking card input
                     self.player_input=self.gui_handle.gui_card_entry[self.round_no]()
-                    self.player_input=self.player_input.lower()
+                    self.player_input=self.player_input.lower().strip()
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                     
                     self.card_played=self.inp_parse_check_modified(self.player_input,self.x)
@@ -354,7 +376,7 @@ class Round_5(Round_4):
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 # gui window for taking card input
                 self.player_input=self.gui_handle.gui_card_entry[self.round_no]()
-                self.player_input=self.player_input.lower()
+                self.player_input=self.player_input.lower().strip()
 #                 print("player inp in round*5 is :",self.player_input)
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -452,6 +474,10 @@ class Round_5(Round_4):
             f=open(self.cards_in_round_filenames[self.round_no],"wb")
             pickle.dump(self.round_cards[self.round_no],f)
             f.close()
+            
+            # to keep a track of till which round the cards where written to 
+            # file in case the game is stopped mid round
+            self.round_till_which_written = self.round_no
         
         # determining round*5_lead_index
         if len(self.obj_dictn_of_highest_card_and_turn['trump'])==0:

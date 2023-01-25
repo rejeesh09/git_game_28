@@ -167,15 +167,15 @@ class Deck():
                 print('\nAll hands are good to go')
 
                 # saving a copy for debugging 
-                f=open("last_deal.txt","wb")
+                f=open("./pickle_dump/last_deal.dat","wb")
                 pickle.dump(self.obj_deal_lst,f)
                 f.close()
         elif custom_deal:
-            f=open("custom_dealt_hand.txt","rb")
+            f=open("./pickle_dump/custom_dealt_hand.dat","rb")
             self.obj_deal_lst=pickle.load(f)
             f.close()
         else:
-            f=open("last_deal.txt","rb")
+            f=open("./pickle_dump/last_deal.dat","rb")
             self.obj_deal_lst=pickle.load(f)
             f.close()
     

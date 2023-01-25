@@ -100,14 +100,14 @@ class Prepare_game(Deck):
         
         #------------------------edit-07102022------------------------
         # a file now stores the game counter
-        gc = open("game_counter.txt",'r')
+        gc = open("z_game_counter.txt",'r')
         self.game_count = int(gc.readline())
         gc.close()       
         
         # creating a file for storing all the game data; to be used later for 
         # learning implementation
         self.game_count += 1
-        self.game_data_file_name = "game_data_"+f"{self.game_count:03d}"+".txt"
+        self.game_data_file_name = "./game_data/game_data_"+f"{self.game_count:03d}"+".txt"
         try:
             gdf = open(self.game_data_file_name,'x')
             gdf.close()
@@ -117,6 +117,10 @@ class Prepare_game(Deck):
         gdf = open(self.game_data_file_name,'w')
         gdf.writelines(["#half_bid_calls\n","#-------------------------\n"])
         gdf.close()
+        
+        # for writing the bid data to file
+        self.half_bid_data = []
+        self.full_bid_data = []
         #------------------------edit-07102022------------------------
         
 
@@ -137,7 +141,7 @@ class Prepare_game(Deck):
         if self.inp_cpy.capitalize() not in self.legal_card_lst:
             print('\nYou did not enter a valid card')
             self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
-                +'\n7s or ah or 10d etc.: ').lower()
+                +'\n7s or ah or 10d etc.: ').lower().strip()
             self.trump_verify(self.player_input,self.half_hand)
         else:
             if self.inp_cpy[-1]=='s':
@@ -171,7 +175,7 @@ class Prepare_game(Deck):
                 if self.inp_uni_obj not in self.obj_half_deal_lst[self.highest_bidder_index]:
                     print('\nEntered card not in hand')
                     self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
-                        +'\n7s or ah or 10d etc.: ').lower()
+                        +'\n7s or ah or 10d etc.: ').lower().strip()
                     self.trump_verify(self.player_input,self.half_hand)
                 else:
                     control_count+=1
@@ -180,7 +184,7 @@ class Prepare_game(Deck):
                 if self.inp_uni_obj not in self.obj_deal_lst[self.highest_bidder2_index]:
                     print('\nEntered card not in hand')
                     self.player_input=input('\nEnter the card rank followed by the first letter of the suit, eg.' 
-                        +'\n7s or ah or 10d etc.: ').lower()
+                        +'\n7s or ah or 10d etc.: ').lower().strip()
                     self.trump_verify(self.player_input,self.half_hand)
                 else:
                     control_count+=1
@@ -202,13 +206,13 @@ class Prepare_game(Deck):
             # the one who starts the bid, starts/lead the first round. 
             # round*1_lead_index will be used in Round_*1() class.
 
-            fb=open("last_starting_bid_turn.txt","wb")
+            fb=open("./pickle_dump/last_starting_bid_turn.dat","wb")
             # saving a copy for debugging 
             # opening a file object in write-binary mode
             pickle.dump(self.bid_turn_index,fb)
             fb.close()
         elif custom_deal:
-            fb=open("custom_starting_bid_turn.txt","rb")
+            fb=open("./pickle_dump/custom_starting_bid_turn.dat","rb")
             # opening a file object in read-binary mode
             self.bid_turn_index=pickle.load(fb)
             self.round1_lead_index=self.bid_turn_index
@@ -216,7 +220,7 @@ class Prepare_game(Deck):
         else:
         # i.e. True is passed as the value of argument 'hold', to this method,
         # (i.e. replaying last round - for debugging)
-            fb=open("last_starting_bid_turn.txt","rb")
+            fb=open("./pickle_dump/last_starting_bid_turn.dat","rb")
             # opening a file object in read-binary mode
             self.bid_turn_index=pickle.load(fb)
             self.round1_lead_index=self.bid_turn_index
@@ -617,9 +621,8 @@ class Prepare_game(Deck):
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                 
                 #------------------------edit-07102022---------------------------
-                gdf = open(self.game_data_file_name,'a')
-                gdf.write(str(self.bid_turn_index)+":"+str(self.bid_value_final)+"\n")
-                gdf.close()
+                h_bid_data = str(self.bid_turn_index)+":"+str(self.bid_value_final)
+                self.half_bid_data.append(h_bid_data) 
                 #------------------------edit-07102022---------------------------
                 
                 print('\n{} calls {}'.format(self.players_lst[self.bid_turn_index],self.bid_value_final))
@@ -656,8 +659,13 @@ class Prepare_game(Deck):
         
         #------------------------edit-07102022---------------------------
         gdf = open(self.game_data_file_name,'a')
+        
+        hbd_str = " ".join(self.half_bid_data) + "\n"
+        gdf.write(hbd_str)
+        
         gdf.writelines(["#half_bid_highest_call\n","#-------------------------\n"])
         gdf.write(str(self.highest_bidder_index)+":"+str(self.bid_value_final)+"\n")
+        
         gdf.writelines(["#full_bid_calls\n","#-------------------------\n"])
         gdf.close()
 
@@ -1016,9 +1024,8 @@ class Prepare_game(Deck):
                 self.highest_bidder2_index=self.bid2_turn_index
                 
                 #------------------------edit-07102022---------------------------
-                gdf = open(self.game_data_file_name,'a')
-                gdf.write(str(self.highest_bidder2_index)+":"+str(self.bid2_value_final)+"\n")
-                gdf.close()
+                f_bid_data = str(self.highest_bidder2_index)+":"+str(self.bid2_value_final)
+                self.full_bid_data.append(f_bid_data) 
                 #------------------------edit-07102022---------------------------
                 
 #^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1061,8 +1068,13 @@ class Prepare_game(Deck):
             
             #------------------------edit-07102022---------------------------
             gdf = open(self.game_data_file_name,'a')
+            
+            fbd_str = " ".join(self.full_bid_data) + "\n"
+            gdf.write(fbd_str)
+            
             gdf.writelines(["#full_bid_highest_call\n","#-------------------------\n"])
             gdf.write(str(self.highest_bidder2_index)+":"+str(self.bid2_value_final)+"\n")
+            
             gdf.writelines(["#round-1\n","#-------------------------\n"])
             gdf.close()
 
