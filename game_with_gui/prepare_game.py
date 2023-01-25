@@ -100,7 +100,7 @@ class Prepare_game(Deck):
         
         #------------------------edit-07102022------------------------
         # a file now stores the game counter
-        gc = open("z_game_counter.txt",'r')
+        gc = open("./game_data/game_counter.txt",'r')
         self.game_count = int(gc.readline())
         gc.close()       
         
