@@ -306,7 +306,8 @@ class Round_8(Round_7):
         else:
             point_needed = self.bid_value_final
             
-        if self.highest_bidder_index in [0,2] and self.point_player_team_sofar >= point_needed:
+        if (self.highest_bidder_index in [0,2] and self.point_player_team_sofar >= point_needed) or \
+        (self.highest_bidder_index in [1,3] and self.point_oppo_team_sofar < point_needed):
             winner_indx = 0
             print('\nYour team won the game')
         else:
